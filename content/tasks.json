@@ -1,0 +1,23 @@
+[
+  {
+    "slug": "extract-last-word",
+    "task": "Extract the last word from text",
+    "intro": "Excel has no built-in function that returns only the last word of a text string, but you can combine TRIM, RIGHT, SUBSTITUTE and REPT — or use TEXTAFTER in Microsoft 365.",
+    "steps": [
+      {
+        "heading": "Modern Excel (Microsoft 365): TEXTAFTER",
+        "body": "Use =TEXTAFTER(A1,\" \",-1) to return everything after the last space — i.e. the last word."
+      },
+      {
+        "heading": "Older versions: combine functions",
+        "body": "Use =TRIM(RIGHT(SUBSTITUTE(A1,\" \",REPT(\" \",100)),100)). SUBSTITUTE replaces each space with 100 spaces, RIGHT grabs the last 100 characters, and TRIM removes the padding."
+      }
+    ],
+    "formulas": [
+      { "formula": "=TEXTAFTER(A1,\" \",-1)", "explanation": "Returns the text after the last space (Microsoft 365 only)." },
+      { "formula": "=TRIM(RIGHT(SUBSTITUTE(A1,\" \",REPT(\" \",100)),100))", "explanation": "Works in every Excel version; pads spaces then takes the rightmost characters." }
+    ],
+    "relatedFunctions": ["sum"],
+    "relatedLessons": []
+  }
+]

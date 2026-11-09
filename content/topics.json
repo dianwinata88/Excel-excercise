@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "sum",
+    "name": "Sum",
+    "title": "SUM Lessons — Excel Practice",
+    "description": "Practice adding numbers with SUM, ranges and quick totals.",
+    "lessons": ["sum-basics"]
+  },
+  {
+    "slug": "shortcuts",
+    "name": "Keyboard Shortcuts",
+    "title": "Excel Shortcut Lessons — Practice on Your Keyboard",
+    "description": "Build muscle memory for the most-used Excel shortcuts.",
+    "lessons": ["shortcut-basics"]
+  }
+]

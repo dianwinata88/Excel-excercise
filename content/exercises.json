@@ -1,0 +1,33 @@
+[
+  {
+    "id": "sum-column-01",
+    "type": "formula",
+    "prompt": "Write a formula in B1 that sums the values in A1:A5.",
+    "grid": { "A1": 10, "A2": 20, "A3": 15, "A4": 5, "A5": 50 },
+    "answerCell": "B1",
+    "expectValue": 100,
+    "acceptFns": ["SUM"],
+    "hints": ["Start with =SUM(", "The range is A1:A5"],
+    "xp": 10
+  },
+  {
+    "id": "sum-range-02",
+    "type": "formula",
+    "prompt": "In B1, sum only the first three cells (A1:A3).",
+    "grid": { "A1": 4, "A2": 6, "A3": 10, "A4": 100 },
+    "answerCell": "B1",
+    "expectValue": 20,
+    "acceptFns": ["SUM"],
+    "hints": ["A smaller range than the whole column"],
+    "xp": 15
+  },
+  {
+    "id": "shortcut-bold-01",
+    "type": "shortcut",
+    "prompt": "Make the selected cell bold using your keyboard.",
+    "grid": { "A1": "Quarterly Report" },
+    "keys": "ctrl+b",
+    "hints": ["Windows: Ctrl+B · Mac: Cmd+B"],
+    "xp": 5
+  }
+]

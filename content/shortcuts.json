@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "bold",
+    "action": "Bold the selection",
+    "keys": { "windows": "Ctrl+B", "mac": "Cmd+B" },
+    "description": "Applies or removes bold formatting to the selected cells — one of the most-used Excel shortcuts.",
+    "tips": ["Works while typing in the formula bar too.", "Toggle: press again to un-bold."],
+    "relatedShortcuts": ["italic", "underline"]
+  },
+  {
+    "slug": "italic",
+    "action": "Italicize the selection",
+    "keys": { "windows": "Ctrl+I", "mac": "Cmd+I" },
+    "description": "Applies or removes italic formatting to the selected cells.",
+    "tips": [],
+    "relatedShortcuts": ["bold", "underline"]
+  },
+  {
+    "slug": "underline",
+    "action": "Underline the selection",
+    "keys": { "windows": "Ctrl+U", "mac": "Cmd+U" },
+    "description": "Applies or removes single underline formatting to the selected cells.",
+    "tips": [],
+    "relatedShortcuts": ["bold", "italic"]
+  }
+]

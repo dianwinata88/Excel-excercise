@@ -1,0 +1,17 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// No auth — Postgres currently stores captured leads (newsletter / download
+// signups) and is ready for progress sync if accounts are added later.
+model Lead {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   // e.g. "newsletter", "practice-file-download"
+  createdAt DateTime @default(now())
+}

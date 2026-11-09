@@ -1,0 +1,84 @@
+[
+  {
+    "slug": "sum",
+    "name": "SUM",
+    "category": "Math & Trig",
+    "syntax": "SUM(number1, [number2], ...)",
+    "params": [
+      { "name": "number1", "required": true, "description": "The first number or range to add." },
+      { "name": "number2", "required": false, "description": "Additional numbers or ranges (up to 255)." }
+    ],
+    "summary": "Adds all the numbers in a range of cells.",
+    "intro": "SUM is the most-used function in Excel. It adds numbers in cells, ranges, or a mix of both — and it ignores text and empty cells, so you can select an entire column without cleaning it first.",
+    "examples": [
+      {
+        "title": "Sum a column",
+        "grid": { "A1": 10, "A2": 20, "A3": 15, "A4": 5, "A5": 50 },
+        "formula": "=SUM(A1:A5)",
+        "result": 100,
+        "note": "A contiguous range is the fastest way to total a column."
+      },
+      {
+        "title": "Sum individual cells",
+        "grid": { "A1": 10, "C1": 25, "E1": 40 },
+        "formula": "=SUM(A1,C1,E1)",
+        "result": 75,
+        "note": "Separate non-adjacent cells with commas."
+      }
+    ],
+    "commonErrors": [
+      { "error": "#VALUE!", "cause": "A referenced cell contains an error or text that can't be read as a number.", "fix": "Check the range for error values like #DIV/0! and fix those first." }
+    ],
+    "relatedFunctions": ["count", "average"],
+    "relatedLessons": ["sum-basics"],
+    "exerciseId": "sum-column-01"
+  },
+  {
+    "slug": "count",
+    "name": "COUNT",
+    "category": "Statistical",
+    "syntax": "COUNT(value1, [value2], ...)",
+    "params": [
+      { "name": "value1", "required": true, "description": "The first item or range to count." },
+      { "name": "value2", "required": false, "description": "Additional items or ranges." }
+    ],
+    "summary": "Counts how many cells in a range contain numbers.",
+    "intro": "COUNT tells you how many cells in a range hold numeric values. Text, blanks and logical values are skipped — use COUNTA instead if you need to count non-empty cells of any type.",
+    "examples": [
+      {
+        "title": "Count numbers in a column",
+        "grid": { "A1": 5, "A2": "n/a", "A3": 12, "A4": "", "A5": 7 },
+        "formula": "=COUNT(A1:A5)",
+        "result": 3
+      }
+    ],
+    "commonErrors": [],
+    "relatedFunctions": ["sum", "average"],
+    "relatedLessons": ["sum-basics"]
+  },
+  {
+    "slug": "average",
+    "name": "AVERAGE",
+    "category": "Statistical",
+    "syntax": "AVERAGE(number1, [number2], ...)",
+    "params": [
+      { "name": "number1", "required": true, "description": "The first number or range to average." },
+      { "name": "number2", "required": false, "description": "Additional numbers or ranges." }
+    ],
+    "summary": "Returns the average (arithmetic mean) of its arguments.",
+    "intro": "AVERAGE adds up the numeric cells in a range and divides by how many there are. Like SUM, it ignores text and empty cells — but a 0 counts, so a blank and a zero give different results.",
+    "examples": [
+      {
+        "title": "Average test scores",
+        "grid": { "A1": 80, "A2": 90, "A3": 70 },
+        "formula": "=AVERAGE(A1:A3)",
+        "result": 80
+      }
+    ],
+    "commonErrors": [
+      { "error": "#DIV/0!", "cause": "The range contains no numeric values.", "fix": "Make sure at least one cell in the range holds a number." }
+    ],
+    "relatedFunctions": ["sum", "count"],
+    "relatedLessons": ["sum-basics"]
+  }
+]

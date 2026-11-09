@@ -1,0 +1,18 @@
+[
+  {
+    "slug": "sum-basics",
+    "topic": "sum",
+    "title": "SUM Basics",
+    "description": "Learn to total a column of numbers with the SUM function.",
+    "level": "beginner",
+    "exercises": ["sum-column-01", "sum-range-02"]
+  },
+  {
+    "slug": "shortcut-basics",
+    "topic": "shortcuts",
+    "title": "Essential Shortcuts",
+    "description": "Practice bold, copy and paste shortcuts on your real keyboard.",
+    "level": "beginner",
+    "exercises": ["shortcut-bold-01"]
+  }
+]
