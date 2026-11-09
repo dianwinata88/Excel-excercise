@@ -3,6 +3,7 @@
  * Run: npx tsx scripts/validate-content.ts
  */
 import {
+  getComparisonDocs,
   getExercises,
   getFunctionDocs,
   getLessons,
@@ -19,11 +20,28 @@ const topics = getTopics();
 const topicSlugs = new Set(topics.map((t) => t.slug));
 const functions = getFunctionDocs();
 const functionSlugs = new Set(functions.map((f) => f.slug));
+const tasks = getTaskDocs();
 const shortcuts = getShortcutDocs();
 const shortcutSlugs = new Set(shortcuts.map((s) => s.slug));
-getTaskDocs();
+const comparisons = getComparisonDocs();
+const comparisonSlugs = new Set(comparisons.map((c) => c.slug));
 
 const errors: string[] = [];
+
+function checkUnique(label: string, slugs: string[]) {
+  const seen = new Set<string>();
+  for (const s of slugs) {
+    if (seen.has(s)) errors.push(`${label}: duplicate slug ${s}`);
+    seen.add(s);
+  }
+}
+checkUnique("topics", topics.map((t) => t.slug));
+checkUnique("lessons", lessons.map((l) => l.slug));
+checkUnique("exercises", exercises.map((e) => e.id));
+checkUnique("functions", functions.map((f) => f.slug));
+checkUnique("tasks", tasks.map((t) => t.slug));
+checkUnique("shortcuts", shortcuts.map((s) => s.slug));
+checkUnique("comparisons", comparisons.map((c) => c.slug));
 
 for (const lesson of lessons) {
   if (!topicSlugs.has(lesson.topic)) errors.push(`lesson ${lesson.slug}: unknown topic ${lesson.topic}`);
@@ -37,8 +55,16 @@ for (const fn of functions) {
   for (const rel of fn.relatedLessons) if (!lessonSlugs.has(rel)) errors.push(`function ${fn.slug}: unknown related lesson ${rel}`);
   if (fn.exerciseId && !exerciseIds.has(fn.exerciseId)) errors.push(`function ${fn.slug}: unknown exercise ${fn.exerciseId}`);
 }
+for (const task of tasks) {
+  for (const rel of task.relatedFunctions) if (!functionSlugs.has(rel)) errors.push(`task ${task.slug}: unknown related function ${rel}`);
+  for (const rel of task.relatedLessons) if (!lessonSlugs.has(rel)) errors.push(`task ${task.slug}: unknown related lesson ${rel}`);
+}
 for (const s of shortcuts) {
   for (const rel of s.relatedShortcuts) if (!shortcutSlugs.has(rel)) errors.push(`shortcut ${s.slug}: unknown related shortcut ${rel}`);
+}
+for (const c of comparisons) {
+  for (const rel of c.relatedFunctions) if (!functionSlugs.has(rel)) errors.push(`comparison ${c.slug}: unknown related function ${rel}`);
+  for (const rel of c.relatedComparisons) if (!comparisonSlugs.has(rel)) errors.push(`comparison ${c.slug}: unknown related comparison ${rel}`);
 }
 
 if (errors.length) {
@@ -47,5 +73,5 @@ if (errors.length) {
 }
 console.log(
   `content OK: ${topics.length} topics, ${lessons.length} lessons, ${exercises.length} exercises, ` +
-    `${functions.length} functions, ${shortcutSlugs.size} shortcuts`,
+    `${functions.length} functions, ${tasks.length} tasks, ${shortcutSlugs.size} shortcuts, ${comparisons.length} comparisons`,
 );

@@ -17,7 +17,380 @@
       { "formula": "=TEXTAFTER(A1,\" \",-1)", "explanation": "Returns the text after the last space (Microsoft 365 only)." },
       { "formula": "=TRIM(RIGHT(SUBSTITUTE(A1,\" \",REPT(\" \",100)),100))", "explanation": "Works in every Excel version; pads spaces then takes the rightmost characters." }
     ],
+    "relatedFunctions": ["right", "trim", "len"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "extract-first-word",
+    "task": "Extract the first word from text",
+    "intro": "Pulling the first word out of a cell is a LEFT + FIND combination in every Excel version — or a one-argument TEXTBEFORE call in Microsoft 365.",
+    "steps": [
+      {
+        "heading": "Modern Excel (Microsoft 365): TEXTBEFORE",
+        "body": "Use =TEXTBEFORE(A1,\" \") to return everything before the first space."
+      },
+      {
+        "heading": "All versions: LEFT + FIND",
+        "body": "Use =LEFT(A1,FIND(\" \",A1)-1). FIND locates the space; subtracting 1 excludes it."
+      },
+      {
+        "heading": "Handle single-word cells",
+        "body": "FIND errors when there is no space. Wrap in IFERROR to return the whole cell: =IFERROR(LEFT(A1,FIND(\" \",A1)-1),A1)."
+      }
+    ],
+    "formulas": [
+      { "formula": "=TEXTBEFORE(A1,\" \")", "explanation": "Microsoft 365 only — text before the first space." },
+      { "formula": "=IFERROR(LEFT(A1,FIND(\" \",A1)-1),A1)", "explanation": "Works everywhere; falls back to the full cell when no space exists." }
+    ],
+    "relatedFunctions": ["left", "iferror", "trim"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "remove-duplicates",
+    "task": "Remove duplicate rows",
+    "intro": "Excel ships a one-click Remove Duplicates tool on the Data tab — but a COUNTIF helper column is the better route when you want to review dupes before deleting them.",
+    "steps": [
+      {
+        "heading": "Quick way: Data → Remove Duplicates",
+        "body": "Select the range, go to Data → Remove Duplicates, pick the columns that define 'same', and click OK. Excel reports how many duplicates were removed."
+      },
+      {
+        "heading": "Review first: COUNTIF flag",
+        "body": "Add a helper column with =COUNTIF($A$2:$A$100,A2)>1. TRUE rows are duplicates — filter on it, inspect, then delete."
+      },
+      {
+        "heading": "Modern Excel: UNIQUE",
+        "body": "In Microsoft 365, =UNIQUE(A2:B100) spills a de-duplicated copy into a new area without touching the source."
+      }
+    ],
+    "formulas": [
+      { "formula": "=COUNTIF($A$2:$A$100,A2)>1", "explanation": "TRUE marks every value that appears more than once." },
+      { "formula": "=UNIQUE(A2:B100)", "explanation": "Microsoft 365 — returns a deduplicated spill range." }
+    ],
+    "relatedFunctions": ["countif", "countifs"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "split-name-into-columns",
+    "task": "Split a full name into first and last columns",
+    "intro": "A column of 'First Last' names splits cleanly with Text to Columns for a one-off job, or TEXTBEFORE/TEXTAFTER when you want live formulas that update with the data.",
+    "steps": [
+      {
+        "heading": "One-off: Text to Columns",
+        "body": "Select the column, go to Data → Text to Columns → Delimited → Space → Finish. Names land in two columns immediately."
+      },
+      {
+        "heading": "Formulas: TEXTBEFORE / TEXTAFTER",
+        "body": "First name: =TEXTBEFORE(A1,\" \"). Last name: =TEXTAFTER(A1,\" \",-1). Microsoft 365 only."
+      },
+      {
+        "heading": "All versions: LEFT/MID + FIND",
+        "body": "First: =LEFT(A1,FIND(\" \",A1)-1). Last: =MID(A1,FIND(\" \",A1)+1,LEN(A1))."
+      }
+    ],
+    "formulas": [
+      { "formula": "=TEXTBEFORE(A1,\" \")", "explanation": "First name in Microsoft 365." },
+      { "formula": "=MID(A1,FIND(\" \",A1)+1,LEN(A1))", "explanation": "Last name in any Excel version." }
+    ],
+    "relatedFunctions": ["left", "mid", "len"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "combine-cells",
+    "task": "Combine cells into one (join text)",
+    "intro": "Merging cells destroys your data layout — joining them with CONCAT, TEXTJOIN or the & operator keeps every value intact while producing the combined text you want.",
+    "steps": [
+      {
+        "heading": "TEXTJOIN for a list",
+        "body": "=TEXTJOIN(\", \",TRUE,A1:C1) joins a range with a delimiter and skips empty cells."
+      },
+      {
+        "heading": "CONCAT for a simple join",
+        "body": "=CONCAT(A1:C1) glues cells together with no separator."
+      },
+      {
+        "heading": "The & operator for control",
+        "body": "=A1&\" \"&B1 gives you per-piece control over separators — ideal for 'First Last' with a single space."
+      }
+    ],
+    "formulas": [
+      { "formula": "=TEXTJOIN(\", \",TRUE,A1:C1)", "explanation": "Delimiter + skip-empty in one function." },
+      { "formula": "=A1&\" \"&B1", "explanation": "Simplest option — no function needed." }
+    ],
+    "relatedFunctions": ["concat", "textjoin", "trim"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "vlookup-two-criteria",
+    "task": "VLOOKUP with two criteria",
+    "intro": "VLOOKUP accepts a single lookup value, so two-criteria lookups need either a helper key column or an INDEX+MATCH combo — XLOOKUP handles it natively in Microsoft 365.",
+    "steps": [
+      {
+        "heading": "Helper column",
+        "body": "Concatenate the criteria in a new column: =A2&\"|\"&B2. Then VLOOKUP that combined key: =VLOOKUP(\"East|Jan\",C2:D10,2,FALSE)."
+      },
+      {
+        "heading": "No helper: INDEX + MATCH",
+        "body": "Use =INDEX(C2:C10,MATCH(1,(A2:A10=\"East\")*(B2:B10=\"Jan\"),0)). The multiplication acts as AND."
+      },
+      {
+        "heading": "Microsoft 365: XLOOKUP",
+        "body": "=XLOOKUP(1,(A2:A10=\"East\")*(B2:B10=\"Jan\"),C2:C10) does the same thing without CSE or helpers."
+      }
+    ],
+    "formulas": [
+      { "formula": "=INDEX(C2:C10,MATCH(1,(A2:A10=\"East\")*(B2:B10=\"Jan\"),0))", "explanation": "Multi-criteria lookup without changing the data." },
+      { "formula": "=XLOOKUP(1,(A2:A10=\"East\")*(B2:B10=\"Jan\"),C2:C10)", "explanation": "Microsoft 365 version — same logic, cleaner." }
+    ],
+    "relatedFunctions": ["vlookup", "index", "match", "xlookup"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "count-unique-values",
+    "task": "Count unique values in a column",
+    "intro": "Counting distinct values takes a SUMPRODUCT/COUNTIF combo in classic Excel, or the purpose-built UNIQUE + COUNTA pair in Microsoft 365.",
+    "steps": [
+      {
+        "heading": "Microsoft 365: UNIQUE + COUNTA",
+        "body": "=COUNTA(UNIQUE(A2:A100)) returns the count of distinct non-blank values."
+      },
+      {
+        "heading": "All versions: SUMPRODUCT",
+        "body": "=SUMPRODUCT(1/COUNTIF(A2:A100,A2:A100)) counts each distinct value once. Blanks break it — add a filter or IF inside COUNTIF if needed."
+      },
+      {
+        "heading": "PivotTable alternative",
+        "body": "Insert → PivotTable, drag the column to Rows, and count the row labels — zero formulas."
+      }
+    ],
+    "formulas": [
+      { "formula": "=COUNTA(UNIQUE(A2:A100))", "explanation": "Distinct count, Microsoft 365." },
+      { "formula": "=SUMPRODUCT(1/COUNTIF(A2:A100,A2:A100))", "explanation": "Distinct count in any version." }
+    ],
+    "relatedFunctions": ["countif", "counta", "count"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "convert-text-to-number",
+    "task": "Convert text to numbers",
+    "intro": "Numbers stored as text refuse to sum and sort alphabetically. Excel flags them with green triangles — three quick fixes get them back to real numbers.",
+    "steps": [
+      {
+        "heading": "Error-checking menu",
+        "body": "Select the flagged cells, click the warning icon, and choose 'Convert to Number'. Fastest for small ranges."
+      },
+      {
+        "heading": "Paste Special multiply",
+        "body": "Type 1 in a blank cell, copy it, select the text-numbers, then Paste Special → Multiply. Forces conversion in place."
+      },
+      {
+        "heading": "VALUE or math coercion",
+        "body": "=VALUE(A1) converts one cell; multiplying by 1 (=A1*1) does the same inline inside larger formulas."
+      }
+    ],
+    "formulas": [
+      { "formula": "=VALUE(A1)", "explanation": "Purpose-built text→number converter." },
+      { "formula": "=IFERROR(VALUE(TRIM(A1)),0)", "explanation": "Handles stray spaces and non-numeric cells gracefully." }
+    ],
+    "relatedFunctions": ["iferror", "trim", "sum"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "create-drop-down-list",
+    "task": "Create a drop-down list in a cell",
+    "intro": "Data Validation turns any cell into a drop-down — no code needed. A list source can be typed literals or a range, which keeps the menu in sync when the options change.",
+    "steps": [
+      {
+        "heading": "Open Data Validation",
+        "body": "Select the target cells, then Data → Data Validation → Allow: List."
+      },
+      {
+        "heading": "Choose the source",
+        "body": "Type values separated by commas (Yes,No,Maybe) for a fixed list, or reference a range like =$E$2:$E$10 so the menu updates with the data."
+      },
+      {
+        "heading": "Optional niceties",
+        "body": "Add an Input Message to explain the field, and an Error Alert to control whether invalid entries are rejected or just warned about."
+      }
+    ],
+    "formulas": [
+      { "formula": "=$E$2:$E$10", "explanation": "Range source — the drop-down updates automatically when the list changes." }
+    ],
+    "relatedFunctions": ["counta"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "absolute-reference",
+    "task": "Lock a cell reference ($A$1 absolute reference)",
+    "intro": "A plain reference like A1 drifts when you copy the formula down. Dollar signs lock it — and the F4 key cycles through all four reference styles while you edit.",
+    "steps": [
+      {
+        "heading": "Press F4 (or Cmd+T on Mac)",
+        "body": "While editing a formula, click inside a reference and press F4. Each press cycles: A1 → $A$1 → A$1 → $A1 → A1."
+      },
+      {
+        "heading": "Know the four styles",
+        "body": "$A$1 locks column and row (fully absolute). A$1 locks only the row; $A1 locks only the column; A1 is fully relative."
+      },
+      {
+        "heading": "Classic use case: rate lookup",
+        "body": "If a tax rate sits in E1, write =B2*$E$1 and fill down — every row multiplies by the same E1 instead of drifting to E2, E3…"
+      }
+    ],
+    "formulas": [
+      { "formula": "=B2*$E$1", "explanation": "Filling down keeps E1 fixed; B2 becomes B3, B4…" }
+    ],
     "relatedFunctions": ["sum"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "round-to-2-decimals",
+    "task": "Round to two decimal places",
+    "intro": "There are two ways to show two decimals — formatting (display only) and ROUND (changes the value). Pick ROUND for money math; pick formatting for presentation.",
+    "steps": [
+      {
+        "heading": "ROUND in a formula",
+        "body": "=ROUND(A1,2) stores 19.476 as 19.48, so downstream sums match what you see."
+      },
+      {
+        "heading": "Display-only: number format",
+        "body": "Select the cells → Ctrl+1 → Number → 2 decimal places. The underlying value stays 19.476."
+      },
+      {
+        "heading": "TEXT for a string",
+        "body": "=TEXT(A1,\"0.00\") returns the text '19.48' — handy inside concatenated messages."
+      }
+    ],
+    "formulas": [
+      { "formula": "=ROUND(A1,2)", "explanation": "Changes the stored value." },
+      { "formula": "=TEXT(A1,\"0.00\")", "explanation": "Formats as text for use in strings." }
+    ],
+    "relatedFunctions": ["round", "text"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "extract-domain-from-email",
+    "task": "Extract the domain from an email address",
+    "intro": "The domain is everything after '@' — a MID + FIND pair in classic Excel, or a one-liner with TEXTAFTER in Microsoft 365.",
+    "steps": [
+      {
+        "heading": "Microsoft 365",
+        "body": "=TEXTAFTER(A1,\"@\") returns the domain in one call."
+      },
+      {
+        "heading": "All versions",
+        "body": "=MID(A1,FIND(\"@\",A1)+1,LEN(A1)) — FIND locates the @, MID takes everything after it."
+      },
+      {
+        "heading": "Guard against bad input",
+        "body": "Wrap in IFERROR to return blank for cells that are not emails: =IFERROR(MID(A1,FIND(\"@\",A1)+1,LEN(A1)),\"\")."
+      }
+    ],
+    "formulas": [
+      { "formula": "=TEXTAFTER(A1,\"@\")", "explanation": "Microsoft 365." },
+      { "formula": "=MID(A1,FIND(\"@\",A1)+1,LEN(A1))", "explanation": "Every Excel version." }
+    ],
+    "relatedFunctions": ["mid", "right", "len", "iferror"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "count-cells-between-two-numbers",
+    "task": "Count cells between two numbers",
+    "intro": "COUNTIFS applies two tests to the same range — 'greater than 20 AND less than 60' — which is the simplest way to bucket values without a histogram.",
+    "steps": [
+      {
+        "heading": "Write the two criteria",
+        "body": "=COUNTIFS(A:A,\">=20\",A:A,\"<=60\") counts cells between 20 and 60 inclusive."
+      },
+      {
+        "heading": "Use cell references for thresholds",
+        "body": "Concatenate the operator: =COUNTIFS(A:A,\">=\"&D1,A:A,\"<=\"&D2) so the bounds are editable in cells."
+      },
+      {
+        "heading": "Same pattern for dates",
+        "body": "Criteria work on serial dates too — \">=\"&DATE(2026,1,1) filters a date column."
+      }
+    ],
+    "formulas": [
+      { "formula": "=COUNTIFS(A:A,\">=20\",A:A,\"<=60\")", "explanation": "Inclusive between-count." },
+      { "formula": "=COUNTIFS(A:A,\">=\"&D1,A:A,\"<=\"&D2)", "explanation": "Bounds live in cells." }
+    ],
+    "relatedFunctions": ["countifs", "countif", "date"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "sum-top-n-values",
+    "task": "Sum the top N values",
+    "intro": "LARGE ranks values without sorting, so summing the top 3, 5 or N is a single formula — no helper column, no sorting the source data.",
+    "steps": [
+      {
+        "heading": "Array constant",
+        "body": "=SUM(LARGE(A2:A20,{1,2,3})) adds the top 3 values."
+      },
+      {
+        "heading": "N in a cell",
+        "body": "Put N in D1 and use =SUM(LARGE(A2:A20,ROW(INDIRECT(\"1:\"&D1)))) for a controllable top-N total."
+      },
+      {
+        "heading": "Microsoft 365: SORT + TAKE",
+        "body": "=SUM(TAKE(SORT(A2:A20,,-1),3)) sorts descending and sums the first 3."
+      }
+    ],
+    "formulas": [
+      { "formula": "=SUM(LARGE(A2:A20,{1,2,3}))", "explanation": "Top-3 total in one formula." },
+      { "formula": "=SUM(TAKE(SORT(A2:A20,,-1),3))", "explanation": "Microsoft 365 variant." }
+    ],
+    "relatedFunctions": ["large", "sum", "max"],
+    "relatedLessons": ["sum-basics"]
+  },
+  {
+    "slug": "clean-extra-spaces",
+    "task": "Remove extra spaces from cells",
+    "intro": "Imported data is full of stray spaces that break lookups and counts. TRIM collapses them in one call; SUBSTITUTE handles the non-breaking spaces TRIM misses.",
+    "steps": [
+      {
+        "heading": "TRIM the column",
+        "body": "In a helper column: =TRIM(A1) — removes leading/trailing spaces and squeezes inner doubles to one."
+      },
+      {
+        "heading": "Catch non-breaking spaces",
+        "body": "Web-pasted data often uses CHAR(160). Use =TRIM(SUBSTITUTE(A1,CHAR(160),\" \")) to clean both kinds."
+      },
+      {
+        "heading": "Paste values back",
+        "body": "Copy the helper column, Paste Special → Values over the originals, then delete the helper."
+      }
+    ],
+    "formulas": [
+      { "formula": "=TRIM(A1)", "explanation": "Standard cleanup." },
+      { "formula": "=TRIM(SUBSTITUTE(A1,CHAR(160),\" \"))", "explanation": "Also removes non-breaking spaces." }
+    ],
+    "relatedFunctions": ["trim", "len"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "highlight-blank-cells",
+    "task": "Highlight blank cells",
+    "intro": "Finding the holes in a dataset is a two-step job: Go To Special selects all blanks at once, or a COUNTA-based conditional format highlights them live as data changes.",
+    "steps": [
+      {
+        "heading": "Go To Special",
+        "body": "Select the range → Ctrl+G → Special → Blanks. Every empty cell is selected simultaneously — type =A1 and Ctrl+Enter to fill them all."
+      },
+      {
+        "heading": "Conditional formatting",
+        "body": "Home → Conditional Formatting → 'Format only cells that contain' → Blanks → pick a fill colour."
+      },
+      {
+        "heading": "Formula-driven highlight",
+        "body": "New Rule → 'Use a formula' → =LEN(TRIM(A1))=0 also catches cells that look filled but only contain spaces."
+      }
+    ],
+    "formulas": [
+      { "formula": "=LEN(TRIM(A1))=0", "explanation": "TRUE for blanks and space-only cells." },
+      { "formula": "=COUNTA(A2:A100)", "explanation": "Compare against expected rows to gauge completeness." }
+    ],
+    "relatedFunctions": ["len", "trim", "counta"],
     "relatedLessons": []
   }
 ]
