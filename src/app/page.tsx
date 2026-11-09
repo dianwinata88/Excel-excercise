@@ -1,52 +1,237 @@
 import Link from "next/link";
-import { getTopics } from "@/lib/content";
+import { Badge, levelTone } from "@/components/Badge";
+import { Card } from "@/components/Card";
+import { LeadCaptureForm } from "@/components/LeadCaptureForm";
+import { SectionHeading } from "@/components/SectionHeading";
+import { getLessons, getTopics } from "@/lib/content";
 import { SITE_NAME } from "@/lib/seo";
+
+const VALUE_PROPS = [
+  {
+    icon: "🎯",
+    title: "Learn by doing",
+    body: "Every lesson is a hands-on exercise. Type real formulas and press real shortcuts — no videos, no filler.",
+  },
+  {
+    icon: "⚡",
+    title: "Bite-sized lessons",
+    body: "Five minutes a day builds real Excel muscle. Short exercises you can finish between meetings.",
+  },
+  {
+    icon: "✅",
+    title: "Instant feedback",
+    body: "Your answers are checked by a real formula engine in the browser, so you know immediately when it works.",
+  },
+];
+
+const STEPS = [
+  {
+    n: "1",
+    title: "Pick a skill",
+    body: "Choose a track — formulas, functions, or shortcuts — and jump into the first lesson.",
+  },
+  {
+    n: "2",
+    title: "Practice in the grid",
+    body: "Solve bite-sized exercises on a live spreadsheet that runs entirely in your browser.",
+  },
+  {
+    n: "3",
+    title: "Level up",
+    body: "Earn XP, unlock harder exercises, and turn Excel into a reflex instead of a chore.",
+  },
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "I finally understand VLOOKUP. Doing the exercises myself instead of watching a tutorial made it stick.",
+    name: "Maya R.",
+    role: "Operations analyst",
+  },
+  {
+    quote:
+      "The five-minute format is perfect. I do one lesson with my morning coffee and it adds up fast.",
+    name: "Daniel K.",
+    role: "Freelance bookkeeper",
+  },
+  {
+    quote:
+      "Our whole team uses it for onboarding. New hires are productive in Excel within the first week.",
+    name: "Priya S.",
+    role: "Finance manager",
+  },
+];
+
+function topicBadge(slug: string): string {
+  if (slug.includes("shortcut")) return "⌨️";
+  if (slug.includes("sum") || slug.includes("math")) return "∑";
+  return "📊";
+}
 
 export default function Home() {
   const topics = getTopics();
+  const lessons = getLessons();
+
   return (
-    <div className="flex flex-col gap-12">
-      <section className="text-center">
-        <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
+    <div className="flex flex-col gap-20">
+      {/* Hero */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-b from-emerald-50 to-white px-6 py-16 text-center dark:from-emerald-950/40 dark:to-zinc-950">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 -top-24 mx-auto h-64 w-[36rem] rounded-full bg-emerald-200/40 blur-3xl dark:bg-emerald-500/10"
+        />
+        <Badge tone="green">Duolingo-style Excel training</Badge>
+        <h1 className="mx-auto mt-4 max-w-2xl text-4xl font-extrabold tracking-tight sm:text-6xl">
           Learn Excel by doing — not watching
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
-          {SITE_NAME} gives you bite-sized, interactive exercises that run right in your
-          browser. Type real formulas, press real shortcuts, earn XP.
+        <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
+          {SITE_NAME} turns Excel practice into a game: bite-sized interactive
+          exercises that run right in your browser. Type real formulas, press
+          real shortcuts, earn XP.
         </p>
-        <div className="mt-8 flex justify-center gap-4">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/learn"
-            className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
+            className="w-full rounded-2xl bg-emerald-600 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-emerald-600/25 transition hover:-translate-y-0.5 hover:bg-emerald-700 sm:w-auto"
           >
-            Start practicing
+            Start practicing — it&apos;s free
           </Link>
           <Link
             href="/functions"
-            className="rounded-lg border border-zinc-300 px-6 py-3 font-semibold hover:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-900"
+            className="w-full rounded-2xl border-2 border-zinc-200 bg-white px-8 py-4 text-lg font-semibold transition hover:border-emerald-400 sm:w-auto dark:border-zinc-700 dark:bg-zinc-900"
           >
             Browse functions
           </Link>
         </div>
+        <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-500">
+          No sign-up. No download. Just practice.
+        </p>
       </section>
 
+      {/* Value props */}
       <section>
-        <h2 className="text-2xl font-semibold">Pick a skill</h2>
-        <ul className="mt-4 grid gap-4 sm:grid-cols-2">
-          {topics.map((topic) => (
-            <li key={topic.slug}>
-              <Link
-                href={`/learn/${topic.slug}`}
-                className="block rounded-xl border border-zinc-200 p-5 hover:border-emerald-400 dark:border-zinc-800"
-              >
-                <h3 className="font-semibold">{topic.name}</h3>
-                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                  {topic.description}
-                </p>
-              </Link>
+        <SectionHeading
+          eyebrow="Why it works"
+          title="Practice that actually sticks"
+          description="Tutorials teach you to watch Excel. We teach you to use it."
+        />
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {VALUE_PROPS.map((v) => (
+            <Card key={v.title} className="text-center">
+              <div className="text-3xl" aria-hidden>
+                {v.icon}
+              </div>
+              <h3 className="mt-3 font-bold">{v.title}</h3>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {v.body}
+              </p>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Pick a skill */}
+      <section>
+        <SectionHeading
+          eyebrow="Skill tracks"
+          title="Pick a skill and start climbing"
+          description="Each track is a path of short lessons, ordered from friendly to formidable."
+        />
+        <ul className="mt-10 grid gap-5 sm:grid-cols-2">
+          {topics.map((topic) => {
+            const topicLessons = lessons.filter((l) =>
+              topic.lessons.includes(l.slug),
+            );
+            return (
+              <li key={topic.slug}>
+                <Card href={`/learn/${topic.slug}`}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <span
+                        aria-hidden
+                        className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-2xl dark:bg-emerald-900/50"
+                      >
+                        {topicBadge(topic.slug)}
+                      </span>
+                      <div>
+                        <h3 className="text-lg font-bold">{topic.name}</h3>
+                        <p className="mt-0.5 text-sm text-zinc-600 dark:text-zinc-400">
+                          {topic.description}
+                        </p>
+                      </div>
+                    </div>
+                    <Badge tone="zinc">
+                      {topicLessons.length} lesson
+                      {topicLessons.length === 1 ? "" : "s"}
+                    </Badge>
+                  </div>
+                  <div className="mt-4 flex items-center justify-between">
+                    <div className="flex gap-2">
+                      {topicLessons.slice(0, 3).map((l) => (
+                        <Badge key={l.slug} tone={levelTone(l.level)}>
+                          {l.level}
+                        </Badge>
+                      ))}
+                    </div>
+                    <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                      Start →
+                    </span>
+                  </div>
+                </Card>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      {/* How it works */}
+      <section className="rounded-3xl bg-zinc-50 px-6 py-12 dark:bg-zinc-900/60">
+        <SectionHeading
+          eyebrow="How it works"
+          title="Three steps to spreadsheet confidence"
+        />
+        <ol className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-3">
+          {STEPS.map((s) => (
+            <li key={s.n} className="text-center">
+              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-xl font-bold text-white">
+                {s.n}
+              </span>
+              <h3 className="mt-4 font-bold">{s.title}</h3>
+              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {s.body}
+              </p>
             </li>
           ))}
-        </ul>
+        </ol>
+      </section>
+
+      {/* Testimonials */}
+      <section>
+        <SectionHeading
+          eyebrow="Learners"
+          title="People are actually finishing these lessons"
+        />
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {TESTIMONIALS.map((t) => (
+            <figure key={t.name}>
+              <Card className="h-full">
+                <blockquote className="text-sm text-zinc-700 dark:text-zinc-300">
+                  “{t.quote}”
+                </blockquote>
+                <figcaption className="mt-4 text-sm">
+                  <span className="font-semibold">{t.name}</span>
+                  <span className="text-zinc-500"> · {t.role}</span>
+                </figcaption>
+              </Card>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      {/* Email capture CTA */}
+      <section className="rounded-3xl bg-emerald-100/70 px-6 py-12 dark:bg-emerald-950/40">
+        <LeadCaptureForm source="homepage-cta" />
       </section>
     </div>
   );
