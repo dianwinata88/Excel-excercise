@@ -8,6 +8,11 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      # Needed even for `npm ci`: the postinstall hook runs `prisma generate`,
+      # and prisma.config.ts resolves DATABASE_URL eagerly.
+      DATABASE_URL: postgresql://excel:excel@localhost:5432/excel_practice
+      NEXT_PUBLIC_SITE_URL: https://excel-practice.example.com
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -19,6 +24,3 @@ jobs:
       - run: npm run lint
       - run: npx next typegen && npx tsc --noEmit
       - run: npm run build
-        env:
-          DATABASE_URL: postgresql://excel:excel@localhost:5432/excel_practice
-          NEXT_PUBLIC_SITE_URL: https://excel-practice.example.com
