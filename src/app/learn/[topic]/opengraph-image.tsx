@@ -94,7 +94,7 @@ export default async function Image({
               padding: "12px 28px",
             }}
           >
-            {count} lesson{count === 1 ? "" : "s"} · start free
+            {lessonsLabel}
           </div>
         </div>
       </div>
