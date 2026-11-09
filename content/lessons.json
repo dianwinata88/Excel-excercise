@@ -5,14 +5,38 @@
     "title": "SUM Basics",
     "description": "Learn to total a column of numbers with the SUM function.",
     "level": "beginner",
-    "exercises": ["sum-column-01", "sum-range-02"]
+    "exercises": ["sum-column-01", "sum-range-02", "sum-inline-01"]
+  },
+  {
+    "slug": "sum-ranges",
+    "topic": "sum",
+    "title": "Summing Multiple Ranges",
+    "description": "Combine ranges in one SUM formula and spot totals in a sheet.",
+    "level": "intermediate",
+    "exercises": ["sum-two-ranges-01", "cell-select-total-01"]
+  },
+  {
+    "slug": "count-basics",
+    "topic": "count",
+    "title": "COUNT and COUNTA",
+    "description": "Count numbers vs. count everything — know which function to reach for.",
+    "level": "beginner",
+    "exercises": ["count-numbers-01", "counta-mixed-01"]
+  },
+  {
+    "slug": "if-logic",
+    "topic": "logical",
+    "title": "Decisions with IF",
+    "description": "Make your spreadsheet react: pass/fail labels, discounts and conditions.",
+    "level": "intermediate",
+    "exercises": ["mcq-if-syntax-01", "if-pass-fail-01", "if-discount-01"]
   },
   {
     "slug": "shortcut-basics",
     "topic": "shortcuts",
     "title": "Essential Shortcuts",
-    "description": "Practice bold, copy and paste shortcuts on your real keyboard.",
+    "description": "Practice bold, copy and undo shortcuts on your real keyboard.",
     "level": "beginner",
-    "exercises": ["shortcut-bold-01"]
+    "exercises": ["shortcut-bold-01", "shortcut-copy-01", "shortcut-undo-01"]
   }
 ]
