@@ -89,3 +89,19 @@ export const ShortcutDocSchema = z.object({
   relatedShortcuts: z.array(z.string()).default([]),
 });
 export type ShortcutDoc = z.infer<typeof ShortcutDocSchema>;
+
+export const ComparisonDocSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/), // e.g. "vlookup-vs-index-match"
+  leftName: z.string(), // "VLOOKUP"
+  rightName: z.string(), // "INDEX + MATCH"
+  title: z.string(), // "VLOOKUP vs INDEX MATCH: which lookup should you use?"
+  intro: z.string(), // unique paragraph for the page
+  verdict: z.string(), // short "use X when..." recommendation
+  // Side-by-side rows compared attribute by attribute.
+  rows: z.array(z.object({ aspect: z.string(), left: z.string(), right: z.string() })),
+  useLeftWhen: z.array(z.string()).default([]),
+  useRightWhen: z.array(z.string()).default([]),
+  relatedFunctions: z.array(z.string()).default([]),
+  relatedComparisons: z.array(z.string()).default([]),
+});
+export type ComparisonDoc = z.infer<typeof ComparisonDocSchema>;

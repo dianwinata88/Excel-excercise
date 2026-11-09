@@ -29,7 +29,7 @@
     "commonErrors": [
       { "error": "#VALUE!", "cause": "A referenced cell contains an error or text that can't be read as a number.", "fix": "Check the range for error values like #DIV/0! and fix those first." }
     ],
-    "relatedFunctions": ["count", "average"],
+    "relatedFunctions": ["count", "average", "sumif"],
     "relatedLessons": ["sum-basics"],
     "exerciseId": "sum-column-01"
   },
@@ -50,11 +50,51 @@
         "grid": { "A1": 5, "A2": "n/a", "A3": 12, "A4": "", "A5": 7 },
         "formula": "=COUNT(A1:A5)",
         "result": 3
+      },
+      {
+        "title": "Count ignores text",
+        "grid": { "B1": "apple", "B2": "banana", "B3": 42, "B4": "cherry" },
+        "formula": "=COUNT(B1:B4)",
+        "result": 1,
+        "note": "Only the numeric cell is counted."
       }
     ],
     "commonErrors": [],
-    "relatedFunctions": ["sum", "average"],
+    "relatedFunctions": ["counta", "countif", "average"],
     "relatedLessons": ["sum-basics"]
+  },
+  {
+    "slug": "counta",
+    "name": "COUNTA",
+    "category": "Statistical",
+    "syntax": "COUNTA(value1, [value2], ...)",
+    "params": [
+      { "name": "value1", "required": true, "description": "The first cell or range to count." },
+      { "name": "value2", "required": false, "description": "Additional cells or ranges (up to 255)." }
+    ],
+    "summary": "Counts how many cells in a range are not empty.",
+    "intro": "COUNTA counts every non-empty cell — numbers, text, dates, errors and even formulas that return an empty string. It is the quickest way to check how much data a column actually holds, which makes it ideal for validating imports and form responses.",
+    "examples": [
+      {
+        "title": "Count filled cells",
+        "grid": { "A1": "Ana", "A2": "", "A3": "Bo", "A4": 7 },
+        "formula": "=COUNTA(A1:A4)",
+        "result": 3,
+        "note": "The blank cell is skipped; text and numbers both count."
+      },
+      {
+        "title": "Check a form column is complete",
+        "grid": { "C1": "Kim", "C2": "Lee", "C3": "", "C4": "Max" },
+        "formula": "=IF(COUNTA(C1:C4)=4,\"Complete\",\"Missing data\")",
+        "result": "Missing data",
+        "note": "Pair COUNTA with IF to flag incomplete lists."
+      }
+    ],
+    "commonErrors": [
+      { "error": "Count looks too high", "cause": "Cells containing spaces or formulas returning \"\" are not empty.", "fix": "Use TRIM to remove stray spaces, or COUNTBLANK to find visually-empty cells." }
+    ],
+    "relatedFunctions": ["count", "countif", "countifs"],
+    "relatedLessons": []
   },
   {
     "slug": "average",
@@ -73,12 +113,992 @@
         "grid": { "A1": 80, "A2": 90, "A3": 70 },
         "formula": "=AVERAGE(A1:A3)",
         "result": 80
+      },
+      {
+        "title": "Average with a blank cell",
+        "grid": { "B1": 10, "B2": "", "B3": 20 },
+        "formula": "=AVERAGE(B1:B3)",
+        "result": 15,
+        "note": "The blank is skipped entirely — the divisor is 2, not 3."
       }
     ],
     "commonErrors": [
       { "error": "#DIV/0!", "cause": "The range contains no numeric values.", "fix": "Make sure at least one cell in the range holds a number." }
     ],
-    "relatedFunctions": ["sum", "count"],
+    "relatedFunctions": ["sum", "count", "max", "min"],
     "relatedLessons": ["sum-basics"]
+  },
+  {
+    "slug": "vlookup",
+    "name": "VLOOKUP",
+    "category": "Lookup & Reference",
+    "syntax": "VLOOKUP(lookup_value, table_array, col_index_num, [range_lookup])",
+    "params": [
+      { "name": "lookup_value", "required": true, "description": "The value to search for in the first column of the table." },
+      { "name": "table_array", "required": true, "description": "The range of cells that contains the data." },
+      { "name": "col_index_num", "required": true, "description": "The column number (counting from the left of table_array) to return." },
+      { "name": "range_lookup", "required": false, "description": "TRUE for approximate match, FALSE for exact. Defaults to TRUE." }
+    ],
+    "summary": "Looks up a value in the first column of a table and returns a value in the same row from another column.",
+    "intro": "VLOOKUP is Excel's classic lookup function: give it a key and a table, and it walks down the first column until it finds a match, then returns the value from whichever column number you specify. It is fast to write but has two famous limits — it can only look to the right, and a hard-coded column index breaks when you insert columns. For new workbooks, XLOOKUP or INDEX+MATCH are more flexible.",
+    "examples": [
+      {
+        "title": "Find a product price",
+        "grid": { "A1": "SKU", "B1": "Price", "A2": "A-100", "B2": 9.5, "A3": "A-200", "B3": 14.0, "A4": "A-300", "B4": 7.25, "D1": "A-200" },
+        "formula": "=VLOOKUP(D1,A2:B4,2,FALSE)",
+        "result": 14.0,
+        "note": "FALSE forces an exact match — always use it for IDs and SKUs."
+      },
+      {
+        "title": "Approximate match on a grade table",
+        "grid": { "A1": 0, "B1": "F", "A2": 60, "B2": "D", "A3": 70, "B3": "C", "A4": 80, "B4": "B", "A5": 90, "B5": "A", "D1": 83 },
+        "formula": "=VLOOKUP(D1,A1:B5,2,TRUE)",
+        "result": "B",
+        "note": "TRUE finds the largest value less than or equal to the lookup; the first column must be sorted ascending."
+      },
+      {
+        "title": "Lookup across sheets",
+        "grid": { "A1": "Name", "B1": "Dept", "A2": "Rui", "B2": "Sales", "A3": "Mei", "B3": "Eng", "D1": "Mei" },
+        "formula": "=VLOOKUP(D1,Sheet2!A2:B3,2,FALSE)",
+        "result": "Eng",
+        "note": "Prefix the range with SheetName! to pull from another worksheet."
+      }
+    ],
+    "commonErrors": [
+      { "error": "#N/A", "cause": "The lookup value is not in the first column — often due to extra spaces or mismatched types (number vs text).", "fix": "Wrap the value in TRIM, or use IFERROR to catch the miss." },
+      { "error": "#REF!", "cause": "col_index_num is bigger than the number of columns in table_array.", "fix": "Check that the index counts from the leftmost column of the lookup range, not of the sheet." },
+      { "error": "Wrong result", "cause": "range_lookup was left as TRUE so Excel returned an approximate match.", "fix": "Add FALSE as the fourth argument for exact matching." }
+    ],
+    "relatedFunctions": ["xlookup", "index", "match", "iferror"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "xlookup",
+    "name": "XLOOKUP",
+    "category": "Lookup & Reference",
+    "syntax": "XLOOKUP(lookup_value, lookup_array, return_array, [if_not_found], [match_mode], [search_mode])",
+    "params": [
+      { "name": "lookup_value", "required": true, "description": "The value to search for." },
+      { "name": "lookup_array", "required": true, "description": "The range or array to search." },
+      { "name": "return_array", "required": true, "description": "The range or array to return a value from." },
+      { "name": "if_not_found", "required": false, "description": "Text or value to return instead of #N/A when nothing matches." },
+      { "name": "match_mode", "required": false, "description": "0 = exact (default), -1 = exact or next smaller, 1 = exact or next larger, 2 = wildcard." },
+      { "name": "search_mode", "required": false, "description": "1 = first to last (default), -1 = last to first, 2/-2 = binary search." }
+    ],
+    "summary": "Searches a range and returns an item from a second range — the modern replacement for VLOOKUP.",
+    "intro": "XLOOKUP fixes nearly every VLOOKUP limitation: it searches any column (not just the leftmost), returns from a separate range so inserting columns never breaks it, defaults to exact match, can search right-to-left, and has a built-in 'if not found' message. It requires Microsoft 365 or Excel 2021+.",
+    "examples": [
+      {
+        "title": "Look up to the left",
+        "grid": { "A1": "Price", "B1": "SKU", "A2": 9.5, "B2": "A-100", "A3": 14.0, "B3": "A-200", "D1": "A-100" },
+        "formula": "=XLOOKUP(D1,B2:B3,A2:A3)",
+        "result": 9.5,
+        "note": "The return column sits left of the lookup column — impossible with VLOOKUP."
+      },
+      {
+        "title": "Custom not-found message",
+        "grid": { "A1": "Rui", "B1": "Sales", "A2": "Mei", "B2": "Eng", "D1": "Zoe" },
+        "formula": "=XLOOKUP(D1,A1:A2,B1:B2,\"No match\")",
+        "result": "No match",
+        "note": "No IFERROR wrapper needed."
+      },
+      {
+        "title": "Return a whole row",
+        "grid": { "A1": "SKU", "B1": "Price", "C1": "Stock", "A2": "A-100", "B2": 9.5, "C2": 120, "E1": "A-100" },
+        "formula": "=XLOOKUP(E1,A2:A2,B2:C2)",
+        "result": "9.5, 120 (spills across two cells)",
+        "note": "A multi-column return_array spills results into neighbouring cells."
+      }
+    ],
+    "commonErrors": [
+      { "error": "#N/A", "cause": "No match and no if_not_found argument was supplied.", "fix": "Add a fourth argument like \"Not found\" to make misses readable." },
+      { "error": "#VALUE!", "cause": "lookup_array and return_array have different sizes.", "fix": "Make both ranges the same length (e.g. A2:A10 and B2:B10)." },
+      { "error": "#NAME?", "cause": "The workbook runs in Excel 2019 or earlier, which lacks XLOOKUP.", "fix": "Use INDEX+MATCH or VLOOKUP for older versions." }
+    ],
+    "relatedFunctions": ["vlookup", "index", "match", "iferror"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "index",
+    "name": "INDEX",
+    "category": "Lookup & Reference",
+    "syntax": "INDEX(array, row_num, [column_num])",
+    "params": [
+      { "name": "array", "required": true, "description": "The range of cells or array constant to pick from." },
+      { "name": "row_num", "required": true, "description": "The row position within array to return." },
+      { "name": "column_num", "required": false, "description": "The column position within array to return." }
+    ],
+    "summary": "Returns the value at a given row and column position inside a range.",
+    "intro": "INDEX does one thing perfectly: it fetches the cell at position (row, column) of a range. On its own it is a simple coordinate picker; combined with MATCH — which finds the position of a value — it becomes the most flexible lookup pattern in Excel, able to look left, right, up or down.",
+    "examples": [
+      {
+        "title": "Pick the third item",
+        "grid": { "A1": "Q1", "A2": "Q2", "A3": "Q3", "A4": "Q4" },
+        "formula": "=INDEX(A1:A4,3)",
+        "result": "Q3"
+      },
+      {
+        "title": "Two-dimensional lookup",
+        "grid": { "A1": "", "B1": "Jan", "C1": "Feb", "A2": "North", "B2": 10, "C2": 15, "A3": "South", "B3": 8, "C3": 20 },
+        "formula": "=INDEX(B2:C3,2,2)",
+        "result": 20,
+        "note": "Row 2 of the range is 'South', column 2 is 'Feb'."
+      },
+      {
+        "title": "INDEX + MATCH lookup",
+        "grid": { "A1": "SKU", "B1": "Price", "A2": "A-100", "B2": 9.5, "A3": "A-200", "B3": 14.0, "D1": "A-200" },
+        "formula": "=INDEX(B2:B3,MATCH(D1,A2:A3,0))",
+        "result": 14.0,
+        "note": "MATCH finds the row; INDEX returns the price. No column-index to break."
+      }
+    ],
+    "commonErrors": [
+      { "error": "#REF!", "cause": "row_num or column_num points outside the array.", "fix": "Check that positions are relative to the array, not the worksheet." }
+    ],
+    "relatedFunctions": ["match", "vlookup", "xlookup"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "match",
+    "name": "MATCH",
+    "category": "Lookup & Reference",
+    "syntax": "MATCH(lookup_value, lookup_array, [match_type])",
+    "params": [
+      { "name": "lookup_value", "required": true, "description": "The value to locate." },
+      { "name": "lookup_array", "required": true, "description": "The single row or column range to search." },
+      { "name": "match_type", "required": false, "description": "1 = largest value ≤ lookup (sorted asc), 0 = exact, -1 = smallest ≥ lookup (sorted desc)." }
+    ],
+    "summary": "Finds the position of a value inside a row or column.",
+    "intro": "MATCH returns a number — the relative position of your lookup value in a range — rather than the value itself. That position is exactly what INDEX needs, which is why INDEX+MATCH is the classic flexible lookup pair. Use match_type 0 for exact matches; 1 and -1 require sorted data.",
+    "examples": [
+      {
+        "title": "Find the position of a name",
+        "grid": { "A1": "Ana", "A2": "Bo", "A3": "Cy", "B1": "Cy" },
+        "formula": "=MATCH(B1,A1:A3,0)",
+        "result": 3
+      },
+      {
+        "title": "Approximate position in sorted prices",
+        "grid": { "A1": 10, "A2": 25, "A3": 50, "A4": 75, "B1": 40 },
+        "formula": "=MATCH(B1,A1:A4,1)",
+        "result": 2,
+        "note": "match_type 1 returns the largest value that is ≤ 40."
+      }
+    ],
+    "commonErrors": [
+      { "error": "#N/A", "cause": "No exact match exists, or the list is not sorted for match_type 1/-1.", "fix": "For exact lookups keep match_type 0; for approximate, sort the lookup array correctly." }
+    ],
+    "relatedFunctions": ["index", "vlookup", "xlookup"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "if",
+    "name": "IF",
+    "category": "Logical",
+    "syntax": "IF(logical_test, value_if_true, [value_if_false])",
+    "params": [
+      { "name": "logical_test", "required": true, "description": "Any expression that evaluates to TRUE or FALSE." },
+      { "name": "value_if_true", "required": true, "description": "What to return when the test is TRUE." },
+      { "name": "value_if_false", "required": false, "description": "What to return when the test is FALSE (defaults to FALSE)." }
+    ],
+    "summary": "Returns one value if a condition is true and another if it is false.",
+    "intro": "IF is the decision-maker of Excel: test a condition, return A when it holds and B when it does not. Nest IFs for more than two outcomes — or reach for IFS, which reads like a flat list of conditions and is far easier to audit.",
+    "examples": [
+      {
+        "title": "Pass / fail",
+        "grid": { "A1": 72 },
+        "formula": "=IF(A1>=60,\"Pass\",\"Fail\")",
+        "result": "Pass"
+      },
+      {
+        "title": "Nested IF for three grades",
+        "grid": { "A1": 85 },
+        "formula": "=IF(A1>=90,\"A\",IF(A1>=70,\"B\",\"C\"))",
+        "result": "B",
+        "note": "For many branches, IFS is cleaner."
+      },
+      {
+        "title": "Flag blank cells",
+        "grid": { "A1": "hello", "A2": "" },
+        "formula": "=IF(A2=\"\",\"Empty\",\"Has data\")",
+        "result": "Empty"
+      }
+    ],
+    "commonErrors": [
+      { "error": "Wrong branch", "cause": "Text compared with = is not case-sensitive, and numbers stored as text fail numeric tests.", "fix": "Convert text numbers with VALUE or check LEN/TRIM issues first." },
+      { "error": "#VALUE!", "cause": "The logical test references an error cell.", "fix": "Wrap the test with IFERROR." }
+    ],
+    "relatedFunctions": ["ifs", "iferror", "countif", "sumif"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "ifs",
+    "name": "IFS",
+    "category": "Logical",
+    "syntax": "IFS(logical_test1, value_if_true1, [logical_test2, value_if_true2], ...)",
+    "params": [
+      { "name": "logical_test1", "required": true, "description": "The first condition to evaluate." },
+      { "name": "value_if_true1", "required": true, "description": "Result returned when the first condition is TRUE." },
+      { "name": "logical_testN", "required": false, "description": "Additional test/result pairs, evaluated left to right." }
+    ],
+    "summary": "Evaluates multiple conditions and returns the value for the first TRUE one.",
+    "intro": "IFS replaces deeply nested IF statements with a flat list of test/result pairs. Excel stops at the first TRUE condition, so order your tests from most to least specific. Available in Excel 2019 and Microsoft 365 — for a final catch-all, end with TRUE as the last test.",
+    "examples": [
+      {
+        "title": "Grade bands",
+        "grid": { "A1": 85 },
+        "formula": "=IFS(A1>=90,\"A\",A1>=80,\"B\",A1>=70,\"C\",TRUE,\"F\")",
+        "result": "B",
+        "note": "The trailing TRUE acts as 'else'."
+      },
+      {
+        "title": "Traffic-light status",
+        "grid": { "A1": "In stock", "A2": "Low", "A3": "Out" },
+        "formula": "=IFS(A2=\"In stock\",\"Green\",A2=\"Low\",\"Amber\",A2=\"Out\",\"Red\")",
+        "result": "Amber"
+      }
+    ],
+    "commonErrors": [
+      { "error": "#N/A", "cause": "No condition evaluated to TRUE.", "fix": "Add a final TRUE,default-value pair as a fallback." },
+      { "error": "#NAME?", "cause": "IFS does not exist in Excel 2016 or earlier.", "fix": "Rewrite as nested IF." }
+    ],
+    "relatedFunctions": ["if", "iferror"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "sumif",
+    "name": "SUMIF",
+    "category": "Math & Trig",
+    "syntax": "SUMIF(range, criteria, [sum_range])",
+    "params": [
+      { "name": "range", "required": true, "description": "The cells evaluated against criteria." },
+      { "name": "criteria", "required": true, "description": "The condition, e.g. \">100\", \"apples\" or a cell reference." },
+      { "name": "sum_range", "required": false, "description": "The cells to actually add; defaults to range." }
+    ],
+    "summary": "Adds the cells that meet a single condition.",
+    "intro": "SUMIF sums only the rows that satisfy one test — 'add up sales for the East region', 'total invoices over $500'. The criteria range and the sum range can be different columns, which makes it perfect for category totals. When you need two or more conditions, step up to SUMIFS.",
+    "examples": [
+      {
+        "title": "Total one region",
+        "grid": { "A1": "East", "B1": 100, "A2": "West", "B2": 80, "A3": "East", "B3": 120 },
+        "formula": "=SUMIF(A1:A3,\"East\",B1:B3)",
+        "result": 220
+      },
+      {
+        "title": "Sum values above a threshold",
+        "grid": { "A1": 30, "A2": 55, "A3": 90 },
+        "formula": "=SUMIF(A1:A3,\">50\")",
+        "result": 145,
+        "note": "When sum_range is omitted, range is summed."
+      },
+      {
+        "title": "Criteria from a cell",
+        "grid": { "A1": "Apples", "B1": 4, "A2": "Pears", "B2": 6, "A3": "Apples", "B3": 5, "D1": "Apples" },
+        "formula": "=SUMIF(A1:A3,D1,B1:B3)",
+        "result": 9
+      }
+    ],
+    "commonErrors": [
+      { "error": "Wrong total", "cause": "sum_range is a different size than range — Excel silently shifts it.", "fix": "Keep sum_range the same shape and starting row as range." },
+      { "error": "0 returned", "cause": "Criteria type mismatch, e.g. comparing numbers stored as text.", "fix": "Normalize the column type (Text to Columns or VALUE)." }
+    ],
+    "relatedFunctions": ["sumifs", "countif", "sum", "if"],
+    "relatedLessons": ["sum-basics"],
+    "exerciseId": "sum-range-02"
+  },
+  {
+    "slug": "sumifs",
+    "name": "SUMIFS",
+    "category": "Math & Trig",
+    "syntax": "SUMIFS(sum_range, criteria_range1, criteria1, [criteria_range2, criteria2], ...)",
+    "params": [
+      { "name": "sum_range", "required": true, "description": "The cells to add." },
+      { "name": "criteria_range1", "required": true, "description": "The first range to test." },
+      { "name": "criteria1", "required": true, "description": "The condition applied to criteria_range1." },
+      { "name": "criteria_range2 / criteria2", "required": false, "description": "Extra range/condition pairs — all must be TRUE." }
+    ],
+    "summary": "Adds the cells that meet several conditions at once.",
+    "intro": "SUMIFS extends SUMIF to as many criteria pairs as you need — 'total sales for East AND January', 'invoices over $500 AND unpaid'. Note the argument order differs from SUMIF: the range to sum comes first. Every criteria range must be the same size as sum_range.",
+    "examples": [
+      {
+        "title": "Region + month",
+        "grid": { "A1": "East", "B1": "Jan", "C1": 100, "A2": "East", "B2": "Feb", "C2": 80, "A3": "West", "B3": "Jan", "C3": 60 },
+        "formula": "=SUMIFS(C1:C3,A1:A3,\"East\",B1:B3,\"Jan\")",
+        "result": 100
+      },
+      {
+        "title": "Amount in a date window",
+        "grid": { "A1": 45000, "B1": 200, "A2": 45200, "B2": 300, "A3": 45400, "B3": 150 },
+        "formula": "=SUMIFS(B1:B3,A1:A3,\">=45000\",A1:A3,\"<=45300\")",
+        "result": 500,
+        "note": "Two criteria on the same range create a between filter."
+      }
+    ],
+    "commonErrors": [
+      { "error": "0 returned", "cause": "A criteria range does not match sum_range's dimensions.", "fix": "Every criteria_range must have the same number of rows/columns as sum_range." }
+    ],
+    "relatedFunctions": ["sumif", "countifs", "sum"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "countif",
+    "name": "COUNTIF",
+    "category": "Statistical",
+    "syntax": "COUNTIF(range, criteria)",
+    "params": [
+      { "name": "range", "required": true, "description": "The cells to evaluate." },
+      { "name": "criteria", "required": true, "description": "The condition, e.g. \"yes\", \">=10\" or a cell reference." }
+    ],
+    "summary": "Counts the cells that meet a single condition.",
+    "intro": "COUNTIF answers 'how many?' with one condition — how many orders say 'shipped', how many scores beat 80, how many times a name appears (the classic duplicate check). Criteria support wildcards (* and ?) and comparison operators, which makes it far more flexible than a plain COUNT.",
+    "examples": [
+      {
+        "title": "Count 'Shipped' orders",
+        "grid": { "A1": "Shipped", "A2": "Pending", "A3": "Shipped", "A4": "Shipped" },
+        "formula": "=COUNTIF(A1:A4,\"Shipped\")",
+        "result": 3
+      },
+      {
+        "title": "Duplicate flag",
+        "grid": { "A1": "Kim", "A2": "Lee", "A3": "Kim" },
+        "formula": "=COUNTIF(A1:A3,A1)>1",
+        "result": "TRUE",
+        "note": "TRUE means the name in A1 appears more than once."
+      },
+      {
+        "title": "Wildcard count",
+        "grid": { "A1": "apple pie", "A2": "apple", "A3": "pear" },
+        "formula": "=COUNTIF(A1:A3,\"apple*\")",
+        "result": 2
+      }
+    ],
+    "commonErrors": [
+      { "error": "0 returned", "cause": "Criteria contain leading/trailing spaces or the column mixes text and numbers.", "fix": "TRIM the data or match the cell's stored type." }
+    ],
+    "relatedFunctions": ["countifs", "count", "counta", "sumif"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "countifs",
+    "name": "COUNTIFS",
+    "category": "Statistical",
+    "syntax": "COUNTIFS(criteria_range1, criteria1, [criteria_range2, criteria2], ...)",
+    "params": [
+      { "name": "criteria_range1", "required": true, "description": "The first range to test." },
+      { "name": "criteria1", "required": true, "description": "The condition applied to criteria_range1." },
+      { "name": "criteria_range2 / criteria2", "required": false, "description": "Additional range/condition pairs — all must be TRUE." }
+    ],
+    "summary": "Counts the rows that meet several conditions at once.",
+    "intro": "COUNTIFS is the multi-test version of COUNTIF: every pair adds an AND filter, so 'count East rows in January that are over $100' is one formula. It is the fastest way to sanity-check a filtered export without leaving the grid.",
+    "examples": [
+      {
+        "title": "Two-column match",
+        "grid": { "A1": "East", "B1": "Jan", "A2": "East", "B2": "Feb", "A3": "West", "B3": "Jan" },
+        "formula": "=COUNTIFS(A1:A3,\"East\",B1:B3,\"Jan\")",
+        "result": 1
+      },
+      {
+        "title": "Between two numbers",
+        "grid": { "A1": 15, "A2": 30, "A3": 55, "A4": 90 },
+        "formula": "=COUNTIFS(A1:A4,\">=20\",A1:A4,\"<=60\")",
+        "result": 2
+      }
+    ],
+    "commonErrors": [
+      { "error": "#VALUE!", "cause": "Criteria ranges have different sizes.", "fix": "Every criteria_range must span the same number of cells." }
+    ],
+    "relatedFunctions": ["countif", "sumifs", "count"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "left",
+    "name": "LEFT",
+    "category": "Text",
+    "syntax": "LEFT(text, [num_chars])",
+    "params": [
+      { "name": "text", "required": true, "description": "The text string (or cell) to slice." },
+      { "name": "num_chars", "required": false, "description": "How many characters to take from the start; defaults to 1." }
+    ],
+    "summary": "Returns the first characters of a text string.",
+    "intro": "LEFT grabs a fixed-length prefix — the first 3 characters of a product code, the area code of a phone number, the first word when paired with FIND. Text functions return text, so wrap LEFT in VALUE when you need the number back.",
+    "examples": [
+      {
+        "title": "First 3 characters of a code",
+        "grid": { "A1": "USA-90210" },
+        "formula": "=LEFT(A1,3)",
+        "result": "USA"
+      },
+      {
+        "title": "First word of a name",
+        "grid": { "A1": "Ada Lovelace" },
+        "formula": "=LEFT(A1,FIND(\" \",A1)-1)",
+        "result": "Ada",
+        "note": "FIND locates the space; subtracting 1 drops it from the result."
+      },
+      {
+        "title": "Single character default",
+        "grid": { "A1": "Excel" },
+        "formula": "=LEFT(A1)",
+        "result": "E"
+      }
+    ],
+    "commonErrors": [
+      { "error": "Wrong length", "cause": "Hidden spaces or non-printing characters inflate the prefix.", "fix": "Wrap text in TRIM/CLEAN first." }
+    ],
+    "relatedFunctions": ["right", "mid", "len", "trim"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "right",
+    "name": "RIGHT",
+    "category": "Text",
+    "syntax": "RIGHT(text, [num_chars])",
+    "params": [
+      { "name": "text", "required": true, "description": "The text string (or cell) to slice." },
+      { "name": "num_chars", "required": false, "description": "How many characters to take from the end; defaults to 1." }
+    ],
+    "summary": "Returns the last characters of a text string.",
+    "intro": "RIGHT pulls a suffix — file extensions, last-4 digits of an ID, the postal code at the end of an address. Combined with LEN and FIND it extracts everything after a delimiter, which is the standard way to get the last word of a phrase in older Excel versions.",
+    "examples": [
+      {
+        "title": "File extension",
+        "grid": { "A1": "report.xlsx" },
+        "formula": "=RIGHT(A1,4)",
+        "result": "xlsx"
+      },
+      {
+        "title": "Text after the hyphen",
+        "grid": { "A1": "SKU-8841" },
+        "formula": "=RIGHT(A1,LEN(A1)-FIND(\"-\",A1))",
+        "result": "8841",
+        "note": "LEN minus the delimiter position gives the suffix length."
+      }
+    ],
+    "commonErrors": [
+      { "error": "Returns more than expected", "cause": "num_chars counts characters, not words.", "fix": "Use LEN(text)-FIND(...) to compute the right length." }
+    ],
+    "relatedFunctions": ["left", "mid", "len"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "mid",
+    "name": "MID",
+    "category": "Text",
+    "syntax": "MID(text, start_num, num_chars)",
+    "params": [
+      { "name": "text", "required": true, "description": "The text string to slice." },
+      { "name": "start_num", "required": true, "description": "The position of the first character to return (1-based)." },
+      { "name": "num_chars", "required": true, "description": "How many characters to return." }
+    ],
+    "summary": "Returns characters from the middle of a text string.",
+    "intro": "MID is the scalpel of the text functions: start anywhere, take any length. It shines when the piece you need sits between two markers — extract the domain after '@', the middle segment of a code, or characters at a computed position from FIND.",
+    "examples": [
+      {
+        "title": "Characters 4-6",
+        "grid": { "A1": "ABCDEFGH" },
+        "formula": "=MID(A1,4,3)",
+        "result": "DEF"
+      },
+      {
+        "title": "Domain of an email",
+        "grid": { "A1": "ana@example.com" },
+        "formula": "=MID(A1,FIND(\"@\",A1)+1,LEN(A1))",
+        "result": "example.com"
+      }
+    ],
+    "commonErrors": [
+      { "error": "Empty result", "cause": "start_num is beyond the string's length.", "fix": "Guard with IF(start_num<=LEN(text), ...) or check with LEN first." }
+    ],
+    "relatedFunctions": ["left", "right", "len", "trim"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "len",
+    "name": "LEN",
+    "category": "Text",
+    "syntax": "LEN(text)",
+    "params": [
+      { "name": "text", "required": true, "description": "The text string (or cell) to measure." }
+    ],
+    "summary": "Returns the number of characters in a text string.",
+    "intro": "LEN counts every character — including trailing spaces you cannot see. That makes it the best debugging tool for 'the VLOOKUP should have matched but didn't': a LEN of 9 on an 8-character SKU means stray whitespace, and TRIM is the fix.",
+    "examples": [
+      {
+        "title": "Measure a word",
+        "grid": { "A1": "Hello" },
+        "formula": "=LEN(A1)",
+        "result": 5
+      },
+      {
+        "title": "Spot hidden spaces",
+        "grid": { "A1": "SKU-1 " },
+        "formula": "=LEN(A1)-LEN(TRIM(A1))",
+        "result": 1,
+        "note": "The difference reveals one trailing space."
+      }
+    ],
+    "commonErrors": [
+      { "error": "Unexpected count", "cause": "LEN counts spaces and non-breaking spaces.", "fix": "TRIM removes regular spaces; SUBSTITUTE with CHAR(160) handles non-breaking ones." }
+    ],
+    "relatedFunctions": ["trim", "left", "right", "mid"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "trim",
+    "name": "TRIM",
+    "category": "Text",
+    "syntax": "TRIM(text)",
+    "params": [
+      { "name": "text", "required": true, "description": "The text to clean." }
+    ],
+    "summary": "Removes leading, trailing and repeated inner spaces from text.",
+    "intro": "TRIM strips the invisible clutter that breaks lookups and comparisons: leading spaces, trailing spaces, and double spaces between words. Run it on imported data before any VLOOKUP or COUNTIF — mismatched whitespace is the #1 cause of 'value exists but lookup fails'.",
+    "examples": [
+      {
+        "title": "Clean padded text",
+        "grid": { "A1": "  hello  world  " },
+        "formula": "=TRIM(A1)",
+        "result": "hello world"
+      },
+      {
+        "title": "Fix a lookup",
+        "grid": { "A1": "A-100 ", "B1": "A-100" },
+        "formula": "=TRIM(A1)=B1",
+        "result": "TRUE",
+        "note": "After TRIM, the padded key matches."
+      }
+    ],
+    "commonErrors": [
+      { "error": "Spaces remain", "cause": "The cells contain non-breaking spaces (CHAR(160)), common in web pastes.", "fix": "Use TRIM(SUBSTITUTE(A1,CHAR(160),\" \"))." }
+    ],
+    "relatedFunctions": ["len", "concat", "textjoin"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "concat",
+    "name": "CONCAT",
+    "category": "Text",
+    "syntax": "CONCAT(text1, [text2], ...)",
+    "params": [
+      { "name": "text1", "required": true, "description": "The first text item or range to join." },
+      { "name": "text2", "required": false, "description": "Additional text items or ranges (up to 253)." }
+    ],
+    "summary": "Joins text items and ranges into one string — no delimiter support.",
+    "intro": "CONCAT is the modern successor to CONCATENATE: it accepts whole ranges as well as individual cells, so =CONCAT(A1:C1) joins a row without listing each cell. It inserts nothing between items — when you need commas, spaces or a 'skip blanks' switch, use TEXTJOIN instead.",
+    "examples": [
+      {
+        "title": "Join first and last name",
+        "grid": { "A1": "Ada", "B1": " ", "C1": "Lovelace" },
+        "formula": "=CONCAT(A1:C1)",
+        "result": "Ada Lovelace"
+      },
+      {
+        "title": "Build a filename",
+        "grid": { "A1": "report", "B1": "-2026", "C1": ".xlsx" },
+        "formula": "=CONCAT(A1,B1,C1)",
+        "result": "report-2026.xlsx"
+      }
+    ],
+    "commonErrors": [
+      { "error": "#NAME?", "cause": "The workbook runs in Excel 2016 or earlier.", "fix": "Use CONCATENATE or the & operator." },
+      { "error": "Values run together", "cause": "CONCAT adds no separator between items.", "fix": "Insert literal separators (\", \") or switch to TEXTJOIN." }
+    ],
+    "relatedFunctions": ["textjoin", "trim", "left"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "textjoin",
+    "name": "TEXTJOIN",
+    "category": "Text",
+    "syntax": "TEXTJOIN(delimiter, ignore_empty, text1, [text2], ...)",
+    "params": [
+      { "name": "delimiter", "required": true, "description": "The separator placed between each item, e.g. \", \"." },
+      { "name": "ignore_empty", "required": true, "description": "TRUE skips empty cells; FALSE keeps them." },
+      { "name": "text1", "required": true, "description": "The first text item or range." },
+      { "name": "text2", "required": false, "description": "Additional items or ranges." }
+    ],
+    "summary": "Joins text with a chosen delimiter and can skip empty cells.",
+    "intro": "TEXTJOIN is CONCAT with manners: a real delimiter and an ignore_empty flag that prevents stray commas when the list has gaps. It is the go-to for building CSV rows, combining address parts, or producing 'A, B, C' lists from a column — all without helper cells.",
+    "examples": [
+      {
+        "title": "CSV line",
+        "grid": { "A1": "Ana", "B1": "Sales", "C1": 42000 },
+        "formula": "=TEXTJOIN(\",\",TRUE,A1:C1)",
+        "result": "Ana,Sales,42000"
+      },
+      {
+        "title": "Skip the blanks",
+        "grid": { "A1": "12 Main St", "B1": "", "C1": "Springfield" },
+        "formula": "=TEXTJOIN(\", \",TRUE,A1:C1)",
+        "result": "12 Main St, Springfield",
+        "note": "With FALSE you'd get a double comma."
+      }
+    ],
+    "commonErrors": [
+      { "error": "#NAME?", "cause": "TEXTJOIN requires Excel 2019 or Microsoft 365.", "fix": "Fall back to CONCAT with manual delimiters." },
+      { "error": "#VALUE!", "cause": "The joined result exceeds the 32,767 character cell limit.", "fix": "Join fewer items or split the output." }
+    ],
+    "relatedFunctions": ["concat", "trim"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "today",
+    "name": "TODAY",
+    "category": "Date & Time",
+    "syntax": "TODAY()",
+    "params": [],
+    "summary": "Returns the current date, refreshed every recalculation.",
+    "intro": "TODAY() returns the system date — no arguments. Because it recalculates whenever the workbook opens or changes, it powers rolling reports like 'invoices due in the next 7 days' or 'days since signup'. For a frozen timestamp, use Ctrl+; instead.",
+    "examples": [
+      {
+        "title": "Days overdue",
+        "grid": { "A1": "Due", "B1": "Days late", "A2": "2026-11-01" },
+        "formula": "=TODAY()-A2",
+        "result": "Number of days between the due date and today",
+        "note": "Format the result as General, not Date."
+      },
+      {
+        "title": "Flag items older than 30 days",
+        "grid": { "A1": 45000 },
+        "formula": "=IF(TODAY()-A1>30,\"Stale\",\"Fresh\")",
+        "result": "Stale or Fresh",
+        "note": "The serial date in A1 stands in for any past date."
+      }
+    ],
+    "commonErrors": [
+      { "error": "Result shows a date, not a number", "cause": "Subtracting dates inherits date formatting.", "fix": "Set the cell format to General or Number." }
+    ],
+    "relatedFunctions": ["now", "date", "datedif"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "now",
+    "name": "NOW",
+    "category": "Date & Time",
+    "syntax": "NOW()",
+    "params": [],
+    "summary": "Returns the current date and time, refreshed on every recalculation.",
+    "intro": "NOW() is TODAY() with the clock attached — date plus time as a serial number. Use it for timestamps on logs, 'last refreshed' stamps on dashboards, or elapsed-time calculations. Remember it is volatile: the value updates at every recalc, so paste-values if you need to freeze it.",
+    "examples": [
+      {
+        "title": "Current timestamp",
+        "grid": {},
+        "formula": "=NOW()",
+        "result": "Current date and time",
+        "note": "Displays like 11/9/2026 17:43 depending on formatting."
+      },
+      {
+        "title": "Hours since an event",
+        "grid": { "A1": 45900.5 },
+        "formula": "=(NOW()-A1)*24",
+        "result": "Hours elapsed",
+        "note": "Multiply the day-fraction difference by 24."
+      }
+    ],
+    "commonErrors": [
+      { "error": "Time shows as a decimal", "cause": "The cell is formatted as a number.", "fix": "Format as 'm/d/yyyy h:mm'." }
+    ],
+    "relatedFunctions": ["today", "date"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "date",
+    "name": "DATE",
+    "category": "Date & Time",
+    "syntax": "DATE(year, month, day)",
+    "params": [
+      { "name": "year", "required": true, "description": "A four-digit year." },
+      { "name": "month", "required": true, "description": "Month number; values >12 roll into the next year." },
+      { "name": "day", "required": true, "description": "Day number; values >month length roll forward." }
+    ],
+    "summary": "Builds a valid date from separate year, month and day values.",
+    "intro": "DATE assembles a serial date from parts — essential when a system exports year, month and day as separate columns, or when you compute dates like 'the last day of next month' (=DATE(y, m+2, 0)). Its rollover behaviour is a feature: month 13 becomes January of the following year.",
+    "examples": [
+      {
+        "title": "Assemble from parts",
+        "grid": { "A1": 2026, "B1": 11, "C1": 9 },
+        "formula": "=DATE(A1,B1,C1)",
+        "result": "11/9/2026"
+      },
+      {
+        "title": "Last day of next month",
+        "grid": { "A1": 2026, "B1": 11 },
+        "formula": "=DATE(A1,B1+2,0)",
+        "result": "12/31/2026",
+        "note": "Day 0 rolls back to the last day of the previous month."
+      }
+    ],
+    "commonErrors": [
+      { "error": "Wrong date", "cause": "Two-digit years map to 1900s (e.g. 26 → 1926).", "fix": "Always pass a four-digit year." },
+      { "error": "#VALUE!", "cause": "An argument is text rather than a number.", "fix": "Convert with VALUE or check the source column type." }
+    ],
+    "relatedFunctions": ["today", "datedif", "text"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "datedif",
+    "name": "DATEDIF",
+    "category": "Date & Time",
+    "syntax": "DATEDIF(start_date, end_date, unit)",
+    "params": [
+      { "name": "start_date", "required": true, "description": "The earlier date." },
+      { "name": "end_date", "required": true, "description": "The later date." },
+      { "name": "unit", "required": true, "description": "\"Y\" years, \"M\" months, \"D\" days, \"MD\"/\"YM\"/\"YD\" partial variants." }
+    ],
+    "summary": "Calculates the difference between two dates in years, months or days.",
+    "intro": "DATEDIF is a hidden gem — it exists in every Excel version but never appears in the function list. Feed it two dates and a unit code to compute ages ('Y'), contract lengths ('M') or 'days between'. The 'MD' unit has known quirks; prefer 'D' for plain day counts.",
+    "examples": [
+      {
+        "title": "Age in whole years",
+        "grid": { "A1": "1990-05-15" },
+        "formula": "=DATEDIF(A1,TODAY(),\"Y\")",
+        "result": "Age in years"
+      },
+      {
+        "title": "Days between dates",
+        "grid": { "A1": "2026-01-01", "B1": "2026-01-31" },
+        "formula": "=DATEDIF(A1,B1,\"D\")",
+        "result": 30
+      }
+    ],
+    "commonErrors": [
+      { "error": "#NUM!", "cause": "start_date is after end_date.", "fix": "Swap the arguments or wrap in IFERROR." },
+      { "error": "Incorrect months", "cause": "\"MD\" unit can return negative or wrong values in some builds.", "fix": "Use \"D\" and divide, or compute year/month separately." }
+    ],
+    "relatedFunctions": ["date", "today"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "max",
+    "name": "MAX",
+    "category": "Statistical",
+    "syntax": "MAX(number1, [number2], ...)",
+    "params": [
+      { "name": "number1", "required": true, "description": "The first number or range." },
+      { "name": "number2", "required": false, "description": "Additional numbers or ranges (up to 255)." }
+    ],
+    "summary": "Returns the largest numeric value in a set.",
+    "intro": "MAX scans a range and hands back the biggest number — top sales figure, latest serial date, highest score. Text and blanks are ignored, so it is safe over messy columns. For 'the Nth largest', use LARGE; for conditional maxima, MAXIFS or MAX + IF in older versions.",
+    "examples": [
+      {
+        "title": "Highest score",
+        "grid": { "A1": 72, "A2": 91, "A3": 65, "A4": 88 },
+        "formula": "=MAX(A1:A4)",
+        "result": 91
+      },
+      {
+        "title": "MAX over mixed data",
+        "grid": { "A1": 5, "A2": "n/a", "A3": 12 },
+        "formula": "=MAX(A1:A3)",
+        "result": 12,
+        "note": "Text is skipped entirely."
+      }
+    ],
+    "commonErrors": [
+      { "error": "0 returned", "cause": "All values are text or the range is empty.", "fix": "Convert stored-as-text numbers first." }
+    ],
+    "relatedFunctions": ["min", "large", "small", "average"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "min",
+    "name": "MIN",
+    "category": "Statistical",
+    "syntax": "MIN(number1, [number2], ...)",
+    "params": [
+      { "name": "number1", "required": true, "description": "The first number or range." },
+      { "name": "number2", "required": false, "description": "Additional numbers or ranges (up to 255)." }
+    ],
+    "summary": "Returns the smallest numeric value in a set.",
+    "intro": "MIN finds the floor of your data — lowest price, earliest serial date, minimum score. It pairs naturally with MAX to bracket a dataset, and with SMALL when you need the 2nd, 3rd or Nth lowest instead of the absolute minimum.",
+    "examples": [
+      {
+        "title": "Lowest price",
+        "grid": { "A1": 4.5, "A2": 9.25, "A3": 2.0 },
+        "formula": "=MIN(A1:A3)",
+        "result": 2.0
+      },
+      {
+        "title": "Data range check",
+        "grid": { "A1": 15, "A2": 30, "A3": 7 },
+        "formula": "=MIN(A1:A3)&\" – \"&MAX(A1:A3)",
+        "result": "7 – 30"
+      }
+    ],
+    "commonErrors": [
+      { "error": "0 returned", "cause": "All values are text or the range is empty.", "fix": "Convert stored-as-text numbers first." }
+    ],
+    "relatedFunctions": ["max", "small", "large", "average"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "large",
+    "name": "LARGE",
+    "category": "Statistical",
+    "syntax": "LARGE(array, k)",
+    "params": [
+      { "name": "array", "required": true, "description": "The range of numbers to rank." },
+      { "name": "k", "required": true, "description": "The rank to return — 1 is the largest." }
+    ],
+    "summary": "Returns the k-th largest value in a set.",
+    "intro": "LARGE answers 'top N' questions: the 2nd-biggest sale, the 3rd-highest score, the top-5 total when wrapped in SUM. It is the backbone of leaderboard formulas, and it ignores text and blanks so you can point it at a raw data column.",
+    "examples": [
+      {
+        "title": "Second-highest value",
+        "grid": { "A1": 50, "A2": 90, "A3": 70, "A4": 80 },
+        "formula": "=LARGE(A1:A4,2)",
+        "result": 80
+      },
+      {
+        "title": "Sum of top 3",
+        "grid": { "A1": 10, "A2": 40, "A3": 25, "A4": 30, "A5": 5 },
+        "formula": "=SUM(LARGE(A1:A5,{1,2,3}))",
+        "result": 95,
+        "note": "An array constant sums the top three in one step."
+      }
+    ],
+    "commonErrors": [
+      { "error": "#NUM!", "cause": "k is bigger than the number of numeric values in array.", "fix": "Check COUNT(range) first, or clamp k." }
+    ],
+    "relatedFunctions": ["small", "max", "min", "sum"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "small",
+    "name": "SMALL",
+    "category": "Statistical",
+    "syntax": "SMALL(array, k)",
+    "params": [
+      { "name": "array", "required": true, "description": "The range of numbers to rank." },
+      { "name": "k", "required": true, "description": "The rank to return — 1 is the smallest." }
+    ],
+    "summary": "Returns the k-th smallest value in a set.",
+    "intro": "SMALL is LARGE mirrored: it returns the Nth lowest value — second-cheapest price, third-shortest time. It is a quiet powerhouse for outlier hunting and 'bottom 10%' checks without sorting the sheet.",
+    "examples": [
+      {
+        "title": "Third-lowest price",
+        "grid": { "A1": 4.5, "A2": 2.0, "A3": 9.25, "A4": 3.0 },
+        "formula": "=SMALL(A1:A4,3)",
+        "result": 4.5
+      },
+      {
+        "title": "Median via SMALL",
+        "grid": { "A1": 10, "A2": 20, "A3": 30, "A4": 40, "A5": 50 },
+        "formula": "=SMALL(A1:A5,3)",
+        "result": 30,
+        "note": "For odd-sized sets, k=(n+1)/2 gives the middle value."
+      }
+    ],
+    "commonErrors": [
+      { "error": "#NUM!", "cause": "k exceeds the count of numeric entries.", "fix": "Compare k against COUNT(range) before ranking." }
+    ],
+    "relatedFunctions": ["large", "min", "max"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "round",
+    "name": "ROUND",
+    "category": "Math & Trig",
+    "syntax": "ROUND(number, num_digits)",
+    "params": [
+      { "name": "number", "required": true, "description": "The value to round." },
+      { "name": "num_digits", "required": true, "description": "Digits to keep: 2 = cents, 0 = whole, -2 = hundreds." }
+    ],
+    "summary": "Rounds a number to a specified number of digits.",
+    "intro": "ROUND actually changes the stored value — unlike cell formatting, which only changes how it displays. That distinction matters in money math: display-rounded cells can still sum to a wrong-looking total, while ROUNDed values add up exactly. Negative num_digits round left of the decimal point.",
+    "examples": [
+      {
+        "title": "Two decimals for currency",
+        "grid": { "A1": 19.476 },
+        "formula": "=ROUND(A1,2)",
+        "result": 19.48
+      },
+      {
+        "title": "Round to the nearest hundred",
+        "grid": { "A1": 1249 },
+        "formula": "=ROUND(A1,-2)",
+        "result": 1200
+      },
+      {
+        "title": "Round a computed total",
+        "grid": { "A1": 3, "B1": 14.99 },
+        "formula": "=ROUND(A1*B1,2)",
+        "result": 44.97
+      }
+    ],
+    "commonErrors": [
+      { "error": "Totals off by a cent", "cause": "Cells were display-rounded instead of ROUND-ed.", "fix": "Apply ROUND inside the formula before summing." }
+    ],
+    "relatedFunctions": ["text", "sum"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "iferror",
+    "name": "IFERROR",
+    "category": "Logical",
+    "syntax": "IFERROR(value, value_if_error)",
+    "params": [
+      { "name": "value", "required": true, "description": "The formula or expression to evaluate." },
+      { "name": "value_if_error", "required": true, "description": "What to return if value produces any error." }
+    ],
+    "summary": "Catches any formula error and returns a friendly fallback instead.",
+    "intro": "IFERROR swallows #N/A, #DIV/0!, #REF!, #VALUE! and friends in one wrapper — the standard way to keep lookup misses and divide-by-zeros from wrecking a dashboard. Use it deliberately though: hiding every error can mask real data problems, so prefer fixing the root cause when you can.",
+    "examples": [
+      {
+        "title": "Safe VLOOKUP",
+        "grid": { "A1": "SKU", "B1": "Price", "A2": "A-100", "B2": 9.5, "D1": "ZZ-9" },
+        "formula": "=IFERROR(VLOOKUP(D1,A2:B2,2,FALSE),\"Not found\")",
+        "result": "Not found"
+      },
+      {
+        "title": "Divide-by-zero guard",
+        "grid": { "A1": 100, "B1": 0 },
+        "formula": "=IFERROR(A1/B1,0)",
+        "result": 0
+      }
+    ],
+    "commonErrors": [
+      { "error": "Everything returns the fallback", "cause": "The wrapped formula itself is broken — IFERROR hides the clue.", "fix": "Remove IFERROR temporarily to see the real error." }
+    ],
+    "relatedFunctions": ["if", "ifs", "vlookup", "xlookup"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "text",
+    "name": "TEXT",
+    "category": "Text",
+    "syntax": "TEXT(value, format_text)",
+    "params": [
+      { "name": "value", "required": true, "description": "The number, date or value to format." },
+      { "name": "format_text", "required": true, "description": "An Excel format code in quotes, e.g. \"#,##0.00\" or \"mmmm yyyy\"." }
+    ],
+    "summary": "Converts a value to text in a specific number format.",
+    "intro": "TEXT turns numbers and dates into formatted strings for concatenation: 'Total: $1,250.00', 'Due March 2027'. Once TEXT runs, the result is text — you cannot sum it — so apply it at the very last step, when a number becomes a message.",
+    "examples": [
+      {
+        "title": "Currency in a sentence",
+        "grid": { "A1": 1250 },
+        "formula": "=\"Total: \"&TEXT(A1,\"$#,##0.00\")",
+        "result": "Total: $1,250.00"
+      },
+      {
+        "title": "Friendly date",
+        "grid": { "A1": "2026-11-09" },
+        "formula": "=TEXT(A1,\"mmmm d, yyyy\")",
+        "result": "November 9, 2026"
+      },
+      {
+        "title": "Zero-padded ID",
+        "grid": { "A1": 42 },
+        "formula": "=TEXT(A1,\"0000\")",
+        "result": "0042"
+      }
+    ],
+    "commonErrors": [
+      { "error": "Format code ignored", "cause": "Excel applies the workbook's locale — codes like \"aaaa\" mean \"yyyy\" in some locales.", "fix": "Use English format codes and test in the target locale." },
+      { "error": "#NAME?", "cause": "The format string is missing quotes.", "fix": "Always quote the format: TEXT(A1,\"0.00\")." }
+    ],
+    "relatedFunctions": ["round", "concat", "date"],
+    "relatedLessons": []
   }
 ]

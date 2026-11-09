@@ -1,0 +1,231 @@
+[
+  {
+    "slug": "vlookup-vs-index-match",
+    "leftName": "VLOOKUP",
+    "rightName": "INDEX + MATCH",
+    "title": "VLOOKUP vs INDEX MATCH: which lookup should you use?",
+    "intro": "Every Excel user hits this fork: keep the one-liner VLOOKUP, or switch to the two-function INDEX + MATCH combo. VLOOKUP is shorter to write; INDEX + MATCH is structurally tougher — it survives column inserts, looks left, and returns positions as well as values.",
+    "verdict": "Use VLOOKUP for quick, right-looking lookups in stable tables. Use INDEX + MATCH when the return column sits left of the key, when columns may be inserted, or when you need the match position — and if you have Microsoft 365, skip both and use XLOOKUP.",
+    "rows": [
+      { "aspect": "Look left", "left": "No — the lookup column must be leftmost", "right": "Yes — lookup and return ranges are independent" },
+      { "aspect": "Survives inserted columns", "left": "No — hard-coded col_index_num breaks", "right": "Yes — ranges move with the data" },
+      { "aspect": "Typing effort", "left": "One function, four arguments", "right": "Two nested functions" },
+      { "aspect": "Approximate match", "left": "TRUE flag; first column must be sorted", "right": "MATCH match_type 1 or -1; same sorting rule" },
+      { "aspect": "Returns position", "left": "No", "right": "MATCH alone returns the row position" },
+      { "aspect": "Performance on huge tables", "left": "Slightly slower", "right": "Slightly faster — only scans needed ranges" }
+    ],
+    "useLeftWhen": [
+      "The key column is already leftmost and the table shape is fixed.",
+      "You want the shortest possible formula for a one-off lookup.",
+      "You're maintaining a legacy workbook built around VLOOKUP."
+    ],
+    "useRightWhen": [
+      "The value you want sits left of the lookup column.",
+      "Columns get inserted or reordered in the source table.",
+      "You need the row position (for OFFSET, INDIRECT or further math)."
+    ],
+    "relatedFunctions": ["vlookup", "index", "match", "xlookup"],
+    "relatedComparisons": ["vlookup-vs-xlookup"]
+  },
+  {
+    "slug": "vlookup-vs-xlookup",
+    "leftName": "VLOOKUP",
+    "rightName": "XLOOKUP",
+    "title": "VLOOKUP vs XLOOKUP: is it time to switch?",
+    "intro": "XLOOKUP was designed to retire VLOOKUP. It defaults to exact match, searches any column in any direction, spills whole rows, and has a built-in 'if not found' argument — the only real blocker is that it requires Microsoft 365 or Excel 2021+.",
+    "verdict": "If every user of the workbook is on Microsoft 365 / Excel 2021+, use XLOOKUP — it is strictly better. Stay on VLOOKUP (or INDEX + MATCH) when the file must open in Excel 2016 or earlier.",
+    "rows": [
+      { "aspect": "Excel versions", "left": "All versions", "right": "Microsoft 365 / Excel 2021+" },
+      { "aspect": "Default match mode", "left": "Approximate (TRUE) — a classic bug source", "right": "Exact (0)" },
+      { "aspect": "Look left", "left": "No", "right": "Yes" },
+      { "aspect": "Not-found handling", "left": "Needs IFERROR wrapper", "right": "Built-in if_not_found argument" },
+      { "aspect": "Return multiple columns", "left": "No (one column per call)", "right": "Yes — return_array spills" },
+      { "aspect": "Search direction", "left": "Top to bottom only", "right": "First-to-last or last-to-first" },
+      { "aspect": "Column-insert safety", "left": "Breaks on inserted columns", "right": "Safe — uses ranges, not an index" }
+    ],
+    "useLeftWhen": [
+      "The workbook must run in Excel 2019 or older.",
+      "You're editing a legacy file and consistency matters more than features."
+    ],
+    "useRightWhen": [
+      "Everyone on Microsoft 365 — exact-match default, left lookups, and no IFERROR wrapper.",
+      "You need to return a whole row or search bottom-up for the latest record."
+    ],
+    "relatedFunctions": ["vlookup", "xlookup", "index", "match"],
+    "relatedComparisons": ["vlookup-vs-index-match"]
+  },
+  {
+    "slug": "sumif-vs-sumifs",
+    "leftName": "SUMIF",
+    "rightName": "SUMIFS",
+    "title": "SUMIF vs SUMIFS: one condition or many?",
+    "intro": "SUMIF and SUMIFS differ by more than the trailing S — the argument order flips (the sum range is last in SUMIF, first in SUMIFS), and only SUMIFS accepts more than one criterion. Reach for the plural even with a single condition if you might add filters later.",
+    "verdict": "Use SUMIF for a single condition and short formulas; use SUMIFS whenever you may need a second criterion — the extended form is identical in power and more future-proof.",
+    "rows": [
+      { "aspect": "Number of criteria", "left": "Exactly one", "right": "One to 127 pairs" },
+      { "aspect": "Sum-range position", "left": "Third (optional) argument", "right": "First argument" },
+      { "aspect": "Range-size rule", "left": "sum_range can differ — silently shifted", "right": "Every range must match exactly or #VALUE!" },
+      { "aspect": "Excel versions", "left": "All versions", "right": "Excel 2007+" },
+      { "aspect": "Readability with many filters", "left": "Not possible", "right": "Clean range/criteria pairs" }
+    ],
+    "useLeftWhen": [
+      "You have exactly one condition and want the shortest formula.",
+      "You're targeting ancient Excel 2003 files."
+    ],
+    "useRightWhen": [
+      "You need two or more filters — region AND month AND amount.",
+      "The report will grow new criteria; upgrading SUMIF later is fiddly."
+    ],
+    "relatedFunctions": ["sumif", "sumifs", "sum", "countifs"],
+    "relatedComparisons": ["countif-vs-countifs"]
+  },
+  {
+    "slug": "count-vs-counta",
+    "leftName": "COUNT",
+    "rightName": "COUNTA",
+    "title": "COUNT vs COUNTA: what does each one actually count?",
+    "intro": "COUNT and COUNTA answer different questions: COUNT tallies numeric cells only, while COUNTA tallies anything non-empty. Picking the wrong one quietly over- or under-counts — the classic sign is a 'row count' that includes header text or a 'response count' that skips text answers.",
+    "verdict": "Use COUNT for columns that should be purely numeric (amounts, scores, quantities). Use COUNTA for completeness checks — 'how many rows were filled in'.",
+    "rows": [
+      { "aspect": "Counts numbers", "left": "Yes", "right": "Yes" },
+      { "aspect": "Counts text", "left": "No", "right": "Yes" },
+      { "aspect": "Counts dates", "left": "Yes (dates are numbers)", "right": "Yes" },
+      { "aspect": "Counts TRUE/FALSE", "left": "No (unless typed as an argument)", "right": "Yes" },
+      { "aspect": "Counts errors", "left": "No", "right": "Yes" },
+      { "aspect": "Counts formulas returning \"\"", "left": "No", "right": "Yes — a common surprise" },
+      { "aspect": "Counts blanks", "left": "No", "right": "No" }
+    ],
+    "useLeftWhen": [
+      "The column is meant to hold numbers and text there is a data bug.",
+      "You're averaging or summing the same range — COUNT stays consistent."
+    ],
+    "useRightWhen": [
+      "You want 'how many rows have anything' — form responses, name lists.",
+      "The column mixes types on purpose."
+    ],
+    "relatedFunctions": ["count", "counta", "countif", "countifs"],
+    "relatedComparisons": ["countif-vs-countifs"]
+  },
+  {
+    "slug": "if-vs-ifs",
+    "leftName": "IF",
+    "rightName": "IFS",
+    "title": "IF vs IFS: nested branches or a flat list?",
+    "intro": "One test, two outcomes — IF is perfect. Three or more outcomes — nested IFs get hard to audit fast ('which parenthesis closes which branch?'), and IFS replaces them with a flat test/result list that stops at the first TRUE.",
+    "verdict": "Use IF for a single binary decision. Use IFS for three-plus branches — but only on Excel 2019 / Microsoft 365; older files need nested IF.",
+    "rows": [
+      { "aspect": "Two outcomes", "left": "Clean one-liner", "right": "Works but no benefit" },
+      { "aspect": "3+ outcomes", "left": "Deeply nested and error-prone", "right": "Flat, readable test/result pairs" },
+      { "aspect": "Default 'else' branch", "left": "value_if_false argument", "right": "End with TRUE,default pair" },
+      { "aspect": "Excel versions", "left": "All versions", "right": "Excel 2019 / Microsoft 365" },
+      { "aspect": "No-match result", "left": "FALSE", "right": "#N/A — must add TRUE fallback" }
+    ],
+    "useLeftWhen": [
+      "There's exactly one condition.",
+      "The file must open in Excel 2016 or earlier."
+    ],
+    "useRightWhen": [
+      "You have grade bands, status maps or tiered pricing.",
+      "Readability matters — auditors can scan IFS top to bottom."
+    ],
+    "relatedFunctions": ["if", "ifs", "iferror"],
+    "relatedComparisons": ["vlookup-vs-xlookup"]
+  },
+  {
+    "slug": "concat-vs-textjoin",
+    "leftName": "CONCAT",
+    "rightName": "TEXTJOIN",
+    "title": "CONCAT vs TEXTJOIN: joining text the right way",
+    "intro": "Both join text — the difference is the delimiter. CONCAT glues items directly together; TEXTJOIN puts a separator between them and can skip empty cells, which is what 'a, b, c' lists and CSV exports actually need.",
+    "verdict": "Use TEXTJOIN whenever items need a separator or the list may contain blanks; use CONCAT (or just &) when pieces bolt together with nothing between.",
+    "rows": [
+      { "aspect": "Separator", "left": "None — you supply literal strings", "right": "First argument, applied between every item" },
+      { "aspect": "Empty cells", "left": "Joined as empty strings", "right": "Skipped with ignore_empty=TRUE" },
+      { "aspect": "Range support", "left": "Yes", "right": "Yes" },
+      { "aspect": "Excel versions", "left": "Excel 2019 / Microsoft 365", "right": "Excel 2019 / Microsoft 365" },
+      { "aspect": "Predecessor", "left": "CONCATENATE", "right": "New in 2019" }
+    ],
+    "useLeftWhen": [
+      "No separator is needed — 'report' + '2026' + '.xlsx'.",
+      "You want to mix literals and ranges freely."
+    ],
+    "useRightWhen": [
+      "You're building comma-separated or dashed lists.",
+      "Some cells may be empty and you don't want stray delimiters."
+    ],
+    "relatedFunctions": ["concat", "textjoin", "trim"],
+    "relatedComparisons": []
+  },
+  {
+    "slug": "left-vs-mid",
+    "leftName": "LEFT",
+    "rightName": "MID",
+    "title": "LEFT vs MID: slicing text from the start or the middle",
+    "intro": "LEFT takes a fixed-length prefix; MID takes a slice from any position. Many jobs that look like LEFT tasks — 'everything before the dash' — are really MID/FIND territory once the prefix length varies.",
+    "verdict": "Use LEFT for fixed-width prefixes; use MID (with FIND to locate the start) when the piece you want sits at a variable position.",
+    "rows": [
+      { "aspect": "Starting position", "left": "Always character 1", "right": "Any start_num" },
+      { "aspect": "Length argument", "left": "Optional (defaults to 1)", "right": "Required" },
+      { "aspect": "Extract suffix", "left": "No — that's RIGHT", "right": "Yes — MID(text, pos, LEN(text))" },
+      { "aspect": "Typical pair", "left": "LEFT + FIND for first words", "right": "MID + FIND for after-delimiter text" }
+    ],
+    "useLeftWhen": [
+      "You need the first N characters and N is constant — country codes, prefixes."
+    ],
+    "useRightWhen": [
+      "The target sits after a delimiter or at a computed position — domains, middle segments."
+    ],
+    "relatedFunctions": ["left", "mid", "right", "len"],
+    "relatedComparisons": []
+  },
+  {
+    "slug": "countif-vs-countifs",
+    "leftName": "COUNTIF",
+    "rightName": "COUNTIFS",
+    "title": "COUNTIF vs COUNTIFS: counting with one test or several",
+    "intro": "COUNTIF counts cells matching one criterion; COUNTIFS stacks range/criteria pairs so every test must pass. Unlike SUMIF→SUMIFS the argument order stays the same — criteria always follow their range — so upgrading is painless.",
+    "verdict": "Use COUNTIF for one condition; use COUNTIFS for anything more — or when the report might gain a second filter later.",
+    "rows": [
+      { "aspect": "Number of criteria", "left": "Exactly one", "right": "Up to 127 range/criteria pairs" },
+      { "aspect": "Argument order", "left": "range, criteria", "right": "range1, criteria1, range2, criteria2, …" },
+      { "aspect": "Same-range between tests", "left": "Impossible", "right": "Two pairs on the same range" },
+      { "aspect": "Range-size rule", "left": "N/A (one range)", "right": "All ranges must be equal size" },
+      { "aspect": "Excel versions", "left": "All versions", "right": "Excel 2007+" }
+    ],
+    "useLeftWhen": [
+      "One test, one range — 'how many say Shipped?'"
+    ],
+    "useRightWhen": [
+      "'How many East rows in January over $100?' — multiple AND conditions.",
+      "Between-two-values or between-two-dates counts."
+    ],
+    "relatedFunctions": ["countif", "countifs", "count", "counta"],
+    "relatedComparisons": ["sumif-vs-sumifs", "count-vs-counta"]
+  },
+  {
+    "slug": "filter-vs-lookup",
+    "leftName": "FILTER",
+    "rightName": "VLOOKUP / INDEX + MATCH",
+    "title": "FILTER vs lookup functions: one match or all of them?",
+    "intro": "Lookups return the first match and stop; FILTER returns every matching row as a spill range. If your question is 'which rows', not 'which value', you want FILTER — the catch is it needs Microsoft 365.",
+    "verdict": "Use FILTER when you need all matching rows and you're on Microsoft 365. Use VLOOKUP / INDEX+MATCH for single-cell answers and older Excel versions.",
+    "rows": [
+      { "aspect": "Result", "left": "All matching rows/values, spilling into cells", "right": "One value per formula" },
+      { "aspect": "Criteria", "left": "Any boolean expression — AND via *, OR via +", "right": "Single lookup value (helper column for multi)" },
+      { "aspect": "Output location", "left": "New spill range — needs empty space", "right": "Exactly where you put the formula" },
+      { "aspect": "Sort order of results", "left": "Source order (wrap in SORT to change)", "right": "First match wins" },
+      { "aspect": "Excel versions", "left": "Microsoft 365 / Excel 2021+", "right": "All versions" },
+      { "aspect": "Not-found behaviour", "left": "#CALC! or your if_empty argument", "right": "#N/A" }
+    ],
+    "useLeftWhen": [
+      "You want every matching record — all East orders, all overdue tasks.",
+      "The result should update live as the source table changes."
+    ],
+    "useRightWhen": [
+      "You need one value in one cell — a price for a SKU.",
+      "The workbook must work in Excel 2019 or earlier."
+    ],
+    "relatedFunctions": ["vlookup", "xlookup", "index", "match"],
+    "relatedComparisons": ["vlookup-vs-xlookup", "vlookup-vs-index-match"]
+  }
+]

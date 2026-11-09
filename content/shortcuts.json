@@ -5,7 +5,7 @@
     "keys": { "windows": "Ctrl+B", "mac": "Cmd+B" },
     "description": "Applies or removes bold formatting to the selected cells — one of the most-used Excel shortcuts.",
     "tips": ["Works while typing in the formula bar too.", "Toggle: press again to un-bold."],
-    "relatedShortcuts": ["italic", "underline"]
+    "relatedShortcuts": ["italic", "underline", "format-cells"]
   },
   {
     "slug": "italic",
@@ -22,5 +22,277 @@
     "description": "Applies or removes single underline formatting to the selected cells.",
     "tips": [],
     "relatedShortcuts": ["bold", "italic"]
+  },
+  {
+    "slug": "format-cells",
+    "action": "Open the Format Cells dialog",
+    "keys": { "windows": "Ctrl+1", "mac": "Cmd+1" },
+    "description": "Opens the full Format Cells dialog — number formats, alignment, borders, fills and protection in one place.",
+    "tips": ["The single most useful dialog in Excel for cleaning up a sheet.", "Use it to apply custom number formats like 0.00% or #,##0."],
+    "relatedShortcuts": ["bold", "autosum"]
+  },
+  {
+    "slug": "copy",
+    "action": "Copy the selection",
+    "keys": { "windows": "Ctrl+C", "mac": "Cmd+C" },
+    "description": "Copies the selected cells to the clipboard, including formulas and formatting.",
+    "tips": ["Combine with paste-special to paste only values."],
+    "relatedShortcuts": ["cut", "paste", "paste-special"]
+  },
+  {
+    "slug": "cut",
+    "action": "Cut the selection",
+    "keys": { "windows": "Ctrl+X", "mac": "Cmd+X" },
+    "description": "Moves the selected cells to the clipboard; they disappear from the source once pasted.",
+    "tips": [],
+    "relatedShortcuts": ["copy", "paste"]
+  },
+  {
+    "slug": "paste",
+    "action": "Paste the clipboard",
+    "keys": { "windows": "Ctrl+V", "mac": "Cmd+V" },
+    "description": "Pastes copied or cut cells, with values, formulas and formatting.",
+    "tips": ["Excel keeps 'marching ants' on the source so you can paste repeatedly."],
+    "relatedShortcuts": ["copy", "cut", "paste-special"]
+  },
+  {
+    "slug": "paste-special",
+    "action": "Open Paste Special",
+    "keys": { "windows": "Ctrl+Alt+V", "mac": "Cmd+Ctrl+V" },
+    "description": "Opens the Paste Special dialog — paste only values, formats, or transpose rows into columns.",
+    "tips": ["The 'Values' option is the fastest way to freeze formula results.", "Multiply is the classic text-to-number fix."],
+    "relatedShortcuts": ["paste", "copy"]
+  },
+  {
+    "slug": "undo",
+    "action": "Undo the last action",
+    "keys": { "windows": "Ctrl+Z", "mac": "Cmd+Z" },
+    "description": "Reverts the most recent change — press repeatedly to step back through history.",
+    "tips": ["Excel remembers about 100 actions per session."],
+    "relatedShortcuts": ["redo"]
+  },
+  {
+    "slug": "redo",
+    "action": "Redo or repeat",
+    "keys": { "windows": "Ctrl+Y", "mac": "Cmd+Y" },
+    "description": "Re-applies an undone action — or repeats your last action when there's nothing to redo.",
+    "tips": ["The 'repeat' behaviour duplicates formatting and inserts quickly."],
+    "relatedShortcuts": ["undo"]
+  },
+  {
+    "slug": "save-workbook",
+    "action": "Save the workbook",
+    "keys": { "windows": "Ctrl+S", "mac": "Cmd+S" },
+    "description": "Saves the current workbook. On a new file it opens Save As.",
+    "tips": ["F12 jumps straight to Save As."],
+    "relatedShortcuts": ["print", "new-workbook"]
+  },
+  {
+    "slug": "print",
+    "action": "Open Print preview",
+    "keys": { "windows": "Ctrl+P", "mac": "Cmd+P" },
+    "description": "Opens the print preview and print settings pane.",
+    "tips": ["Check 'Fit Sheet on One Page' before printing wide tables."],
+    "relatedShortcuts": ["save-workbook"]
+  },
+  {
+    "slug": "new-workbook",
+    "action": "Create a new workbook",
+    "keys": { "windows": "Ctrl+N", "mac": "Cmd+N" },
+    "description": "Opens a fresh blank workbook.",
+    "tips": [],
+    "relatedShortcuts": ["save-workbook", "open-workbook"]
+  },
+  {
+    "slug": "open-workbook",
+    "action": "Open an existing workbook",
+    "keys": { "windows": "Ctrl+O", "mac": "Cmd+O" },
+    "description": "Opens the file picker to open an existing workbook.",
+    "tips": [],
+    "relatedShortcuts": ["new-workbook", "save-workbook"]
+  },
+  {
+    "slug": "find",
+    "action": "Find text in the sheet",
+    "keys": { "windows": "Ctrl+F", "mac": "Cmd+F" },
+    "description": "Opens Find & Replace to locate values or formulas anywhere in the workbook.",
+    "tips": ["Use 'Options' to search within formulas or match entire cell contents."],
+    "relatedShortcuts": ["replace", "go-to"]
+  },
+  {
+    "slug": "replace",
+    "action": "Find and replace",
+    "keys": { "windows": "Ctrl+H", "mac": "Ctrl+H" },
+    "description": "Opens Find & Replace on the Replace tab — bulk-swap values, labels or formula fragments.",
+    "tips": ["Replacing inside formulas is the quickest way to repoint a model at a new column."],
+    "relatedShortcuts": ["find"]
+  },
+  {
+    "slug": "go-to",
+    "action": "Open the Go To dialog",
+    "keys": { "windows": "Ctrl+G", "mac": "Ctrl+G" },
+    "description": "Jumps to a named cell or range — and to 'Special' selections like blanks, constants or formulas.",
+    "tips": ["'Special → Blanks' selects every empty cell at once."],
+    "relatedShortcuts": ["find", "select-all"]
+  },
+  {
+    "slug": "select-all",
+    "action": "Select the whole sheet",
+    "keys": { "windows": "Ctrl+A", "mac": "Cmd+A" },
+    "description": "Selects the current data region; pressed twice it selects the entire worksheet.",
+    "tips": ["Inside a table it selects the table body first."],
+    "relatedShortcuts": ["select-column", "select-row", "extend-selection"]
+  },
+  {
+    "slug": "select-column",
+    "action": "Select the current column",
+    "keys": { "windows": "Ctrl+Space", "mac": "Ctrl+Space" },
+    "description": "Selects the entire column of the active cell.",
+    "tips": [],
+    "relatedShortcuts": ["select-row", "select-all"]
+  },
+  {
+    "slug": "select-row",
+    "action": "Select the current row",
+    "keys": { "windows": "Shift+Space", "mac": "Shift+Space" },
+    "description": "Selects the entire row of the active cell.",
+    "tips": [],
+    "relatedShortcuts": ["select-column", "select-all"]
+  },
+  {
+    "slug": "extend-selection",
+    "action": "Extend the selection by one cell",
+    "keys": { "windows": "Shift+Arrow keys", "mac": "Shift+Arrow keys" },
+    "description": "Grows the selection one cell at a time in the arrow direction.",
+    "tips": ["Add Ctrl to jump-extend to the edge of the data."],
+    "relatedShortcuts": ["jump-to-edge", "extend-to-edge"]
+  },
+  {
+    "slug": "jump-to-edge",
+    "action": "Jump to the edge of the data",
+    "keys": { "windows": "Ctrl+Arrow keys", "mac": "Cmd+Arrow keys" },
+    "description": "Leaps the active cell to the last filled cell in the arrow direction — the fastest way around a big table.",
+    "tips": ["Stops at blanks — a gap in the column ends the jump."],
+    "relatedShortcuts": ["extend-to-edge", "go-to-first-cell", "go-to-last-cell"]
+  },
+  {
+    "slug": "extend-to-edge",
+    "action": "Select to the edge of the data",
+    "keys": { "windows": "Ctrl+Shift+Arrow keys", "mac": "Cmd+Shift+Arrow keys" },
+    "description": "Selects from the active cell to the end of the data region — select a whole column of numbers instantly.",
+    "tips": ["Ctrl+Shift+End extends to the last used cell on the sheet."],
+    "relatedShortcuts": ["jump-to-edge", "extend-selection"]
+  },
+  {
+    "slug": "go-to-first-cell",
+    "action": "Go to cell A1",
+    "keys": { "windows": "Ctrl+Home", "mac": "Cmd+Home" },
+    "description": "Jumps to the top-left cell of the worksheet.",
+    "tips": [],
+    "relatedShortcuts": ["go-to-last-cell", "jump-to-edge"]
+  },
+  {
+    "slug": "go-to-last-cell",
+    "action": "Go to the last used cell",
+    "keys": { "windows": "Ctrl+End", "mac": "Cmd+End" },
+    "description": "Jumps to the bottom-right cell that has ever held data — a quick measure of a sheet's real size.",
+    "tips": ["If it lands far below your data, clear the phantom rows to shrink the file."],
+    "relatedShortcuts": ["go-to-first-cell", "jump-to-edge"]
+  },
+  {
+    "slug": "next-sheet",
+    "action": "Move to the next worksheet",
+    "keys": { "windows": "Ctrl+Page Down", "mac": "Fn+Ctrl+Down Arrow" },
+    "description": "Switches to the next sheet tab in the workbook.",
+    "tips": ["Ctrl+Page Up moves back."],
+    "relatedShortcuts": ["go-to-first-cell"]
+  },
+  {
+    "slug": "move-right",
+    "action": "Move one cell to the right",
+    "keys": { "windows": "Tab", "mac": "Tab" },
+    "description": "Moves the active cell one column right — inside a selected range it cycles within the selection.",
+    "tips": ["Shift+Tab moves left; Enter moves down."],
+    "relatedShortcuts": ["move-down", "extend-selection"]
+  },
+  {
+    "slug": "move-down",
+    "action": "Move one cell down",
+    "keys": { "windows": "Enter", "mac": "Return" },
+    "description": "Confirms the cell and moves down — Shift+Enter moves up instead.",
+    "tips": ["Change the direction in File → Options → Advanced."],
+    "relatedShortcuts": ["move-right", "edit-cell"]
+  },
+  {
+    "slug": "edit-cell",
+    "action": "Edit the active cell",
+    "keys": { "windows": "F2", "mac": "F2" },
+    "description": "Puts the cursor inside the cell contents so you can edit a formula instead of retyping it.",
+    "tips": ["Pressing F2 again toggles between Edit and Enter mode — it changes whether arrows move the cursor or the reference."],
+    "relatedShortcuts": ["move-down", "cancel-edit"]
+  },
+  {
+    "slug": "cancel-edit",
+    "action": "Cancel cell editing",
+    "keys": { "windows": "Esc", "mac": "Esc" },
+    "description": "Exits edit mode without saving changes and clears the 'marching ants' clipboard marquee.",
+    "tips": [],
+    "relatedShortcuts": ["edit-cell", "undo"]
+  },
+  {
+    "slug": "new-line-in-cell",
+    "action": "Insert a line break inside a cell",
+    "keys": { "windows": "Alt+Enter", "mac": "Option+Cmd+Return" },
+    "description": "Starts a new line within the same cell — requires Wrap Text to display fully.",
+    "tips": ["CHAR(10) does the same inside formulas."],
+    "relatedShortcuts": ["edit-cell"]
+  },
+  {
+    "slug": "fill-down",
+    "action": "Fill down",
+    "keys": { "windows": "Ctrl+D", "mac": "Cmd+D" },
+    "description": "Copies the top cell of the selection into every cell below it — formulas adjust relative references automatically.",
+    "tips": ["Select the source plus targets first, then Ctrl+D."],
+    "relatedShortcuts": ["fill-right", "copy"]
+  },
+  {
+    "slug": "fill-right",
+    "action": "Fill right",
+    "keys": { "windows": "Ctrl+R", "mac": "Cmd+R" },
+    "description": "Copies the leftmost cell of the selection across every cell to its right.",
+    "tips": [],
+    "relatedShortcuts": ["fill-down"]
+  },
+  {
+    "slug": "toggle-absolute",
+    "action": "Cycle reference styles ($A$1)",
+    "keys": { "windows": "F4", "mac": "Cmd+T" },
+    "description": "While editing a formula, cycles a reference through A1 → $A$1 → A$1 → $A1 — absolute vs relative.",
+    "tips": ["Lock the row (A$1) for fill-right formulas; lock the column ($A1) for fill-down."],
+    "relatedShortcuts": ["edit-cell", "insert-function-args"]
+  },
+  {
+    "slug": "autosum",
+    "action": "Insert AutoSum",
+    "keys": { "windows": "Alt+=", "mac": "Cmd+Shift+T" },
+    "description": "Inserts =SUM() over the contiguous numbers above or left of the active cell — one keystroke totals a column.",
+    "tips": ["Works at the bottom of a filtered table and respects hidden rows."],
+    "relatedShortcuts": ["insert-function-args", "format-cells"]
+  },
+  {
+    "slug": "insert-function-args",
+    "action": "Show function arguments",
+    "keys": { "windows": "Ctrl+A (inside a function name)", "mac": "Ctrl+A (inside a function name)" },
+    "description": "With the cursor inside a function name in the formula bar, opens the Function Arguments dialog — labelled fields for each parameter.",
+    "tips": ["Ctrl+Shift+A inserts the argument names as placeholders instead."],
+    "relatedShortcuts": ["autosum", "edit-cell"]
+  },
+  {
+    "slug": "show-formulas",
+    "action": "Toggle formulas view",
+    "keys": { "windows": "Ctrl+`", "mac": "Ctrl+`" },
+    "description": "Displays formulas instead of their results across the whole sheet — instant formula audit mode.",
+    "tips": ["Press again to return to values."],
+    "relatedShortcuts": ["edit-cell", "go-to"]
   }
 ]
