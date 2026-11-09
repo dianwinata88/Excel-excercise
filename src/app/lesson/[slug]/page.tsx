@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { ExerciseEmbed } from "@/components/ExerciseEmbed";
-import { getLesson, getLessons, getTopic } from "@/lib/content";
+import { LessonPlayer } from "@/components/exercise/LessonPlayer";
+import { getExercise, getLesson, getLessons, getTopic } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -24,6 +24,9 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">
   const lesson = getLesson(slug);
   if (!lesson) notFound();
   const topic = getTopic(lesson.topic);
+  const exercises = lesson.exercises
+    .map((id) => getExercise(id))
+    .filter((e) => e !== undefined);
   return (
     <div className="flex flex-col gap-6">
       <Breadcrumbs
@@ -36,10 +39,7 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">
       />
       <h1 className="text-3xl font-bold">{lesson.title}</h1>
       <p className="text-zinc-600 dark:text-zinc-400">{lesson.description}</p>
-      {/* The lesson player replaces this static list in the exercise-engine work. */}
-      {lesson.exercises.map((id) => (
-        <ExerciseEmbed key={id} exerciseId={id} />
-      ))}
+      <LessonPlayer exercises={exercises} />
     </div>
   );
 }

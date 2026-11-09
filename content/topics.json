@@ -4,7 +4,21 @@
     "name": "Sum",
     "title": "SUM Lessons — Excel Practice",
     "description": "Practice adding numbers with SUM, ranges and quick totals.",
-    "lessons": ["sum-basics"]
+    "lessons": ["sum-basics", "sum-ranges"]
+  },
+  {
+    "slug": "count",
+    "name": "Count",
+    "title": "COUNT Lessons — Excel Practice",
+    "description": "Count values in a sheet with COUNT and COUNTA.",
+    "lessons": ["count-basics"]
+  },
+  {
+    "slug": "logical",
+    "name": "Logic & IF",
+    "title": "IF & Logic Lessons — Excel Practice",
+    "description": "Build conditional formulas with IF and comparisons.",
+    "lessons": ["if-logic"]
   },
   {
     "slug": "shortcuts",

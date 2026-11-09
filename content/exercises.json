@@ -22,12 +22,120 @@
     "xp": 15
   },
   {
+    "id": "sum-two-ranges-01",
+    "type": "formula",
+    "prompt": "In C1, add the totals of column A (A1:A3) and column B (B1:B3) in a single formula.",
+    "grid": { "A1": 5, "A2": 5, "A3": 5, "B1": 20, "B2": 20, "B3": 20 },
+    "answerCell": "C1",
+    "expectValue": 75,
+    "acceptFns": ["SUM"],
+    "hints": ["SUM accepts multiple ranges separated by commas", "=SUM(A1:A3,B1:B3)"],
+    "xp": 20
+  },
+  {
+    "id": "sum-inline-01",
+    "type": "formula",
+    "prompt": "In B1, write a formula that adds A1, A2 and A3 without using any function.",
+    "grid": { "A1": 7, "A2": 8, "A3": 9 },
+    "answerCell": "B1",
+    "expectValue": 24,
+    "acceptFns": [],
+    "hints": ["Just use the + operator", "=A1+A2+A3"],
+    "xp": 10
+  },
+  {
+    "id": "count-numbers-01",
+    "type": "formula",
+    "prompt": "In B1, count how many cells in A1:A6 contain numbers.",
+    "grid": { "A1": 3, "A2": "n/a", "A3": 7, "A4": "pending", "A5": 12, "A6": 1 },
+    "answerCell": "B1",
+    "expectValue": 4,
+    "acceptFns": ["COUNT"],
+    "hints": ["COUNT ignores text", "=COUNT(A1:A6)"],
+    "xp": 10
+  },
+  {
+    "id": "counta-mixed-01",
+    "type": "formula",
+    "prompt": "In B1, count how many cells in A1:A6 are not empty.",
+    "grid": { "A1": "done", "A2": 4, "A3": "wip", "A4": 9, "A6": "late" },
+    "answerCell": "B1",
+    "expectValue": 5,
+    "acceptFns": ["COUNTA"],
+    "hints": ["COUNTA counts text and numbers", "=COUNTA(A1:A6)"],
+    "xp": 15
+  },
+  {
+    "id": "cell-select-total-01",
+    "type": "cell-select",
+    "prompt": "Click the cell that holds the largest value.",
+    "grid": { "A1": 42, "A2": 17, "A3": 89, "A4": 23 },
+    "answerCell": "A3",
+    "hints": ["Scan column A for the biggest number"],
+    "xp": 5
+  },
+  {
+    "id": "mcq-if-syntax-01",
+    "type": "mcq",
+    "prompt": "Which formula correctly writes \"Pass\" in B1 when A1 is 60 or more, and \"Fail\" otherwise?",
+    "grid": { "A1": 60 },
+    "options": [
+      "=IF(A1>=60,\"Pass\",\"Fail\")",
+      "=IF(A1>=60 THEN \"Pass\" ELSE \"Fail\")",
+      "=IF(\"Pass\",\"Fail\",A1>=60)",
+      "=WHEN(A1>=60,\"Pass\",\"Fail\")"
+    ],
+    "correctOption": 0,
+    "hints": ["IF takes condition, value-if-true, value-if-false — comma separated"],
+    "xp": 5
+  },
+  {
+    "id": "if-pass-fail-01",
+    "type": "formula",
+    "prompt": "In B1, write a formula that shows \"Pass\" if the score in A1 is at least 50, otherwise \"Fail\".",
+    "grid": { "A1": 72 },
+    "answerCell": "B1",
+    "expectValue": "Pass",
+    "acceptFns": ["IF"],
+    "hints": ["=IF(A1>=50,...)", "Text results need quotes"],
+    "xp": 15
+  },
+  {
+    "id": "if-discount-01",
+    "type": "formula",
+    "prompt": "In B1, apply a 10% discount to the price in A1 when it is over 100, otherwise keep the price.",
+    "grid": { "A1": 150 },
+    "answerCell": "B1",
+    "expectValue": 135,
+    "acceptFns": ["IF"],
+    "hints": ["=IF(A1>100, A1*0.9, A1)"],
+    "xp": 20
+  },
+  {
     "id": "shortcut-bold-01",
     "type": "shortcut",
     "prompt": "Make the selected cell bold using your keyboard.",
     "grid": { "A1": "Quarterly Report" },
     "keys": "ctrl+b",
     "hints": ["Windows: Ctrl+B · Mac: Cmd+B"],
+    "xp": 5
+  },
+  {
+    "id": "shortcut-copy-01",
+    "type": "shortcut",
+    "prompt": "Copy the selected cell using your keyboard.",
+    "grid": { "A1": "Region: West" },
+    "keys": "ctrl+c",
+    "hints": ["Windows: Ctrl+C · Mac: Cmd+C"],
+    "xp": 5
+  },
+  {
+    "id": "shortcut-undo-01",
+    "type": "shortcut",
+    "prompt": "Undo your last action using your keyboard.",
+    "grid": { "A1": 999 },
+    "keys": "ctrl+z",
+    "hints": ["Windows: Ctrl+Z · Mac: Cmd+Z"],
     "xp": 5
   }
 ]

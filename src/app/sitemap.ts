@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import {
+  getComparisonDocs,
   getFunctionDocs,
   getLessons,
   getShortcutDocs,
@@ -27,5 +28,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...getFunctionDocs().map((f) => entry(`/functions/${f.slug}`, 0.6, "monthly")),
     ...getTaskDocs().map((t) => entry(`/how-to/${t.slug}`, 0.6, "monthly")),
     ...getShortcutDocs().map((s) => entry(`/shortcuts/${s.slug}`, 0.5, "monthly")),
+    ...getComparisonDocs().map((c) => entry(`/compare/${c.slug}`, 0.6, "monthly")),
   ];
 }
