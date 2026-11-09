@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 export function CurrentYear() {
-  const [year, setYear] = useState<number | null>(null);
-  useEffect(() => setYear(new Date().getFullYear()), []);
+  const year = useSyncExternalStore(
+    () => () => {},
+    () => new Date().getFullYear(),
+    () => null,
+  );
   return <>{year}</>;
 }
