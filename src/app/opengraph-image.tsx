@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import { ImageResponse } from "next/og";
 
 export const alt = "Excel Practice — Learn Excel by doing, not watching";

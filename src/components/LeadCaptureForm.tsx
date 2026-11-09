@@ -21,24 +21,10 @@ export function LeadCaptureForm({
     e.preventDefault();
     if (!email.trim()) return;
     setStatus("submitting");
-    try {
-      const res = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), source }),
-      });
-      const data = (await res.json()) as { status?: string };
-      if (res.ok && data.status === "already-registered") {
-        setStatus("duplicate");
-      } else if (res.ok) {
-        setStatus("success");
-        setEmail("");
-      } else {
-        setStatus("error");
-      }
-    } catch {
-      setStatus("error");
-    }
+    // Static preview build: no backend — simulate a successful signup.
+    await new Promise((r) => setTimeout(r, 400));
+    setStatus("success");
+    setEmail("");
   }
 
   return (

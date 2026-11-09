@@ -1,5 +1,11 @@
+export const dynamic = "force-static";
+
 import { ImageResponse } from "next/og";
-import { getTopic } from "@/lib/content";
+import { getTopic, getTopics } from "@/lib/content";
+
+export function generateStaticParams() {
+  return getTopics().map((t) => ({ topic: t.slug }));
+}
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
