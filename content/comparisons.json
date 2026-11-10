@@ -227,5 +227,54 @@
     ],
     "relatedFunctions": ["vlookup", "xlookup", "index", "match"],
     "relatedComparisons": ["vlookup-vs-xlookup", "vlookup-vs-index-match"]
+  },
+  {
+    "slug": "index-match-vs-xlookup",
+    "leftName": "INDEX + MATCH",
+    "rightName": "XLOOKUP",
+    "title": "INDEX MATCH vs XLOOKUP: which lookup should you use?",
+    "intro": "INDEX/MATCH and XLOOKUP both overcome VLOOKUP's leftward and column-index limits. XLOOKUP is shorter and easier to read; INDEX/MATCH still works in older Excel versions and can be more flexible in complex workbooks.",
+    "verdict": "Use XLOOKUP for new Microsoft 365 workbooks because it is simpler. Use INDEX/MATCH when you need compatibility with older Excel or already have helper structures built around it.",
+    "rows": [
+      { "aspect": "Excel versions", "left": "Works in older Excel versions", "right": "Microsoft 365 / Excel 2021+" },
+      { "aspect": "Syntax length", "left": "Two functions nested together", "right": "One function with lookup and return arrays" },
+      { "aspect": "Left lookup", "left": "Yes", "right": "Yes" },
+      { "aspect": "Not-found handling", "left": "Wrap with IFERROR or IFNA", "right": "Built-in if-not-found argument" },
+      { "aspect": "Performance", "left": "Very fast with large ranges", "right": "Fast and simpler to maintain" }
+    ],
+    "useLeftWhen": [
+      "The workbook must open in Excel 2019 or earlier.",
+      "You need to combine lookup logic with other INDEX/MATCH patterns already in the file."
+    ],
+    "useRightWhen": [
+      "You are on Microsoft 365 and want the clearest formula.",
+      "You want a built-in default for missing matches."
+    ],
+    "relatedFunctions": ["index", "match", "xlookup"],
+    "relatedComparisons": ["vlookup-vs-index-match", "vlookup-vs-xlookup"]
+  },
+  {
+    "slug": "sumif-vs-countif",
+    "leftName": "SUMIF",
+    "rightName": "COUNTIF",
+    "title": "SUMIF vs COUNTIF: should you total or count?",
+    "intro": "SUMIF and COUNTIF use the same criteria logic but answer different questions. SUMIF adds values; COUNTIF counts rows. Choosing the wrong one is a common cause of reports that are off by a factor or missing totals.",
+    "verdict": "Use SUMIF when you need a total of matching values. Use COUNTIF when you need the number of matching rows or cells.",
+    "rows": [
+      { "aspect": "Result", "left": "Sum of matching numeric cells", "right": "Count of matching cells" },
+      { "aspect": "Best for", "left": "Revenue, hours, quantities", "right": "Orders, errors, completed tasks" },
+      { "aspect": "Criteria range", "left": "Can differ from sum range", "right": "The range being counted" },
+      { "aspect": "Multiple conditions", "left": "Use SUMIFS", "right": "Use COUNTIFS" }
+    ],
+    "useLeftWhen": [
+      "You need a dollar total, quantity total or hours total for matching rows.",
+      "The answer should change when the underlying values change."
+    ],
+    "useRightWhen": [
+      "You need to know how many rows meet a condition.",
+      "You are checking completeness, errors or backlog counts."
+    ],
+    "relatedFunctions": ["sumif", "countif", "sum"],
+    "relatedComparisons": ["sumif-vs-sumifs", "countif-vs-countifs"]
   }
 ]

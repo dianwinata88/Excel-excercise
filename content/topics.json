@@ -21,6 +21,34 @@
     "lessons": ["if-logic"]
   },
   {
+    "slug": "lookup",
+    "name": "Lookup",
+    "title": "Excel Lookup Lessons — VLOOKUP, XLOOKUP & Practice",
+    "description": "Practice finding values with VLOOKUP and XLOOKUP, including exact and default-result lookups.",
+    "lessons": ["vlookup-basics", "xlookup-basics"]
+  },
+  {
+    "slug": "text",
+    "name": "Text",
+    "title": "Excel Text Lessons — Clean, Uppercase & Join Text",
+    "description": "Practice cleaning text with TRIM, changing case with UPPER and joining values with formulas.",
+    "lessons": ["text-cleanup-basics"]
+  },
+  {
+    "slug": "dates",
+    "name": "Dates",
+    "title": "Excel Date Lessons — DAYS, YEAR & Date Math",
+    "description": "Practice date math with DAYS and YEAR using Excel date serial values.",
+    "lessons": ["date-math-basics"]
+  },
+  {
+    "slug": "conditional-aggregation",
+    "name": "Conditional Totals",
+    "title": "SUMIF & COUNTIF Lessons — Conditional Totals Practice",
+    "description": "Practice totals and counts that respond to criteria with SUMIF and COUNTIF.",
+    "lessons": ["sumif-countif-basics"]
+  },
+  {
     "slug": "shortcuts",
     "name": "Keyboard Shortcuts",
     "title": "Excel Shortcut Lessons — Practice on Your Keyboard",

@@ -1,8 +1,12 @@
 import Link from "next/link";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo";
 
 export function Breadcrumbs({ items }: { items: { name: string; path: string }[] }) {
   return (
-    <nav aria-label="Breadcrumb" className="text-sm text-zinc-500">
+    <>
+      <JsonLd data={breadcrumbJsonLd(items)} />
+      <nav aria-label="Breadcrumb" className="text-sm text-zinc-500">
       <ol className="flex flex-wrap items-center gap-1">
         {items.map((item, i) => (
           <li key={item.path} className="flex items-center gap-1">
@@ -17,6 +21,7 @@ export function Breadcrumbs({ items }: { items: { name: string; path: string }[]
           </li>
         ))}
       </ol>
-    </nav>
+      </nav>
+    </>
   );
 }

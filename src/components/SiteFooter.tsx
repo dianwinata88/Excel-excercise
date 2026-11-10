@@ -14,6 +14,12 @@ export function SiteFooter() {
           <Link href="/functions" className="hover:underline">
             Functions
           </Link>
+          <Link href="/how-to" className="hover:underline">
+            How-to guides
+          </Link>
+          <Link href="/compare" className="hover:underline">
+            Comparisons
+          </Link>
           <Link href="/certification" className="hover:underline">
             Certification
           </Link>

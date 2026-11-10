@@ -21,6 +21,7 @@ const topicSlugs = new Set(topics.map((t) => t.slug));
 const functions = getFunctionDocs();
 const functionSlugs = new Set(functions.map((f) => f.slug));
 const tasks = getTaskDocs();
+const taskSlugs = new Set(tasks.map((t) => t.slug));
 const shortcuts = getShortcutDocs();
 const shortcutSlugs = new Set(shortcuts.map((s) => s.slug));
 const comparisons = getComparisonDocs();
@@ -46,6 +47,9 @@ checkUnique("comparisons", comparisons.map((c) => c.slug));
 for (const lesson of lessons) {
   if (!topicSlugs.has(lesson.topic)) errors.push(`lesson ${lesson.slug}: unknown topic ${lesson.topic}`);
   for (const id of lesson.exercises) if (!exerciseIds.has(id)) errors.push(`lesson ${lesson.slug}: unknown exercise ${id}`);
+  for (const rel of lesson.relatedFunctions) if (!functionSlugs.has(rel)) errors.push(`lesson ${lesson.slug}: unknown related function ${rel}`);
+  for (const rel of lesson.relatedTasks) if (!taskSlugs.has(rel)) errors.push(`lesson ${lesson.slug}: unknown related task ${rel}`);
+  for (const rel of lesson.relatedLessons) if (!lessonSlugs.has(rel)) errors.push(`lesson ${lesson.slug}: unknown related lesson ${rel}`);
 }
 for (const topic of topics) {
   for (const slug of topic.lessons) if (!lessonSlugs.has(slug)) errors.push(`topic ${topic.slug}: unknown lesson ${slug}`);
