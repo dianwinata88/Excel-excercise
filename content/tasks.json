@@ -392,5 +392,70 @@
     ],
     "relatedFunctions": ["len", "trim", "counta"],
     "relatedLessons": []
+  },
+  {
+    "slug": "look-up-a-price-with-vlookup",
+    "task": "Look up a price with VLOOKUP",
+    "intro": "Use VLOOKUP when you have a table keyed by SKU, product, employee or region and need to return a value from the same row.",
+    "steps": [
+      { "heading": "Put the lookup value in the first column", "body": "VLOOKUP searches the first column of the selected range, so arrange or select the table that way." },
+      { "heading": "Count the return column", "body": "If the table starts at A and price is in B, the column index is 2." },
+      { "heading": "Use exact match for IDs", "body": "For SKUs and names, end with 0 or FALSE so Excel does not guess the closest row." },
+      { "heading": "Handle missing matches", "body": "If #N/A appears, check spelling, number formats and whether the value is actually in the first column." }
+    ],
+    "formulas": [
+      { "formula": "=VLOOKUP(D1,A2:B4,2,0)", "explanation": "Finds the value in D1 within A2:A4 and returns the matching price from B2:B4." },
+      { "formula": "=IFERROR(VLOOKUP(D1,A2:B4,2,0),\"Not found\")", "explanation": "Shows a readable message instead of #N/A when the lookup fails." }
+    ],
+    "relatedFunctions": ["vlookup", "xlookup", "iferror"],
+    "relatedLessons": ["vlookup-basics", "xlookup-basics"]
+  },
+  {
+    "slug": "clean-extra-spaces-in-excel",
+    "task": "Clean extra spaces in Excel text",
+    "intro": "Imported names and labels often contain double spaces or leading/trailing blanks that break lookups. Clean the text before matching or reporting.",
+    "steps": [
+      { "heading": "Trim the cell", "body": "Use TRIM to remove leading and trailing spaces and collapse repeated internal spaces." },
+      { "heading": "Standardize case", "body": "Use UPPER or LOWER when the same label appears as \"East\", \"east\" and \"EAST\"." },
+      { "heading": "Clean before lookup", "body": "Apply cleaning in a helper column first, then run VLOOKUP/XLOOKUP against the cleaned values." }
+    ],
+    "formulas": [
+      { "formula": "=TRIM(A1)", "explanation": "Removes extra spaces from a text value." },
+      { "formula": "=UPPER(TRIM(A1))", "explanation": "Combines trimming and case normalization in one formula." }
+    ],
+    "relatedFunctions": ["trim", "concat", "textjoin"],
+    "relatedLessons": ["text-cleanup-basics", "vlookup-basics"]
+  },
+  {
+    "slug": "calculate-days-between-dates",
+    "task": "Calculate days between dates in Excel",
+    "intro": "Excel stores dates as serial numbers, so date differences can be calculated with subtraction or the DAYS function.",
+    "steps": [
+      { "heading": "Confirm the cells are dates", "body": "If subtraction returns text or an error, format the cells as dates or rebuild them with DATE(year, month, day)." },
+      { "heading": "Use DAYS", "body": "DAYS(end_date, start_date) returns the number of days between two dates in a clear order." },
+      { "heading": "Extract year or month", "body": "Use YEAR, MONTH or DAY when you need labels for reports rather than a day count." }
+    ],
+    "formulas": [
+      { "formula": "=DAYS(A2,A1)", "explanation": "Returns the number of days from the earlier date in A1 to the later date in A2." },
+      { "formula": "=YEAR(A1)", "explanation": "Extracts the year from a date for grouping or labels." }
+    ],
+    "relatedFunctions": ["date", "today"],
+    "relatedLessons": ["date-math-basics"]
+  },
+  {
+    "slug": "total-sales-for-one-region",
+    "task": "Total sales for one region with SUMIF",
+    "intro": "SUMIF totals only the rows that match a condition, which is faster than filtering a report by hand.",
+    "steps": [
+      { "heading": "Select matching ranges", "body": "The criteria range and sum range must cover the same rows, even if they are different columns." },
+      { "heading": "Quote the criteria", "body": "Use \"East\" for text or \">100\" for numeric comparisons." },
+      { "heading": "Add more conditions if needed", "body": "Move to SUMIFS when you need region and month, or region and salesperson." }
+    ],
+    "formulas": [
+      { "formula": "=SUMIF(A2:A4,\"East\",B2:B4)", "explanation": "Adds B2:B4 only where A2:A4 equals \"East\"." },
+      { "formula": "=COUNTIF(B2:B4,\">100\")", "explanation": "Counts how many sales values are greater than 100." }
+    ],
+    "relatedFunctions": ["sumif", "countif", "sum"],
+    "relatedLessons": ["sumif-countif-basics", "if-logic"]
   }
 ]

@@ -49,3 +49,27 @@ export const getFunctionDoc = (slug: string) => getFunctionDocs().find((f) => f.
 export const getTaskDoc = (slug: string) => getTaskDocs().find((t) => t.slug === slug);
 export const getShortcutDoc = (slug: string) => getShortcutDocs().find((s) => s.slug === slug);
 export const getComparisonDoc = (slug: string) => getComparisonDocs().find((c) => c.slug === slug);
+
+export function getFunctionCategories(): string[] {
+  return [...new Set(getFunctionDocs().map((f) => f.category))].sort((a, b) =>
+    a.localeCompare(b),
+  );
+}
+
+export function functionCategorySlug(category: string): string {
+  return category
+    .toLowerCase()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+export function getFunctionDocsByCategory(category: string) {
+  return getFunctionDocs()
+    .filter((f) => f.category === category)
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export function getFunctionCategoryBySlug(slug: string): string | undefined {
+  return getFunctionCategories().find((c) => functionCategorySlug(c) === slug);
+}

@@ -89,6 +89,54 @@ export function courseJsonLd(input: { name: string; description: string; path: s
   };
 }
 
+export function learningResourceJsonLd(input: {
+  name: string;
+  description: string;
+  path: string;
+  level?: string;
+  teaches?: string[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LearningResource",
+    name: input.name,
+    description: input.description,
+    url: `${SITE_URL}${input.path}`,
+    educationalLevel: input.level,
+    teaches: input.teaches,
+    isAccessibleForFree: true,
+    provider: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      sameAs: SITE_URL,
+    },
+  };
+}
+
+export function collectionPageJsonLd(input: {
+  name: string;
+  description: string;
+  path: string;
+  items: { name: string; path: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: input.name,
+    description: input.description,
+    url: `${SITE_URL}${input.path}`,
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: input.items.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: item.name,
+        url: `${SITE_URL}${item.path}`,
+      })),
+    },
+  };
+}
+
 export function websiteJsonLd() {
   return {
     "@context": "https://schema.org",

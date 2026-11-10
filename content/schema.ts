@@ -42,6 +42,13 @@ export const LessonSchema = z.object({
   description: z.string(),
   level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner"),
   exercises: z.array(z.string()), // exercise ids, in order
+  overview: z.string().optional(),
+  objectives: z.array(z.string()).default([]),
+  steps: z.array(z.object({ heading: z.string(), body: z.string() })).default([]),
+  faqs: z.array(z.object({ question: z.string(), answer: z.string() })).default([]),
+  relatedFunctions: z.array(z.string()).default([]),
+  relatedTasks: z.array(z.string()).default([]),
+  relatedLessons: z.array(z.string()).default([]),
 });
 export type Lesson = z.infer<typeof LessonSchema>;
 

@@ -32,6 +32,136 @@
     "exercises": ["mcq-if-syntax-01", "if-pass-fail-01", "if-discount-01"]
   },
   {
+    "slug": "vlookup-basics",
+    "topic": "lookup",
+    "title": "VLOOKUP Basics",
+    "description": "Find a value in a table by its first column and return a matching result.",
+    "level": "beginner",
+    "exercises": ["vlookup-price-01", "vlookup-band-01"],
+    "overview": "VLOOKUP is the classic Excel lookup: it searches the first column of a table for a value, then returns a value from another column in the same row. This lesson focuses on exact matches and approximate band lookups so you understand when the fourth argument matters.",
+    "objectives": [
+      "Write a VLOOKUP for an exact match using FALSE/0.",
+      "Understand when VLOOKUP requires sorted data and TRUE/1.",
+      "Avoid the most common VLOOKUP mistakes."
+    ],
+    "steps": [
+      { "heading": "Choose the table", "body": "VLOOKUP only looks in the first column of the selected range. Put your lookup values there." },
+      { "heading": "Set the column index", "body": "Count from the left edge of the selected range: column 2 returns the second column." },
+      { "heading": "Pick exact or approximate", "body": "Use 0/FALSE for exact matches. Use 1/TRUE only when the first column is sorted and you want the closest lower match." }
+    ],
+    "faqs": [
+      { "question": "Why does VLOOKUP return #N/A?", "answer": "Usually the lookup value is not in the first column, text/number formats differ, or you used approximate match on unsorted data." },
+      { "question": "Can VLOOKUP look left?", "answer": "No. VLOOKUP searches the first column and returns columns to the right. Use XLOOKUP or INDEX/MATCH for leftward lookups." }
+    ],
+    "relatedFunctions": ["vlookup", "xlookup", "index", "match"],
+    "relatedTasks": [],
+    "relatedLessons": ["xlookup-basics", "if-logic"]
+  },
+  {
+    "slug": "xlookup-basics",
+    "topic": "lookup",
+    "title": "XLOOKUP Basics",
+    "description": "Search any direction, return any column, and handle missing matches cleanly.",
+    "level": "intermediate",
+    "exercises": ["xlookup-price-01", "xlookup-default-01"],
+    "overview": "XLOOKUP is the modern replacement for VLOOKUP: it can search left or right, return a column to the left, and show a custom value when no match exists. This lesson practices exact lookups and the if-not-found argument.",
+    "objectives": [
+      "Write XLOOKUP with lookup array and return array.",
+      "Use the if-not-found argument for cleaner reports.",
+      "Compare XLOOKUP with VLOOKUP mentally before choosing one."
+    ],
+    "steps": [
+      { "heading": "Separate lookup and return ranges", "body": "Unlike VLOOKUP, the search range and result range can be different shapes as long as they align." },
+      { "heading": "Add a default", "body": "The fourth argument controls what appears when no match is found, replacing #N/A with text like \"Not found\"." },
+      { "heading": "Prefer exact match", "body": "XLOOKUP defaults to exact matching, which prevents surprises from unsorted approximate lookups." }
+    ],
+    "faqs": [
+      { "question": "Does XLOOKUP work in older Excel?", "answer": "XLOOKUP requires Microsoft 365 or Excel 2021 and later. For older versions, use VLOOKUP or INDEX/MATCH." },
+      { "question": "Why use XLOOKUP over VLOOKUP?", "answer": "It is more flexible: leftward lookup, no column-index counting, exact match by default, and a built-in not-found value." }
+    ],
+    "relatedFunctions": ["xlookup", "vlookup", "index", "match"],
+    "relatedTasks": [],
+    "relatedLessons": ["vlookup-basics"]
+  },
+  {
+    "slug": "text-cleanup-basics",
+    "topic": "text",
+    "title": "Text Cleanup Basics",
+    "description": "Trim spaces, change case and join text values with Excel formulas.",
+    "level": "beginner",
+    "exercises": ["text-trim-01", "text-upper-01", "text-join-01"],
+    "overview": "Messy text breaks lookups and reports. This lesson practices three everyday fixes: removing extra spaces with TRIM, normalizing case with UPPER, and joining values with the concatenation operator.",
+    "objectives": [
+      "Remove leading and trailing spaces with TRIM.",
+      "Standardize text case with UPPER.",
+      "Combine first and last name style values in one formula."
+    ],
+    "steps": [
+      { "heading": "Clean before you compare", "body": "A trailing space makes \"East \" different from \"East\". TRIM first, then lookup or count." },
+      { "heading": "Normalize case", "body": "Use UPPER or LOWER when imported data mixes \"east\", \"East\" and \"EAST\"." },
+      { "heading": "Join with &", "body": "The ampersand operator combines text and values without needing CONCAT in older Excel versions." }
+    ],
+    "faqs": [
+      { "question": "Why does my lookup fail after copying data?", "answer": "Extra spaces or different capitalization are common causes. Clean with TRIM and UPPER/LOWER before matching." },
+      { "question": "What is the difference between TRIM and CLEAN?", "answer": "TRIM removes extra spaces; CLEAN removes non-printable characters. Use both when data came from PDFs or web pages." }
+    ],
+    "relatedFunctions": ["trim", "concat", "textjoin", "left", "mid"],
+    "relatedTasks": [],
+    "relatedLessons": ["vlookup-basics"]
+  },
+  {
+    "slug": "date-math-basics",
+    "topic": "dates",
+    "title": "Date Math Basics",
+    "description": "Calculate days between dates and extract the year from an Excel date serial.",
+    "level": "beginner",
+    "exercises": ["date-days-01", "date-year-01"],
+    "overview": "Excel stores dates as serial numbers, which makes date math possible with simple subtraction and functions like DAYS and YEAR. This lesson uses serial values so the practice matches how formulas actually calculate.",
+    "objectives": [
+      "Use DAYS to calculate the number of days between two dates.",
+      "Extract the year from a date serial with YEAR.",
+      "Recognize why Excel dates are numbers under the hood."
+    ],
+    "steps": [
+      { "heading": "Remember dates are numbers", "body": "Excel stores 2026-01-01 as a serial value, so subtraction gives elapsed days." },
+      { "heading": "Use DAYS for clarity", "body": "DAYS(end_date, start_date) returns the difference without depending on cell subtraction direction." },
+      { "heading": "Extract parts with YEAR/MONTH/DAY", "body": "Use YEAR, MONTH and DAY when you need report labels or grouping by period." }
+    ],
+    "faqs": [
+      { "question": "Why is my date formula showing a number?", "answer": "Excel stores dates as serial numbers. Apply a date number format or wrap the result in TEXT for display." },
+      { "question": "Does DAYS work with text dates?", "answer": "It is safer to use real Excel dates or DATE() values. Text dates may not coerce consistently across locales." }
+    ],
+    "relatedFunctions": ["date", "today"],
+    "relatedTasks": [],
+    "relatedLessons": ["sumif-countif-basics"]
+  },
+  {
+    "slug": "sumif-countif-basics",
+    "topic": "conditional-aggregation",
+    "title": "SUMIF and COUNTIF Basics",
+    "description": "Total and count only the rows that meet a condition.",
+    "level": "intermediate",
+    "exercises": ["sumif-east-01", "countif-over-100-01"],
+    "overview": "SUMIF and COUNTIF let a spreadsheet answer questions like 'total sales for East' or 'how many orders are over $100' without filtering the table manually. This lesson practices single-criteria totals and counts.",
+    "objectives": [
+      "Write SUMIF with separate criteria and sum ranges.",
+      "Write COUNTIF with text and numeric criteria.",
+      "Know when to move from SUMIF/COUNTIF to SUMIFS/COUNTIFS."
+    ],
+    "steps": [
+      { "heading": "Match the ranges", "body": "In SUMIF, criteria_range and sum_range should cover the same rows even if they are different columns." },
+      { "heading": "Quote text criteria", "body": "Use quotes for text criteria like \"East\" and operators like \">100\" for numbers." },
+      { "heading": "Add criteria pairs for multiple conditions", "body": "When one condition is not enough, use SUMIFS or COUNTIFS with range/criteria pairs." }
+    ],
+    "faqs": [
+      { "question": "Why does SUMIF return 0?", "answer": "Check criteria spelling, number formats, and whether the ranges start on the same row." },
+      { "question": "SUMIF vs SUMIFS?", "answer": "SUMIF handles one condition; SUMIFS handles multiple conditions and puts sum_range first." }
+    ],
+    "relatedFunctions": ["sumif", "countif", "sum", "if"],
+    "relatedTasks": [],
+    "relatedLessons": ["if-logic", "count-basics"]
+  },
+  {
     "slug": "shortcut-basics",
     "topic": "shortcuts",
     "title": "Essential Shortcuts",

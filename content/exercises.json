@@ -112,6 +112,160 @@
     "xp": 20
   },
   {
+    "id": "vlookup-price-01",
+    "type": "formula",
+    "prompt": "In D2, look up the SKU in D1 and return its price from A2:B4.",
+    "grid": {
+      "A1": "SKU", "B1": "Price",
+      "A2": "A-100", "B2": 12,
+      "A3": "B-200", "B3": 18,
+      "A4": "C-300", "B4": 25,
+      "D1": "B-200"
+    },
+    "answerCell": "D2",
+    "expectValue": 18,
+    "acceptFns": ["VLOOKUP"],
+    "hints": ["Use 0 or FALSE for an exact match", "=VLOOKUP(D1,A2:B4,2,0)"],
+    "xp": 20
+  },
+  {
+    "id": "vlookup-band-01",
+    "type": "formula",
+    "prompt": "In D1, write an approximate VLOOKUP that converts the score in A1 to a grade band.",
+    "grid": {
+      "A1": 82,
+      "A2": 0, "B2": "F",
+      "A3": 70, "B3": "D",
+      "A4": 80, "B4": "B",
+      "A5": 90, "B5": "A"
+    },
+    "answerCell": "D1",
+    "expectValue": "B",
+    "acceptFns": ["VLOOKUP"],
+    "hints": ["The first column must be sorted ascending", "Use 1 or TRUE for approximate match"],
+    "xp": 25
+  },
+  {
+    "id": "xlookup-price-01",
+    "type": "formula",
+    "prompt": "In D2, use XLOOKUP to find the SKU in D1 and return its price from B2:B4.",
+    "grid": {
+      "A1": "SKU", "B1": "Price",
+      "A2": "A-100", "B2": 12,
+      "A3": "B-200", "B3": 18,
+      "A4": "C-300", "B4": 25,
+      "D1": "C-300"
+    },
+    "answerCell": "D2",
+    "expectValue": 25,
+    "acceptFns": ["XLOOKUP"],
+    "hints": ["Lookup array first, return array second", "=XLOOKUP(D1,A2:A4,B2:B4)"],
+    "xp": 20
+  },
+  {
+    "id": "xlookup-default-01",
+    "type": "formula",
+    "prompt": "In D2, use XLOOKUP to find the SKU in D1; if it is missing, return \"Not found\".",
+    "grid": {
+      "A2": "A-100", "B2": 12,
+      "A3": "B-200", "B3": 18,
+      "A4": "C-300", "B4": 25,
+      "D1": "Z-999"
+    },
+    "answerCell": "D2",
+    "expectValue": "Not found",
+    "acceptFns": ["XLOOKUP"],
+    "hints": ["The fourth argument is the if-not-found value", "=XLOOKUP(D1,A2:A4,B2:B4,\"Not found\")"],
+    "xp": 25
+  },
+  {
+    "id": "text-trim-01",
+    "type": "formula",
+    "prompt": "In B1, remove the extra spaces around the text in A1.",
+    "grid": { "A1": "  west region  " },
+    "answerCell": "B1",
+    "expectValue": "west region",
+    "acceptFns": ["TRIM"],
+    "hints": ["TRIM removes leading and trailing spaces", "=TRIM(A1)"],
+    "xp": 10
+  },
+  {
+    "id": "text-upper-01",
+    "type": "formula",
+    "prompt": "In B1, convert the text in A1 to uppercase.",
+    "grid": { "A1": "excel practice" },
+    "answerCell": "B1",
+    "expectValue": "EXCEL PRACTICE",
+    "acceptFns": ["UPPER"],
+    "hints": ["UPPER changes text case", "=UPPER(A1)"],
+    "xp": 10
+  },
+  {
+    "id": "text-join-01",
+    "type": "formula",
+    "prompt": "In B1, join the first name in A1 and last name in A2 with a space between them.",
+    "grid": { "A1": "Ada", "A2": "Lovelace" },
+    "answerCell": "B1",
+    "expectValue": "Ada Lovelace",
+    "acceptFns": [],
+    "hints": ["Use the & operator with a quoted space", "=A1&\" \"&A2"],
+    "xp": 15
+  },
+  {
+    "id": "date-days-01",
+    "type": "formula",
+    "prompt": "In B1, calculate how many days are between the dates in A1 and A2.",
+    "grid": { "A1": 46023, "A2": 46032 },
+    "answerCell": "B1",
+    "expectValue": 9,
+    "acceptFns": ["DAYS"],
+    "hints": ["DAYS(end_date, start_date)", "=DAYS(A2,A1)"],
+    "xp": 15
+  },
+  {
+    "id": "date-year-01",
+    "type": "formula",
+    "prompt": "In B1, extract the year from the date serial in A1.",
+    "grid": { "A1": 46023 },
+    "answerCell": "B1",
+    "expectValue": 2026,
+    "acceptFns": ["YEAR"],
+    "hints": ["YEAR returns the year portion of a date", "=YEAR(A1)"],
+    "xp": 10
+  },
+  {
+    "id": "sumif-east-01",
+    "type": "formula",
+    "prompt": "In C1, total the sales in B2:B4 only for rows where the region in A2:A4 is \"East\".",
+    "grid": {
+      "A1": "Region", "B1": "Sales",
+      "A2": "East", "B2": 120,
+      "A3": "West", "B3": 80,
+      "A4": "East", "B4": 200
+    },
+    "answerCell": "C1",
+    "expectValue": 320,
+    "acceptFns": ["SUMIF"],
+    "hints": ["Criteria range first, criteria second, sum range third", "=SUMIF(A2:A4,\"East\",B2:B4)"],
+    "xp": 20
+  },
+  {
+    "id": "countif-over-100-01",
+    "type": "formula",
+    "prompt": "In C1, count how many sales values in B2:B4 are greater than 100.",
+    "grid": {
+      "A1": "Region", "B1": "Sales",
+      "A2": "East", "B2": 120,
+      "A3": "West", "B3": 80,
+      "A4": "East", "B4": 200
+    },
+    "answerCell": "C1",
+    "expectValue": 2,
+    "acceptFns": ["COUNTIF"],
+    "hints": ["Use a comparison operator in quotes", "=COUNTIF(B2:B4,\">100\")"],
+    "xp": 15
+  },
+  {
     "id": "shortcut-bold-01",
     "type": "shortcut",
     "prompt": "Make the selected cell bold using your keyboard.",

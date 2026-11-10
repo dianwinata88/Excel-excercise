@@ -15,6 +15,9 @@ export function SiteHeader() {
           <Link href="/functions" className="hover:underline">
             Functions
           </Link>
+          <Link href="/how-to" className="hover:underline">
+            How-to
+          </Link>
           <Link href="/shortcuts" className="hover:underline">
             Shortcuts
           </Link>
