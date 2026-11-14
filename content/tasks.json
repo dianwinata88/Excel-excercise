@@ -459,6 +459,281 @@
     "relatedLessons": ["sumif-countif-basics", "if-logic"]
   },
   {
+    "slug": "freeze-top-row",
+    "task": "Freeze the top row",
+    "intro": "Freezing the top row keeps headers visible while you scroll through long sheets, which makes filtering, sorting and data entry much less error-prone.",
+    "steps": [
+      { "heading": "Open the View tab", "body": "On the ribbon, choose View → Freeze Panes. Excel offers Freeze Top Row, Freeze First Column and Freeze Panes." },
+      { "heading": "Choose Freeze Top Row", "body": "Select Freeze Top Row to lock row 1 in place. For a header in row 2, click any cell below the headers and use Freeze Panes instead." },
+      { "heading": "Check the frozen line", "body": "A thin gray line appears below the frozen rows. Scroll down to confirm the headers stay put." },
+      { "heading": "Unfreeze when needed", "body": "Return to View → Freeze Panes → Unfreeze Panes before changing the sheet layout." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "freeze-first-column",
+    "task": "Freeze the first column",
+    "intro": "When row labels or IDs sit in column A, freezing the first column keeps them beside every record as you scroll right through wide tables.",
+    "steps": [
+      { "heading": "Select column B", "body": "Click the B column header, or select any cell in column B, so Excel knows where the freeze point should be." },
+      { "heading": "Choose Freeze First Column", "body": "Go to View → Freeze Panes → Freeze First Column." },
+      { "heading": "For a custom freeze point", "body": "If you also want the top row frozen, click the first data cell below and right of the headers — often B2 — then choose Freeze Panes." },
+      { "heading": "Verify and unfreeze", "body": "Scroll right; column A should remain visible. Use View → Freeze Panes → Unfreeze Panes to release it." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "merge-cells",
+    "task": "Merge cells without losing data",
+    "intro": "Merging cells is best for titles and labels, not data tables — Excel keeps only the upper-left value and can break formulas that expect one value per cell.",
+    "steps": [
+      { "heading": "Put text in the top-left cell", "body": "Enter the title or label in the upper-left cell first; other values in the merged range will be discarded." },
+      { "heading": "Select the cells", "body": "Highlight the contiguous cells you want to combine, such as A1:D1 for a banner." },
+      { "heading": "Choose a merge option", "body": "Home → Alignment → Merge & Center dropdown offers Merge & Center, Merge Across, Merge Cells and Unmerge Cells." },
+      { "heading": "Format the result", "body": "Use Merge Across to center each row without merging columns into one cell, or Merge Cells when you do not want centering." },
+      { "heading": "Unmerge carefully", "body": "Unmerge Cells restores the grid but does not restore values that were discarded when the cells were merged." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "transpose-rows-to-columns",
+    "task": "Transpose rows into columns",
+    "intro": "Paste Special → Transpose flips a vertical list into a horizontal row — or a two-dimensional range — without rewriting formulas by hand.",
+    "steps": [
+      { "heading": "Copy the source range", "body": "Select the cells you want to flip and press Ctrl+C." },
+      { "heading": "Pick the destination", "body": "Click the top-left cell where the transposed output should start, leaving enough empty space for the result." },
+      { "heading": "Open Paste Special", "body": "Home → Paste → Paste Special, or right-click the destination and choose Paste Special." },
+      { "heading": "Check Transpose", "body": "Tick Transpose and click OK. The range flips into the new orientation and formulas transpose with it, adjusting their references. Choose Values instead of All in the dialog first if you want static results." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "remove-blank-rows",
+    "task": "Remove blank rows",
+    "intro": "Blank rows split ranges, break charts and inflate pivot tables. Excel can select every blank cell in a column at once so you can delete the whole rows cleanly.",
+    "steps": [
+      { "heading": "Select a key column", "body": "Drag down the column that is filled on every real record — an ID, name or date column. Restricting the selection to one column is what keeps partially filled rows safe." },
+      { "heading": "Find blanks with Go To Special", "body": "Press Ctrl+G → Special → Blanks, or F5 → Special → Blanks, to select every empty cell in the selected column. Rows flagged now are truly blank in the key field." },
+      { "heading": "Delete entire rows", "body": "Right-click one selected blank → Delete → Entire row → OK. Excel removes the rows, not just the selected cells." },
+      { "heading": "Check for space-only cells", "body": "Cells containing spaces are not truly blank. Clean them with TRIM first if Go To Special misses rows." },
+      { "heading": "Alternative: filter blanks", "body": "Add a helper column with =IF(COUNTA(A2:D2)=0,\"Blank\",\"Data\"), filter to Blank, then delete the visible rows." }
+    ],
+    "formulas": [
+      { "formula": "=IF(COUNTA(A2:D2)=0,\"Blank\",\"Data\")", "explanation": "Flags rows where every cell in the range is empty." }
+    ],
+    "relatedFunctions": ["if", "counta"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "create-a-pivot-table",
+    "task": "Create a pivot table",
+    "intro": "A PivotTable summarizes large ranges by dragging fields into Rows, Columns and Values, letting you total, count or average without writing formulas.",
+    "steps": [
+      { "heading": "Prepare clean source data", "body": "Use one header row, no blank rows inside the table, and consistent labels so the PivotTable groups correctly." },
+      { "heading": "Insert the PivotTable", "body": "Select any cell in the range, then Insert → PivotTable. Keep New Worksheet selected unless you need the summary beside the data." },
+      { "heading": "Build the layout", "body": "Drag fields to Rows and Columns for grouping, and drag a numeric field to Values for totals." },
+      { "heading": "Change the calculation", "body": "Open the field's value settings, such as Sum of Sales, to switch between Sum, Count, Average, Max or Min." },
+      { "heading": "Refresh after edits", "body": "Right-click the PivotTable → Refresh, or use PivotTable Analyze → Refresh All when source data changes." }
+    ],
+    "formulas": [],
+    "relatedFunctions": ["sum", "count", "average"],
+    "relatedLessons": ["sum-basics"]
+  },
+  {
+    "slug": "make-a-bar-chart",
+    "task": "Make a bar chart",
+    "intro": "A bar or column chart turns rows of numbers into an instant visual comparison, and Excel's chart tools can relabel and restyle it without editing the data.",
+    "steps": [
+      { "heading": "Select the data", "body": "Highlight the category labels and values together, including headers so Excel can name the axes." },
+      { "heading": "Insert the chart", "body": "Insert → Charts → choose Clustered Column for vertical bars or Clustered Bar for horizontal bars." },
+      { "heading": "Check the orientation", "body": "If series and categories look swapped, Chart Design → Switch Row/Column fixes the layout." },
+      { "heading": "Add labels and titles", "body": "Use Chart Elements (+) for axis titles and data labels, then Chart Design to pick a style." },
+      { "heading": "Format for readability", "body": "Right-click an axis or bar to adjust bounds, gap width or colors; keep the message readable rather than decorative." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "apply-conditional-formatting",
+    "task": "Apply conditional formatting",
+    "intro": "Conditional formatting highlights patterns automatically — overdue dates, top performers, blanks and outliers update as the data changes.",
+    "steps": [
+      { "heading": "Select the cells to format", "body": "Highlight the data range, not the headers, before opening the rules." },
+      { "heading": "Pick a preset", "body": "Home → Conditional Formatting → Highlight Cells Rules for comparisons, or Top/Bottom Rules for ranks." },
+      { "heading": "Try Color Scales or Data Bars", "body": "Color Scales and Data Bars show magnitude across the range without picking a single threshold." },
+      { "heading": "Use a formula for custom logic", "body": "Choose New Rule → Use a formula → enter =B2>AVERAGE(B$2:B$10), then set the format. The formula is relative to the active cell." },
+      { "heading": "Manage existing rules", "body": "Conditional Formatting → Manage Rules lets you edit, reorder or delete rules that overlap." }
+    ],
+    "formulas": [
+      { "formula": "=B2>AVERAGE(B$2:B$10)", "explanation": "Highlights cells above the range average; adjust the reference to match your active cell." }
+    ],
+    "relatedFunctions": ["average"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "sort-by-multiple-columns",
+    "task": "Sort by multiple columns",
+    "intro": "Sorting by one column is easy; sorting by several columns at once keeps groups together — for example region first, then sales descending.",
+    "steps": [
+      { "heading": "Start from any cell", "body": "Click inside the table and use Data → Sort, not the A-Z buttons, so Excel detects headers and lists every column." },
+      { "heading": "Add the first level", "body": "In Sort, choose the primary column, order such as A to Z or Smallest to Largest, and keep My data has headers ticked if needed." },
+      { "heading": "Add more levels", "body": "Click Add Level for each tie-breaker, such as Region ascending then Sales descending." },
+      { "heading": "Use Custom List for fixed order", "body": "For months or weekdays, choose Custom List in Order and pick January…December or Sunday…Saturday." },
+      { "heading": "Review blanks and totals", "body": "Excel sorts blanks last by default. If the range includes totals, exclude them or sort only the data rows." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "filter-data-in-place",
+    "task": "Filter data in place",
+    "intro": "Filtering hides rows that do not match criteria while leaving the worksheet intact, which is faster than copying data into a new report.",
+    "steps": [
+      { "heading": "Turn on filters", "body": "Select the table or range and click Data → Filter, or press Ctrl+Shift+L. Dropdown arrows appear in the header row." },
+      { "heading": "Filter one column", "body": "Click the arrow, untick Select All, then tick the values you want — or use Text Filters/Number Filters for conditions." },
+      { "heading": "Combine columns", "body": "Apply filters down several columns to narrow results, such as Region = East and Status = Open." },
+      { "heading": "Clear or remove", "body": "Filter → Clear removes criteria but keeps arrows; Data → Filter again removes the arrows entirely. Hidden rows are not deleted." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "wrap-text-in-cell",
+    "task": "Wrap text in a cell",
+    "intro": "Wrap Text keeps long labels readable inside a cell instead of spilling over neighbors or forcing a very wide column.",
+    "steps": [
+      { "heading": "Select the cells", "body": "Highlight the cells that contain long text, titles or descriptions." },
+      { "heading": "Turn on Wrap Text", "body": "Home → Alignment → Wrap Text. Excel increases row height automatically when the column width is fixed." },
+      { "heading": "Add a manual line break", "body": "Double-click the cell and press Alt+Enter where you want a new line inside the same cell." },
+      { "heading": "Tune width and height", "body": "Adjust column width and row height, or use Format → AutoFit Row Height after wrapping. Avoid wrapping inside formulas unless intentional." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "autofit-column-width",
+    "task": "Autofit column width",
+    "intro": "Autofit sizes columns to the widest visible content, which is faster than dragging boundaries when labels or numbers keep changing.",
+    "steps": [
+      { "heading": "Select the columns", "body": "Click one column header, drag across several, or press Ctrl+A to select the whole sheet." },
+      { "heading": "Double-click the boundary", "body": "Position the mouse on the line between two column letters until it becomes a double arrow, then double-click." },
+      { "heading": "Or use the ribbon", "body": "Home → Format → AutoFit Column Width applies the same fit to the selected columns. For rows, Home → Format → AutoFit Row Height." },
+      { "heading": "Check the result", "body": "Scroll through the sheet to confirm headers and values are not clipped; widen specific columns manually when autofit is too narrow for intentional spacing." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "protect-a-worksheet",
+    "task": "Protect a worksheet",
+    "intro": "Protecting a worksheet prevents accidental edits to formulas and layout while still letting users enter data in cells you explicitly unlock.",
+    "steps": [
+      { "heading": "Unlock editable cells first", "body": "Select the input cells, press Ctrl+1 → Protection, and untick Locked. Leave formula and label cells locked." },
+      { "heading": "Review → Protect Sheet", "body": "Go to Review → Protect Sheet. You can set a password, though it only prevents casual edits, not determined users." },
+      { "heading": "Choose allowed actions", "body": "In the dialog, tick what users may do — Select locked cells, Format cells, Insert rows — then click OK." },
+      { "heading": "Test before sharing", "body": "Try typing in a locked cell and an unlocked cell to confirm the protection behaves as intended." },
+      { "heading": "Unprotect when needed", "body": "Review → Unprotect Sheet removes protection. If a password was set, enter it first." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "hide-rows-and-columns",
+    "task": "Hide rows and columns",
+    "intro": "Hiding rows and columns is useful for focusing a report or temporarily removing helper data without deleting it.",
+    "steps": [
+      { "heading": "Select what to hide", "body": "Click row numbers to hide rows or column letters to hide columns; Ctrl-click selects non-adjacent items." },
+      { "heading": "Hide with the ribbon", "body": "Home → Format → Hide & Unhide → Hide Rows or Hide Columns." },
+      { "heading": "Use shortcuts", "body": "Ctrl+9 hides selected rows and Ctrl+0 hides selected columns. Ctrl+Shift+9 and Ctrl+Shift+0 unhide them." },
+      { "heading": "Show hidden data", "body": "Select the rows or columns on both sides of the hidden area, then Home → Format → Hide & Unhide → Unhide Rows/Columns." },
+      { "heading": "Remember it is not security", "body": "Hidden rows still affect formulas and can be revealed. Use Protect Sheet if the data must stay private." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": []
+  },
+  {
+    "slug": "find-duplicate-values",
+    "task": "Find duplicate values",
+    "intro": "Conditional formatting can spotlight repeated values instantly, while a COUNTIF helper column gives you a filterable list before you delete anything.",
+    "steps": [
+      { "heading": "Highlight duplicates visually", "body": "Select the range, then Home → Conditional Formatting → Highlight Cells Rules → Duplicate Values and choose a format." },
+      { "heading": "Build a COUNTIF flag", "body": "In a helper column enter =COUNTIF($A$2:$A$100,A2)>1 and fill down. TRUE marks values that appear more than once." },
+      { "heading": "Filter to review", "body": "Turn on Data → Filter and filter the helper column to TRUE to inspect only the duplicates." },
+      { "heading": "Remove duplicates deliberately", "body": "When ready, Data → Remove Duplicates can delete repeats, but copy the range first if the original must be preserved." },
+      { "heading": "Check whole rows", "body": "For duplicate rows across several columns, select all relevant columns in Remove Duplicates or use COUNTIFS with multiple criteria." }
+    ],
+    "formulas": [
+      { "formula": "=COUNTIF($A$2:$A$100,A2)>1", "explanation": "TRUE marks every value that appears more than once in the range." }
+    ],
+    "relatedFunctions": ["countif", "countifs"],
+    "relatedLessons": ["count-basics"]
+  },
+  {
+    "slug": "calculate-percentage-of-total",
+    "task": "Calculate percentage of total",
+    "intro": "Percentages of total answer 'what share is this?' questions in budgets, surveys and scorecards — the key is dividing by the correct denominator.",
+    "steps": [
+      { "heading": "Pick the denominator", "body": "Use the grand total in one cell for share of total, or each row or column total for share within a group." },
+      { "heading": "Write the division", "body": "If B2 is the part and the total is in $B$101, enter =B2/$B$101 so the denominator stays fixed when copied." },
+      { "heading": "Use SUM for a dynamic total", "body": "=B2/SUM($B$2:$B$100) works when the total should recalculate from the range itself." },
+      { "heading": "Format as percent", "body": "Select the formula cells and press Ctrl+Shift+% or Home → Number Format → Percentage." },
+      { "heading": "Check edge cases", "body": "If totals can be zero, wrap the formula in IFERROR to avoid #DIV/0! errors." }
+    ],
+    "formulas": [
+      { "formula": "=B2/$B$101", "explanation": "Divides by a fixed total cell, useful when the denominator is already calculated." },
+      { "formula": "=B2/SUM($B$2:$B$100)", "explanation": "Divides by a recalculated total for the whole range." },
+      { "formula": "=IFERROR(B2/SUM($B$2:$B$100),0)", "explanation": "Returns 0 instead of #DIV/0! when the total is zero." }
+    ],
+    "relatedFunctions": ["sum", "iferror"],
+    "relatedLessons": ["sum-basics"]
+  },
+  {
+    "slug": "convert-range-to-table",
+    "task": "Convert a range to a table",
+    "intro": "Excel Tables add filters, banded rows, calculated columns and structured references to a plain range with one shortcut.",
+    "steps": [
+      { "heading": "Select the range", "body": "Click any cell inside the data or select the full range including headers." },
+      { "heading": "Insert the table", "body": "Press Ctrl+T or Insert → Table. Confirm My table has headers is ticked, then click OK." },
+      { "heading": "Use Table Design", "body": "On the Table Design tab, rename the table, choose a style and turn Total Row on for quick totals." },
+      { "heading": "Reference structured columns", "body": "Formulas can use table names and column headers, such as =SUM(Sales[Amount]), instead of fragile cell ranges." }
+    ],
+    "formulas": [
+      { "formula": "=SUM(Sales[Amount])", "explanation": "Structured references stay readable when rows are added or removed." }
+    ],
+    "relatedFunctions": ["sum"],
+    "relatedLessons": []
+  },
+  {
+    "slug": "split-text-to-columns",
+    "task": "Split text to columns",
+    "intro": "Text to Columns turns one messy column into several clean columns using delimiters, fixed widths or dates — ideal for imports and pasted lists.",
+    "steps": [
+      { "heading": "Select only the source column", "body": "Highlight the column containing the combined text and leave room to the right for the output columns." },
+      { "heading": "Start the wizard", "body": "Data → Text to Columns opens a three-step wizard: Delimited, Fixed width or Date." },
+      { "heading": "Choose delimiters", "body": "For Delimited, tick the separator characters — comma, semicolon, tab, space or a custom character — and preview the split." },
+      { "heading": "Set destination if needed", "body": "On the final step, change Destination if the output should not start in the selected column, then click Finish." },
+      { "heading": "Clean up after splitting", "body": "Use TRIM on the new columns if extra spaces remain, and delete the original combined column only after checking the results." }
+    ],
+    "formulas": [],
+    "relatedFunctions": [],
+    "relatedLessons": ["text-cleanup-basics"]
+  },
+  {
     "slug": "excel-interview-questions",
     "task": "Answer Excel interview questions",
     "intro": "Excel interview questions usually test whether you can choose the right function, explain your logic and work quickly under time pressure.",

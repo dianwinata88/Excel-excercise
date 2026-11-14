@@ -4,7 +4,7 @@
     "name": "Sum",
     "title": "SUM Lessons — Excel Practice",
     "description": "Practice adding numbers with SUM, ranges and quick totals.",
-    "lessons": ["sum-basics", "sum-ranges"]
+    "lessons": ["sum-basics", "sum-ranges", "sumproduct-basics", "percentage-calculations"]
   },
   {
     "slug": "count",
@@ -32,14 +32,14 @@
     "name": "Text",
     "title": "Excel Text Lessons — Clean, Uppercase & Join Text",
     "description": "Practice cleaning text with TRIM, changing case with UPPER and joining values with formulas.",
-    "lessons": ["text-cleanup-basics"]
+    "lessons": ["text-cleanup-basics", "text-functions-basics"]
   },
   {
     "slug": "dates",
     "name": "Dates",
     "title": "Excel Date Lessons — DAYS, YEAR & Date Math",
     "description": "Practice date math with DAYS and YEAR using Excel date serial values.",
-    "lessons": ["date-math-basics"]
+    "lessons": ["date-math-basics", "date-functions-basics"]
   },
   {
     "slug": "conditional-aggregation",
@@ -54,5 +54,12 @@
     "title": "Excel Shortcut Lessons — Practice on Your Keyboard",
     "description": "Build muscle memory for the most-used Excel shortcuts.",
     "lessons": ["shortcut-basics"]
+  },
+  {
+    "slug": "data",
+    "name": "Data",
+    "title": "Excel Data Lessons — Filter, Sort, Find & Named Ranges",
+    "description": "Practice filtering, sorting, finding and replacing text, and naming ranges.",
+    "lessons": ["filter-basics", "sorting-and-filtering", "find-and-substitute", "named-ranges-basics"]
   }
 ]

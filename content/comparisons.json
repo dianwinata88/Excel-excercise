@@ -276,5 +276,782 @@
     ],
     "relatedFunctions": ["sumif", "countif", "sum"],
     "relatedComparisons": ["sumif-vs-sumifs", "countif-vs-countifs"]
+  },
+  {
+    "slug": "sumproduct-vs-sumifs",
+    "leftName": "SUMPRODUCT",
+    "rightName": "SUMIFS",
+    "title": "SUMPRODUCT vs SUMIFS: conditional totals with or without helper columns?",
+    "intro": "When you need to total only the rows that meet several conditions, SUMPRODUCT can do it with one range and an array of booleans, while SUMIFS reads like plain English and handles wildcards natively. The catch is that SUMPRODUCT's math semantics and its habit of returning #VALUE! on text in summed ranges trip up people who only copy it from tutorials.",
+    "verdict": "Use SUMIFS whenever your criteria are simple comparisons (equals, greater than, wildcards) — it is clearer, faster and far more forgiving. Use SUMPRODUCT when you need custom arithmetic in the test, such as 'sum price times quantity for items in Q1', or you are on Excel 2003 where SUMIFS does not exist.",
+    "rows": [
+{
+        "aspect": "Core idea",
+        "left": "Multiplies arrays and sums the results",
+        "right": "Classic conditional total: sum_range plus range/criteria pairs"
+      },
+{
+        "aspect": "Example test",
+        "left": "(--(A2:A100=\"East\")*--(B2:B100>10))",
+        "right": "\"East\" in A2:A100, \">10\" in B2:B100"
+      },
+{
+        "aspect": "Wildcard criteria",
+        "left": "No — must build your own with ISNUMBER/SEARCH",
+        "right": "Yes — \"north*\", \"?uest\", \"~?\" work directly"
+      },
+{
+        "aspect": "Range-size rule",
+        "left": "All arrays must be the same dimensions or #VALUE!",
+        "right": "Every range must match the sum range's size or #VALUE!"
+      },
+{
+        "aspect": "Text in the sum range",
+        "left": "#VALUE! error",
+        "right": "Text is simply ignored"
+      },
+{
+        "aspect": "Weighted totals",
+        "left": "Natural: SUMPRODUCT(qty, price)",
+        "right": "Not possible without helper columns"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "All versions",
+        "right": "Excel 2007+"
+      }
+    ],
+    "useLeftWhen": [
+      "You must multiply rows before summing (qty x price, hours x rate).",
+      "You need a custom condition that SUMIFS cannot express, such as proximity of dates or non-wildcard pattern matching.",
+      "You must support Excel 2003 or need the sum to include zeros returned by the product rather than text-ignoring logic."
+    ],
+    "useRightWhen": [
+      "All you need is 'sum X where region = East and amount > 100'.",
+      "Your criteria include wildcards or text comparisons.",
+      "Readers of the workbook should understand the formula at a glance.",
+      "The summed column may contain text or blanks."
+    ],
+    "relatedFunctions": [
+      "sum",
+      "sumifs",
+      "sumif",
+      "if"
+    ],
+    "relatedComparisons": [
+      "sumif-vs-sumifs",
+      "sumif-vs-countif"
+    ]
+  },
+  {
+    "slug": "xlookup-vs-filter",
+    "leftName": "XLOOKUP",
+    "rightName": "FILTER",
+    "title": "XLOOKUP vs FILTER: one match or every match?",
+    "intro": "XLOOKUP returns a single value per lookup — or spills a row or column when the return array is two-dimensional — while FILTER returns the entire set of rows that satisfy a condition. Choosing between them is really choosing between 'find this record' and 'list every record that matches'.",
+    "verdict": "Use XLOOKUP when you look up one key and want the associated value, with exact match by default and a built-in not-found message. Use FILTER when the answer is a list: all rows for a customer, all dates after a cutoff, all products below a price — and it needs Microsoft 365 or Excel 2021+.",
+    "rows": [
+{
+        "aspect": "Output",
+        "left": "One value, one row, or one column (spill)",
+        "right": "A two-dimensional array of every matching row"
+      },
+{
+        "aspect": "Match logic",
+        "left": "Equality, wildcard, or approximate with match_mode",
+        "right": "Any Boolean condition, including arithmetic such as qty*price > 1000"
+      },
+{
+        "aspect": "No matches",
+        "left": "Built-in if_not_found argument",
+        "right": "#CALC! unless you pass an if_empty value"
+      },
+{
+        "aspect": "Duplicates",
+        "left": "Returns the first match silently",
+        "right": "Returns all of them"
+      },
+{
+        "aspect": "Exact match default",
+        "left": "Yes",
+        "right": "Not applicable — the condition defines the match"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "Microsoft 365 / Excel 2021+",
+        "right": "Microsoft 365 / Excel 2021+"
+      },
+{
+        "aspect": "Typical length",
+        "left": "Short; one call per key",
+        "right": "One call for the whole table"
+      }
+    ],
+    "useLeftWhen": [
+      "You have a single key (order ID, SKU) and want one result.",
+      "You want a friendly fallback such as \"Not found\" when the key is missing.",
+      "You need to search right-to-left for the most recent entry."
+    ],
+    "useRightWhen": [
+      "The question is 'show me all rows where ...' rather than 'what is the value for ...'.",
+      "You want several matching columns returned together, dynamically sized.",
+      "The condition is a calculation across columns, not a plain key match."
+    ],
+    "relatedFunctions": [
+      "xlookup",
+      "vlookup",
+      "index",
+      "match"
+    ],
+    "relatedComparisons": [
+      "vlookup-vs-xlookup",
+      "filter-vs-lookup",
+      "index-match-vs-xlookup"
+    ]
+  },
+  {
+    "slug": "iferror-vs-iserror",
+    "leftName": "IFERROR",
+    "rightName": "ISERROR",
+    "title": "IFERROR vs ISERROR: hide the error or test for it?",
+    "intro": "IFERROR is a wrapper that swaps any error for a value of your choosing, while ISERROR is a test that returns TRUE or FALSE and leaves the error visible. One replaces the symptom, the other exposes it — and that difference matters for auditing and for avoiding masked mistakes.",
+    "verdict": "Use IFERROR when you want a clean fallback shown to end users, such as a dash for a missing lookup. Use ISERROR (or better, ISNA, ISNUMBER, ISBLANK) when you need to branch on specific error types, count errors, or keep the original formula visible for debugging.",
+    "rows": [
+{
+        "aspect": "What it returns",
+        "left": "The fallback value instead of the error",
+        "right": "TRUE or FALSE only"
+      },
+{
+        "aspect": "Original error",
+        "left": "Hidden completely",
+        "right": "Still present in the cell it tests"
+      },
+{
+        "aspect": "Error specificity",
+        "left": "Catches every error type, including typos and #DIV/0!",
+        "right": "Also all types; pair with ISNA or ISERR for finer control"
+      },
+{
+        "aspect": "Typical use",
+        "left": "=IFERROR(VLOOKUP(...),\"-\")",
+        "right": "=IF(ISERROR(A1),\"check\",A1) or =SUMPRODUCT(--ISERROR(range))"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "Excel 2007+",
+        "right": "All versions"
+      },
+{
+        "aspect": "Risk",
+        "left": "Can mask genuine bugs silently",
+        "right": "Keeps errors visible unless you act on them"
+      }
+    ],
+    "useLeftWhen": [
+      "You are producing a report for readers who should never see error codes.",
+      "Any error, not just #N/A, should show a default such as 0 or \"-\".",
+      "You need a compact one-function wrapper around a lookup or division."
+    ],
+    "useRightWhen": [
+      "You want to count or flag errors rather than hide them.",
+      "You need to react differently to #N/A versus other errors.",
+      "You are debugging and must keep the original result visible."
+    ],
+    "relatedFunctions": [
+      "iferror",
+      "if",
+      "ifs",
+      "text"
+    ],
+    "relatedComparisons": [
+      "vlookup-vs-xlookup",
+      "count-vs-counta"
+    ]
+  },
+  {
+    "slug": "switch-vs-ifs",
+    "leftName": "SWITCH",
+    "rightName": "IFS",
+    "title": "SWITCH vs IFS: exact value match or multiple conditions?",
+    "intro": "SWITCH compares one expression against a list of exact values and returns the result for the first match, while IFS evaluates a chain of independent TRUE/FALSE conditions. SWITCH is elegant for codes and categories; IFS is the general-purpose replacement for nested IFs with no 'else' trap.",
+    "verdict": "Use SWITCH when you are mapping one value (a status code, grade, region) to a result and exact equality is what you mean. Use IFS when conditions are ranges, comparisons or different cells — and prefer IFS over nested IF whenever you have more than two branches.",
+    "rows": [
+{
+        "aspect": "Input",
+        "left": "One expression compared for equality",
+        "right": "Independent Boolean conditions"
+      },
+{
+        "aspect": "Comparison type",
+        "left": "Exact match only (no wildcards, no ranges)",
+        "right": "Anything that returns TRUE/FALSE"
+      },
+{
+        "aspect": "First-match rule",
+        "left": "Yes — earlier pairs win",
+        "right": "Yes — first TRUE wins"
+      },
+{
+        "aspect": "Default / else",
+        "left": "Optional final argument without a match_value",
+        "right": "Optional final TRUE with a value"
+      },
+{
+        "aspect": "Text comparison",
+        "left": "Case-insensitive",
+        "right": "Depends on your condition (often ISNUMBER(SEARCH(...)))"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "Microsoft 365 / Excel 2021+ (also Excel 2019+ in some builds)",
+        "right": "Microsoft 365 / Excel 2021+"
+      },
+{
+        "aspect": "Typical length",
+        "left": "Compact for 3+ equal cases",
+        "right": "Readable for mixed conditions"
+      }
+    ],
+    "useLeftWhen": [
+      "You map a single code such as \"A\", \"B\", \"C\" to a label.",
+      "All branches compare the same cell with exact values.",
+      "You want to avoid repeating the expression in every branch."
+    ],
+    "useRightWhen": [
+      "Conditions differ: amount > 1000, date < today, region = \"West\".",
+      "You need range tests such as score >= 90.",
+      "Your workbook must avoid SWITCH for older compatibility, where nested IF is the fallback."
+    ],
+    "relatedFunctions": [
+      "ifs",
+      "if",
+      "text",
+      "today"
+    ],
+    "relatedComparisons": [
+      "if-vs-ifs"
+    ]
+  },
+  {
+    "slug": "eomonth-vs-date",
+    "leftName": "EOMONTH",
+    "rightName": "DATE",
+    "title": "EOMONTH vs DATE: getting the last day of the month",
+    "intro": "EOMONTH takes any date and returns the last day of its month, rolling forward or backward with an offset. DATE builds a date from year, month and day numbers and can do the same job with a little arithmetic, but it is not self-documenting and mishandles day zero unless you know the trick.",
+    "verdict": "Use EOMONTH whenever you need month-end dates, billing cut-offs or month boundaries — it is shorter and safer. Use DATE when you are constructing dates from parts (year, month, day) or need full control such as the first day of next month via DATE(y,m+1,1).",
+    "rows": [
+{
+        "aspect": "Purpose",
+        "left": "Returns the last day of a month",
+        "right": "Builds a date from year, month, day numbers"
+      },
+{
+        "aspect": "Month-end syntax",
+        "left": "=EOMONTH(A1,0)",
+        "right": "=DATE(YEAR(A1),MONTH(A1)+1,0)"
+      },
+{
+        "aspect": "Offset argument",
+        "left": "Built in: +1 next month, -1 previous",
+        "right": "None — adjust month yourself"
+      },
+{
+        "aspect": "Day zero handling",
+        "left": "Not applicable",
+        "right": "Day 0 means the last day of the previous month"
+      },
+{
+        "aspect": "Formatting",
+        "left": "Returns a serial number; format as a date",
+        "right": "Same"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "Analysis ToolPak in 2003; built in from 2007",
+        "right": "All versions"
+      },
+{
+        "aspect": "Readability",
+        "left": "Self-explanatory name",
+        "right": "Requires nested YEAR/MONTH calls for month boundaries"
+      }
+    ],
+    "useLeftWhen": [
+      "You need the last calendar day of the current, next or previous month.",
+      "You build period-end cut-offs for reports or deadlines.",
+      "You want a single function instead of DATE(YEAR(...),MONTH(...)+1,0)."
+    ],
+    "useRightWhen": [
+      "You assemble a date from separate year, month and day cells.",
+      "You need the first day of a month: DATE(y,m,1).",
+      "You must support very old Excel without the Analysis ToolPak."
+    ],
+    "relatedFunctions": [
+      "date",
+      "datedif",
+      "today",
+      "now"
+    ],
+    "relatedComparisons": [
+      "today-vs-now",
+      "vlookup-vs-xlookup"
+    ]
+  },
+  {
+    "slug": "trim-vs-clean",
+    "leftName": "TRIM",
+    "rightName": "CLEAN",
+    "title": "TRIM vs CLEAN: spaces and invisible characters",
+    "intro": "TRIM and CLEAN sound interchangeable but fix different problems: TRIM removes extra spaces (leading, trailing, and repeated internal spaces down to one), while CLEAN strips non-printing control characters such as line breaks and tab codes imported from other systems. Neither one does the other's job.",
+    "verdict": "Use TRIM for text tidied by eye — extra spaces from copy-paste or concatenation. Use CLEAN for text imported from web pages, PDFs or other spreadsheets that contains invisible control characters. For a really messy import, nest them: CLEAN first, then TRIM.",
+    "rows": [
+{
+        "aspect": "Removes",
+        "left": "Extra space characters (codes 32), except single spaces between words",
+        "right": "Non-printing characters (codes 0-31), including line breaks"
+      },
+{
+        "aspect": "Spaces",
+        "left": "Yes — leading, trailing and runs of spaces",
+        "right": "No — ordinary spaces are untouched"
+      },
+{
+        "aspect": "Line breaks",
+        "left": "No",
+        "right": "Yes — CHAR(10) and CHAR(13) are removed"
+      },
+{
+        "aspect": "Typical source of dirt",
+        "left": "Hand-typed or pasted text",
+        "right": "Web, PDF, CSV or legacy system exports"
+      },
+{
+        "aspect": "Combining",
+        "left": "=TRIM(CLEAN(A1)) cleans both",
+        "right": "Same nested formula"
+      },
+{
+        "aspect": "Non-breaking space (CHAR 160)",
+        "left": "Not removed",
+        "right": "Not removed — needs SUBSTITUTE"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "All versions",
+        "right": "All versions"
+      }
+    ],
+    "useLeftWhen": [
+      "Values have leading/trailing or double spaces that break exact-match lookups.",
+      "You are tidying names or addresses typed by people.",
+      "You want single spaces between words."
+    ],
+    "useRightWhen": [
+      "Text was imported and shows line breaks or invisible symbols.",
+      "You are preparing data for exact match and suspect hidden control codes.",
+      "You need to remove CHAR(9), CHAR(10) or CHAR(13)."
+    ],
+    "relatedFunctions": [
+      "trim",
+      "text",
+      "len",
+      "left"
+    ],
+    "relatedComparisons": [
+      "concat-vs-textjoin",
+      "left-vs-mid"
+    ]
+  },
+  {
+    "slug": "unique-vs-remove-duplicates",
+    "leftName": "UNIQUE",
+    "rightName": "Remove Duplicates",
+    "title": "UNIQUE vs Remove Duplicates: formula list or one-time cleanup?",
+    "intro": "UNIQUE is a dynamic-array formula that returns a de-duplicated list and updates itself when the source changes, while Excel's Remove Duplicates command permanently rewrites the range in place. One is a living view, the other is a destructive edit — and that decides which one belongs in your workflow.",
+    "verdict": "Use UNIQUE when you want a live, spill-based list that refreshes with the source and can feed COUNT, charts or lookups. Use Remove Duplicates when you are producing a final static dataset for export, pivot tables or another system, and you have backed up the original.",
+    "rows": [
+{
+        "aspect": "Type",
+        "left": "Dynamic array formula",
+        "right": "Ribbon command (Data > Remove Duplicates)"
+      },
+{
+        "aspect": "Source data",
+        "left": "Untouched",
+        "right": "Rows deleted permanently"
+      },
+{
+        "aspect": "Updates automatically",
+        "left": "Yes",
+        "right": "No — re-run after every change"
+      },
+{
+        "aspect": "Returns",
+        "left": "Unique rows or columns with optional by_col, exact_only, once_per_row",
+        "right": "First occurrence of each row kept"
+      },
+{
+        "aspect": "Blank cells",
+        "left": "Returned once if present",
+        "right": "Kept as a row like any other"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "Microsoft 365 / Excel 2021+",
+        "right": "Excel 2007+"
+      },
+{
+        "aspect": "Undo",
+        "left": "Delete the formula",
+        "right": "Only via Undo before saving"
+      }
+    ],
+    "useLeftWhen": [
+      "The list must stay current as new rows are added.",
+      "You want the unique values inside another formula, such as COUNT or a dropdown.",
+      "You cannot afford to lose the duplicate rows."
+    ],
+    "useRightWhen": [
+      "You are finalizing a dataset to hand off, import or pivot.",
+      "You want the file smaller and do not need formulas over the full list.",
+      "You are on Excel 2019 or older."
+    ],
+    "relatedFunctions": [
+      "count",
+      "counta",
+      "text",
+      "concat"
+    ],
+    "relatedComparisons": [
+      "count-vs-counta",
+      "sumif-vs-countif"
+    ]
+  },
+  {
+    "slug": "rank-vs-large",
+    "leftName": "RANK",
+    "rightName": "LARGE",
+    "title": "RANK vs LARGE: position or value?",
+    "intro": "RANK tells you where a number sits in a list (1st, 2nd, 3rd) and ties share the same rank with the next rank skipped, while LARGE simply returns the nth biggest value in a range. They answer different questions, and knowing the difference saves you from ranking a value you already have or fetching a value when you only wanted its position.",
+    "verdict": "Use RANK (or its modern RANK.EQ / RANK.AVG replacements) when you need the position of a specific value in a list, such as a salesperson's standing. Use LARGE when you need the value itself at a position, such as the top three scores, especially inside a dynamic formula like LARGE(range,k).",
+    "rows": [
+{
+        "aspect": "Returns",
+        "left": "The position (rank) of a value",
+        "right": "The value at position k"
+      },
+{
+        "aspect": "Needs the value first",
+        "left": "Yes — you must reference the cell",
+        "right": "No — just the range and k"
+      },
+{
+        "aspect": "Ties",
+        "left": "Same rank; next rank is skipped (1,2,2,4)",
+        "right": "No notion of ties"
+      },
+{
+        "aspect": "Ascending vs descending",
+        "left": "Order argument: 0 descending (default), 1 ascending",
+        "right": "Always descending; use SMALL for ascending"
+      },
+{
+        "aspect": "Modern alternatives",
+        "left": "RANK.EQ, RANK.AVG",
+        "right": "FILTER/SORT for ranked lists"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "All versions (RANK.EQ/.AVG from 2010)",
+        "right": "All versions"
+      },
+{
+        "aspect": "Typical use",
+        "left": "Leaderboard position of one person",
+        "right": "Top-k list or '3rd highest score'"
+      }
+    ],
+    "useLeftWhen": [
+      "You have a value in a cell and need its position in a range.",
+      "You want descending (default) or ascending ranks with ties handled.",
+      "You are building a leaderboard or 'rank of this student' column."
+    ],
+    "useRightWhen": [
+      "You need the actual value at rank k, such as the highest or third-highest score.",
+      "You are generating a top-N list with a helper column.",
+      "You want to combine with SUM, COUNT or other functions over the range."
+    ],
+    "relatedFunctions": [
+      "count",
+      "sum",
+      "average",
+      "round"
+    ],
+    "relatedComparisons": [
+      "sumif-vs-countif",
+      "count-vs-counta"
+    ]
+  },
+  {
+    "slug": "vlookup-vs-hlookup",
+    "leftName": "VLOOKUP",
+    "rightName": "HLOOKUP",
+    "title": "VLOOKUP vs HLOOKUP: vertical or horizontal tables?",
+    "intro": "VLOOKUP and HLOOKUP are twins: one scans down a column to find a key and returns a value from a column to the right, the other scans across a row and returns a value from a row below. The data layout decides which one you need, and most real-world tables are vertical, which is why VLOOKUP dominates.",
+    "verdict": "Use VLOOKUP when your lookup key sits in the leftmost column of a normal row-per-record table — the common case. Use HLOOKUP only when your data is genuinely laid out with keys across the top row and values in rows beneath, such as a matrix of monthly figures by category.",
+    "rows": [
+{
+        "aspect": "Search direction",
+        "left": "Down the first column",
+        "right": "Across the first row"
+      },
+{
+        "aspect": "Return direction",
+        "left": "To the right, by column index",
+        "right": "Downward, by row index"
+      },
+{
+        "aspect": "Typical table shape",
+        "left": "Rows = records, columns = fields",
+        "right": "Rows = fields, columns = periods or categories"
+      },
+{
+        "aspect": "Approximate match",
+        "left": "TRUE requires sorted first column",
+        "right": "TRUE requires sorted first row"
+      },
+{
+        "aspect": "Wildcards",
+        "left": "Supported for exact match",
+        "right": "Supported for exact match"
+      },
+{
+        "aspect": "Readability",
+        "left": "More familiar; column index is intuitive",
+        "right": "Row index is harder to keep track of"
+      },
+{
+        "aspect": "Modern alternative",
+        "left": "XLOOKUP",
+        "right": "XLOOKUP works in both orientations"
+      }
+    ],
+    "useLeftWhen": [
+      "Your table has one row per record and fields across columns.",
+      "You want the most widely understood lookup for colleagues.",
+      "You need approximate match on a sorted first column."
+    ],
+    "useRightWhen": [
+      "Your key values run across the top row (dates, months, versions).",
+      "Each field is a row and each period is a column.",
+      "You are on Microsoft 365 and XLOOKUP is available — it handles both directions with one syntax."
+    ],
+    "relatedFunctions": [
+      "vlookup",
+      "xlookup",
+      "index",
+      "match"
+    ],
+    "relatedComparisons": [
+      "vlookup-vs-xlookup",
+      "vlookup-vs-index-match"
+    ]
+  },
+  {
+    "slug": "today-vs-now",
+    "leftName": "TODAY",
+    "rightName": "NOW",
+    "title": "TODAY vs NOW: date only or date and time?",
+    "intro": "TODAY returns today's date with a time of 00:00:00, while NOW returns the current date and time, updated whenever the sheet recalculates. Both are volatile, meaning they recalculate on every change, which is why they are fast but can slow down large workbooks if overused.",
+    "verdict": "Use TODAY when you only need the calendar date — deadlines, ages in days, month-to-date comparisons — because it is stable within a day and easier to reason about. Use NOW only when the time of day matters, such as timestamps, elapsed durations, or SLA deadlines, and prefer a static value or VBA if you need a frozen timestamp.",
+    "rows": [
+{
+        "aspect": "Returns",
+        "left": "Date only (serial with time 0)",
+        "right": "Date and time"
+      },
+{
+        "aspect": "Time component",
+        "left": "Always 00:00:00",
+        "right": "Current hour, minute, second"
+      },
+{
+        "aspect": "Volatile",
+        "left": "Yes — recalculates on any change",
+        "right": "Yes"
+      },
+{
+        "aspect": "Formatting",
+        "left": "Usually date format",
+        "right": "Needs date+time or custom format to be readable"
+      },
+{
+        "aspect": "Precision in comparisons",
+        "left": "Stable; =TODAY() works for whole-day tests",
+        "right": "=NOW() changes every recalculation; avoid in exact equality tests"
+      },
+{
+        "aspect": "Typical use",
+        "left": "Due date = TODAY()+7",
+        "right": "Timestamp or time remaining"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "All versions",
+        "right": "All versions"
+      }
+    ],
+    "useLeftWhen": [
+      "You need a date with no time, such as a deadline or an age in days.",
+      "You compare against dates in other cells and want exact day matches.",
+      "You want the result to stay constant throughout the day."
+    ],
+    "useRightWhen": [
+      "You need the current time, such as for a timestamp or duration.",
+      "You calculate time remaining in hours or minutes.",
+      "You are logging events and can accept volatility."
+    ],
+    "relatedFunctions": [
+      "today",
+      "now",
+      "date",
+      "datedif"
+    ],
+    "relatedComparisons": [
+      "eomonth-vs-date",
+      "iferror-vs-iserror"
+    ]
+  },
+  {
+    "slug": "absolute-vs-relative-reference",
+    "leftName": "Absolute reference ($A$1)",
+    "rightName": "Relative reference (A1)",
+    "title": "Absolute vs relative reference: when to lock a cell",
+    "intro": "Excel references come in three flavours: relative (A1), which moves when copied; absolute ($A$1), which never moves; and mixed ($A1 or A$1), which locks only one axis. The wrong choice is the most common cause of 'the formula worked in row 1 but broke in row 2' bugs.",
+    "verdict": "Use relative references for values that should move with each row or column when you copy a formula. Use absolute references for constants, lookup tables, tax rates or denominators that must stay fixed. Use mixed references for grids where only the row or only the column should change, such as a multiplication table.",
+    "rows": [
+{
+        "aspect": "Behaviour when copied",
+        "left": "Stays on the same cell",
+        "right": "Shifts by the same offset as the copy"
+      },
+{
+        "aspect": "Syntax",
+        "left": "$` before column and row",
+        "right": "No `$` signs"
+      },
+{
+        "aspect": "Typical use",
+        "left": "Fixed rate, header cell, lookup range anchor",
+        "right": "Each row's own values"
+      },
+{
+        "aspect": "Mixed form",
+        "left": "e.g. $A1 (column fixed) or A$1 (row fixed)",
+        "right": "Not applicable"
+      },
+{
+        "aspect": "Shortcut",
+        "left": "F4 toggles absolute/relative",
+        "right": "Same shortcut"
+      },
+{
+        "aspect": "Risk",
+        "left": "Over-locking breaks fill-down formulas",
+        "right": "Under-locking breaks constants on copy"
+      },
+{
+        "aspect": "Applies to",
+        "left": "Any reference in any function",
+        "right": "Any reference in any function"
+      }
+    ],
+    "useLeftWhen": [
+      "The value is a constant such as a tax rate, discount or growth factor.",
+      "You reference a header or title cell that must stay put.",
+      "You build a lookup table and want the range anchor fixed while copying the formula."
+    ],
+    "useRightWhen": [
+      "Each row or column has its own value that should move with the formula.",
+      "You are filling a formula down a column and every row should reference its own cells.",
+      "You want the formula to adapt automatically when rows or columns are inserted."
+    ],
+    "relatedFunctions": [
+      "vlookup",
+      "index",
+      "match",
+      "sum"
+    ],
+    "relatedComparisons": [
+      "vlookup-vs-index-match",
+      "vlookup-vs-hlookup"
+    ]
+  },
+  {
+    "slug": "textbefore-vs-left",
+    "leftName": "TEXTBEFORE",
+    "rightName": "LEFT",
+    "title": "TEXTBEFORE vs LEFT: split by delimiter or by count?",
+    "intro": "TEXTBEFORE (and its sibling TEXTAFTER) splits text at a delimiter you specify, returning everything before or after the first occurrence. LEFT simply returns the first n characters. If your data has variable-length fields separated by a delimiter, TEXTBEFORE is the right tool; if you know exactly how many characters you need, LEFT is simpler and works everywhere.",
+    "verdict": "Use TEXTBEFORE when the position of what you want is defined by a delimiter such as a space, comma, hyphen or @ — especially for names, emails or codes with varying lengths. Use LEFT when you know the exact character count, such as the first three digits of an ID, or when you must support Excel 2019 or older where TEXTBEFORE does not exist.",
+    "rows": [
+{
+        "aspect": "How it decides",
+        "left": "Delimiter text (first occurrence)",
+        "right": "Fixed number of characters"
+      },
+{
+        "aspect": "Variable-length fields",
+        "left": "Yes — handles any length before the delimiter",
+        "right": "No — you must know the count"
+      },
+{
+        "aspect": "Delimiter not found",
+        "left": "#N/A error",
+        "right": "Not applicable"
+      },
+{
+        "aspect": "Instance control",
+        "left": "instance_num picks the 1st, 2nd, ... occurrence",
+        "right": "None"
+      },
+{
+        "aspect": "Match mode",
+        "left": "case_sensitive and match_mode (wildcards) options",
+        "right": "None"
+      },
+{
+        "aspect": "Excel versions",
+        "left": "Microsoft 365 / Excel 2021+",
+        "right": "All versions"
+      },
+{
+        "aspect": "Typical use",
+        "left": "Extract first name from 'Jane A. Doe', domain from email",
+        "right": "Extract country code, first 3 digits, fixed-width codes"
+      }
+    ],
+    "useLeftWhen": [
+      "The field length varies and a delimiter separates it from the rest.",
+      "You want the text before or after a specific occurrence of a delimiter.",
+      "You are on Microsoft 365 and want readable, delimiter-based extraction."
+    ],
+    "useRightWhen": [
+      "The number of characters is fixed and known.",
+      "You must work in Excel 2019 or older.",
+      "You need a simple, universally compatible function for fixed-width text."
+    ],
+    "relatedFunctions": [
+      "left",
+      "right",
+      "mid",
+      "text"
+    ],
+    "relatedComparisons": [
+      "left-vs-mid",
+      "concat-vs-textjoin",
+      "trim-vs-clean"
+    ]
   }
 ]

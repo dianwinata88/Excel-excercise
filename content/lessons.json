@@ -168,5 +168,215 @@
     "description": "Practice bold, copy and undo shortcuts on your real keyboard.",
     "level": "beginner",
     "exercises": ["shortcut-bold-01", "shortcut-copy-01", "shortcut-undo-01"]
+  },
+  {
+    "slug": "filter-basics",
+    "topic": "data",
+    "title": "Filtering Basics",
+    "description": "Hide rows that do not match your criteria and answer questions about a table.",
+    "level": "beginner",
+    "exercises": ["filter-flag-east-01", "filter-count-north-01", "filter-sum-west-01", "mcq-filter-icon-01"],
+    "overview": "Filtering lets you focus on the rows that matter: show only one region, one product or one date range without deleting anything. This lesson practices the ideas behind filtering — flagging rows with IF and summarizing a filtered view with COUNTIF and SUMIF — and shows where the Filter button lives.",
+    "objectives": [
+      "Understand what filtering does to a table.",
+      "Flag rows that match a condition with IF.",
+      "Count and total only the rows you care about with COUNTIF and SUMIF."
+    ],
+    "steps": [
+      { "heading": "Pick a clean table", "body": "Filtering works best on a range with headers in the first row and no blank rows inside the data." },
+      { "heading": "Turn on the filter", "body": "Select any cell in the table, then click the Filter button on the Data tab. Dropdown arrows appear in each header." },
+      { "heading": "Choose your criteria", "body": "Uncheck \"Select All\" and tick only the values you want to see, or use Text Filters / Number Filters for conditions like \"greater than\"." },
+      { "heading": "Summarize the visible rows", "body": "COUNTIF and SUMIF ignore the filter and read the whole range, so use them when you want totals for a condition no matter what is visible." }
+    ],
+    "faqs": [
+      { "question": "Does filtering delete the hidden rows?", "answer": "No. Filtering only hides rows. Clear the filter to bring every row back — nothing is lost." },
+      { "question": "Why does my SUM include rows I filtered out?", "answer": "SUM reads the entire range regardless of which rows are hidden. Use SUBTOTAL instead if you want a total of only the visible rows." }
+    ],
+    "relatedFunctions": ["if", "countif", "sumif", "count", "sum"],
+    "relatedTasks": ["total-sales-for-one-region", "count-cells-between-two-numbers"],
+    "relatedLessons": ["sumif-countif-basics", "sorting-and-filtering"]
+  },
+  {
+    "slug": "sumproduct-basics",
+    "topic": "sum",
+    "title": "SUMPRODUCT Basics",
+    "description": "Multiply columns row by row and total the results in one formula.",
+    "level": "intermediate",
+    "exercises": ["sumproduct-revenue-01", "sumproduct-weighted-avg-01", "sumproduct-three-columns-01", "mcq-sumproduct-array-01"],
+    "overview": "SUMPRODUCT is Excel's row-by-row calculator: it multiplies matching values across ranges and adds the products. It powers revenue totals, weighted averages and conditional sums without helper columns.",
+    "objectives": [
+      "Write SUMPRODUCT for two and three ranges.",
+      "Build a weighted average with SUMPRODUCT and SUM.",
+      "Recognize when SUMPRODUCT beats a helper column."
+    ],
+    "steps": [
+      { "heading": "Line up the ranges", "body": "Every range must have the same shape and start on the same row, or SUMPRODUCT returns #VALUE!." },
+      { "heading": "Let it multiply first", "body": "SUMPRODUCT pairs the first value of each range, multiplies them, moves to the second value, and so on — then adds everything." },
+      { "heading": "Divide for averages", "body": "A weighted average is SUMPRODUCT(values, weights) divided by SUM(weights)." }
+    ],
+    "faqs": [
+      { "question": "SUMPRODUCT vs SUM of a helper column?", "answer": "They give the same result, but SUMPRODUCT does it in one formula without an extra column of =A2*B2." },
+      { "question": "Why do I get #VALUE!?", "answer": "Usually the ranges have different sizes or one range contains text where the other has numbers." }
+    ],
+    "relatedFunctions": ["sum", "sumif", "average", "countif"],
+    "relatedTasks": ["sum-top-n-values", "total-sales-for-one-region"],
+    "relatedLessons": ["sum-basics", "sumif-countif-basics"]
+  },
+  {
+    "slug": "text-functions-basics",
+    "topic": "text",
+    "title": "Text Functions: LOWER, PROPER & SUBSTITUTE",
+    "description": "Change letter case and replace text inside a cell with formulas.",
+    "level": "beginner",
+    "exercises": ["text-lower-01", "text-proper-01", "text-substitute-01", "mcq-text-chain-01"],
+    "overview": "Beyond TRIM and UPPER, Excel gives you LOWER for lowercase, PROPER for title case, and SUBSTITUTE for find-and-replace inside a formula. These three cover most of the text cleanup jobs that imported data throws at you.",
+    "objectives": [
+      "Convert text to lowercase with LOWER.",
+      "Title-case names with PROPER.",
+      "Replace characters or words inside text with SUBSTITUTE."
+    ],
+    "steps": [
+      { "heading": "Pick the right case function", "body": "UPPER shouts, LOWER whispers, PROPER capitalizes the first letter of each word." },
+      { "heading": "Chain functions when needed", "body": "Nest TRIM inside PROPER — =PROPER(TRIM(A1)) — to clean spaces and fix case in one formula." },
+      { "heading": "Replace with SUBSTITUTE", "body": "SUBSTITUTE(text, old, new) swaps every occurrence of old for new; use \"\" as new to delete characters." }
+    ],
+    "faqs": [
+      { "question": "PROPER vs UPPER?", "answer": "UPPER makes everything capital (\"ADA LOVELACE\"); PROPER makes \"Ada Lovelace\". Use PROPER for names and titles." },
+      { "question": "Does SUBSTITUTE change the original cell?", "answer": "No — it returns the changed text. Put it in another cell or use it inside a larger formula." }
+    ],
+    "relatedFunctions": ["trim", "concat", "textjoin", "left", "mid", "len", "text"],
+    "relatedTasks": ["clean-extra-spaces", "split-name-into-columns"],
+    "relatedLessons": ["text-cleanup-basics", "find-and-substitute"]
+  },
+  {
+    "slug": "date-functions-basics",
+    "topic": "dates",
+    "title": "Date Functions: YEAR, MONTH, DAY & EOMONTH",
+    "description": "Pull the year, month and day out of a date and find the end of any month.",
+    "level": "beginner",
+    "exercises": ["date-month-01", "date-day-01", "date-eomonth-last-day-01", "mcq-eomonth-01"],
+    "overview": "Excel stores dates as serial numbers, and YEAR, MONTH and DAY read the parts back out. EOMONTH jumps to the last day of any month — essential for month-end reports and billing cycles.",
+    "objectives": [
+      "Extract month and day numbers with MONTH and DAY.",
+      "Use EOMONTH to find the last day of a month.",
+      "Combine DAY and EOMONTH to get a day count like 31."
+    ],
+    "steps": [
+      { "heading": "Dates are numbers", "body": "A date serial counts days since Excel's epoch, so YEAR, MONTH and DAY simply decode it." },
+      { "heading": "Extract the parts", "body": "YEAR gives 2026, MONTH gives 3, DAY gives 15 for March 15, 2026." },
+      { "heading": "EOMONTH for month ends", "body": "EOMONTH(date, 0) returns the last day of the same month; wrap it in DAY to read just the day number." }
+    ],
+    "faqs": [
+      { "question": "Why does EOMONTH show a number instead of a date?", "answer": "EOMONTH returns a serial value. Apply a date number format, or use DAY(EOMONTH(...)) if you only need the day number." },
+      { "question": "What does the second argument of EOMONTH do?", "answer": "It shifts months: 0 is the same month, 1 is next month, -1 is the previous month." }
+    ],
+    "relatedFunctions": ["date", "today", "now", "datedif"],
+    "relatedTasks": ["calculate-days-between-dates"],
+    "relatedLessons": ["date-math-basics"]
+  },
+  {
+    "slug": "percentage-calculations",
+    "topic": "sum",
+    "title": "Percentage Calculations",
+    "description": "Work out shares of a total and percent change with plain formulas.",
+    "level": "beginner",
+    "exercises": ["percent-share-01", "percent-change-01", "percent-of-total-100-01", "mcq-percent-format-01"],
+    "overview": "Percentages in Excel are just division: a share is part divided by total, and percent change is the difference divided by the old value. This lesson practices both, including the ×100 step and how the Percent format displays results.",
+    "objectives": [
+      "Calculate a value's share of a total.",
+      "Calculate percent change between two numbers.",
+      "Understand the difference between 0.25 and 25% formatting."
+    ],
+    "steps": [
+      { "heading": "Share of total", "body": "Divide one value by SUM of the range: =B2/SUM($B$2:$B$4) gives a decimal like 0.3." },
+      { "heading": "Percent change", "body": "Use (new - old) / old. Multiply by 100 if you want 25 instead of 0.25." },
+      { "heading": "Let the format do the work", "body": "Apply the Percent number format to a decimal result instead of multiplying by 100 — Excel displays 0.25 as 25%." }
+    ],
+    "faqs": [
+      { "question": "Why does my percent show 3000% instead of 30%?", "answer": "You multiplied by 100 AND applied Percent format, which multiplies by 100 again. Pick one or the other." },
+      { "question": "How do I keep the denominator fixed when copying?", "answer": "Use absolute references like $B$2:$B$4 so the total range does not shift." }
+    ],
+    "relatedFunctions": ["sum", "round"],
+    "relatedTasks": ["round-to-2-decimals", "sum-top-n-values"],
+    "relatedLessons": ["sum-basics", "sumif-countif-basics"]
+  },
+  {
+    "slug": "find-and-substitute",
+    "topic": "data",
+    "title": "Find and Substitute",
+    "description": "Replace text across a sheet with the Find & Replace dialog and SUBSTITUTE.",
+    "level": "beginner",
+    "exercises": ["substitute-remove-dashes-01", "substitute-banana-01", "substitute-double-space-01", "mcq-find-replace-01"],
+    "overview": "Two ways to fix repeated text problems: the Find and Replace dialog (Ctrl+H) changes cells directly, while SUBSTITUTE does it inside a formula so the original data stays intact. This lesson practices SUBSTITUTE and when to reach for each tool.",
+    "objectives": [
+      "Open Find and Replace with Ctrl+H.",
+      "Use SUBSTITUTE to replace text inside a formula.",
+      "Choose between the dialog and the formula for a cleanup job."
+    ],
+    "steps": [
+      { "heading": "For quick fixes, use the dialog", "body": "Ctrl+H opens Find and Replace. Type the text to find, the replacement, and click Replace All." },
+      { "heading": "For formulas, use SUBSTITUTE", "body": "=SUBSTITUTE(A1,\"-\",\"/\") returns the changed text without touching the original cell." },
+      { "heading": "Replace every occurrence", "body": "SUBSTITUTE and Replace All both swap every match by default. Pass a fourth argument (instance_num) to SUBSTITUTE to replace only one occurrence, e.g. =SUBSTITUTE(A1,\"-\",\"\",1) replaces just the first dash." }
+    ],
+    "faqs": [
+      { "question": "Find & Replace vs SUBSTITUTE?", "answer": "Find & Replace edits the cells themselves. SUBSTITUTE returns new text inside a formula, which is safer when the original data must stay unchanged." },
+      { "question": "Can I replace across an entire workbook?", "answer": "Yes — in the Find and Replace dialog choose \"Workbook\" in the Within dropdown." }
+    ],
+    "relatedFunctions": ["trim", "textjoin", "concat", "left", "mid"],
+    "relatedTasks": ["clean-extra-spaces", "extract-domain-from-email"],
+    "relatedLessons": ["text-functions-basics", "filter-basics"]
+  },
+  {
+    "slug": "named-ranges-basics",
+    "topic": "data",
+    "title": "Named Ranges Basics",
+    "description": "Give cells and ranges meaningful names and use them in formulas.",
+    "level": "beginner",
+    "exercises": ["mcq-valid-name-01", "named-range-sum-01", "named-range-discount-01", "mcq-name-scope-01"],
+    "overview": "A named range turns =SUM(B2:B4) into =SUM(Sales) — formulas that read like sentences and survive inserted rows. This lesson covers what makes a valid name, how names behave in formulas, and the difference between workbook and worksheet scope.",
+    "objectives": [
+      "Know the rules for a valid defined name.",
+      "Use a named range anywhere a cell reference works.",
+      "Understand workbook vs worksheet scope."
+    ],
+    "steps": [
+      { "heading": "Select and name", "body": "Select the cell or range, then type the name into the Name Box (left of the formula bar) and press Enter." },
+      { "heading": "Follow the naming rules", "body": "Start with a letter or underscore, use letters, numbers and dots — no spaces, and never a cell reference like A1." },
+      { "heading": "Use it like a reference", "body": "A name works anywhere a range works: =Sales*1.1, =SUM(Sales), or inside VLOOKUP." }
+    ],
+    "faqs": [
+      { "question": "What happens to a name when I insert rows?", "answer": "The name keeps pointing at the same logical range — Excel adjusts the reference automatically, which is a big advantage over hard-coded ranges in formulas." },
+      { "question": "Why is my name not working in a formula?", "answer": "Check the spelling, make sure it does not look like a cell reference, and confirm the scope includes the sheet you are on." }
+    ],
+    "relatedFunctions": ["sum", "if", "vlookup", "xlookup"],
+    "relatedTasks": ["absolute-reference", "look-up-a-price-with-vlookup"],
+    "relatedLessons": ["vlookup-basics", "sum-basics"]
+  },
+  {
+    "slug": "sorting-and-filtering",
+    "topic": "data",
+    "title": "Sorting and Filtering",
+    "description": "Order a table and hide what you do not need with Sort and Filter.",
+    "level": "beginner",
+    "exercises": ["mcq-sort-ascending-01", "sort-top-cell-01", "sort-second-smallest-01", "mcq-clear-filter-01"],
+    "overview": "Sorting rearranges rows so the biggest or newest values surface first; filtering hides the rest. Together they turn a raw table into a report you can read at a glance — and SMALL/LARGE give you the sorted answers without moving anything.",
+    "objectives": [
+      "Sort a column ascending or descending.",
+      "Predict where values land after a sort.",
+      "Use SMALL and LARGE to read sorted positions from formulas."
+    ],
+    "steps": [
+      { "heading": "Sort smallest to largest", "body": "Select the column, then Data > Sort Smallest to Largest (or the Z-A / A-Z equivalents for text)." },
+      { "heading": "Watch where extremes land", "body": "After ascending sort the smallest value sits on top and the largest on the bottom; descending flips it." },
+      { "heading": "Filter to focus", "body": "Filter dropdowns let you tick only the values you want; Clear Filter brings everything back." },
+      { "heading": "Formulas see the unsorted truth", "body": "SMALL(range, 2) returns the second smallest value no matter how the rows are arranged." }
+    ],
+    "faqs": [
+      { "question": "Does sorting change my formulas?", "answer": "No — formulas reference cells by position, so results stay the same; only the visual order changes." },
+      { "question": "Sort vs Filter?", "answer": "Sort reorders rows; Filter hides rows you do not want to see. You can use both on the same table." }
+    ],
+    "relatedFunctions": ["small", "large", "max", "min", "countif"],
+    "relatedTasks": ["sum-top-n-values", "remove-duplicates"],
+    "relatedLessons": ["filter-basics", "count-basics"]
   }
 ]
