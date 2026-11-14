@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ExerciseEmbed } from "@/components/ExerciseEmbed";
 import { JsonLd } from "@/components/JsonLd";
+import { ContextualLinks } from "@/components/seo/ContextualLinks";
 import { getFunctionDoc, getFunctionDocs } from "@/lib/content";
 import { buildMetadata, faqJsonLd, howToJsonLd } from "@/lib/seo";
 
@@ -15,7 +16,7 @@ export async function generateMetadata({ params }: PageProps<"/functions/[fn]">)
   const fn = getFunctionDoc(slug);
   if (!fn) return {};
   return buildMetadata({
-    title: `${fn.name} Function in Excel — Syntax & Examples`,
+    title: `Excel ${fn.name} Function — Syntax & Examples`,
     description: `${fn.summary} Syntax, examples, common errors and a hands-on exercise.`,
     path: `/functions/${slug}`,
   });
@@ -143,6 +144,28 @@ export default async function FunctionPage({ params }: PageProps<"/functions/[fn
           </ul>
         </section>
       )}
+
+      <ContextualLinks
+        title="Preparing for an Excel test or certification?"
+        description="Review the syntax here, then practice the formula in a realistic exercise or assessment-focused path."
+        links={[
+          {
+            href: "/practice",
+            label: "Practice Excel formulas",
+            description: "Free interactive exercises",
+          },
+          {
+            href: "/how-to/excel-formulas-job-interview",
+            label: "Excel formulas for interviews",
+            description: "Job-test formula prep",
+          },
+          {
+            href: "/certification",
+            label: "Certification prep",
+            description: "MO-200, MO-201 and job tests",
+          },
+        ]}
+      />
     </article>
   );
 }

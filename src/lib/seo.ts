@@ -8,13 +8,15 @@ type MetaInput = {
   title: string;
   description: string;
   path: string; // e.g. "/functions/sum"
+  /** Use the title verbatim instead of applying the layout's `%s | Excel Practice` template. */
+  absoluteTitle?: boolean;
 };
 
 /** Build consistent metadata: canonical, OG, Twitter cards. */
-export function buildMetadata({ title, description, path }: MetaInput): Metadata {
+export function buildMetadata({ title, description, path, absoluteTitle = false }: MetaInput): Metadata {
   const url = `${SITE_URL}${path}`;
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     alternates: { canonical: url },
     openGraph: {

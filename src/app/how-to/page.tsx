@@ -5,8 +5,9 @@ import { getTaskDocs } from "@/lib/content";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 
 export const metadata = buildMetadata({
-  title: "Excel How-To Guides — Formulas, Lookups & Data Cleaning",
-  description: "Step-by-step Excel how-to guides for lookups, duplicate removal, text cleanup, conditional totals and more.",
+  title: "Excel Interview Questions & How-To Guides",
+  description:
+    "Answer common Excel interview questions and solve practical spreadsheet tasks with step-by-step formulas, examples, and practice links.",
   path: "/how-to",
 });
 
@@ -16,15 +17,15 @@ export default function HowToIndexPage() {
     <div className="flex flex-col gap-8">
       <JsonLd
         data={collectionPageJsonLd({
-          name: "Excel How-To Guides",
-          description: "Step-by-step Excel guides for practical spreadsheet tasks.",
+          name: "Excel Interview Questions & How-To Guides",
+          description: "Step-by-step Excel guides for interviews, assessments and practical spreadsheet tasks.",
           path: "/how-to",
           items: tasks.map((task) => ({ name: task.task, path: `/how-to/${task.slug}` })),
         })}
       />
       <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "How-to guides", path: "/how-to" }]} />
       <header>
-        <h1 className="text-3xl font-bold">Excel how-to guides</h1>
+        <h1 className="text-3xl font-bold">Excel interview questions and how-to guides</h1>
         <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
           Practical, formula-first walkthroughs for the tasks people search for most: lookups,
           duplicates, text cleanup, conditional totals and spreadsheet shortcuts.

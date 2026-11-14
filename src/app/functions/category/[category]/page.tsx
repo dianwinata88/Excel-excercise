@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps<"/functions/categor
   if (!category) return {};
   const count = getFunctionDocsByCategory(category).length;
   return buildMetadata({
-    title: `${category} Functions in Excel — Syntax, Examples & Practice`,
+    title: `${category} Functions in Excel`,
     description: `Learn ${count} Excel ${category.toLowerCase()} functions with syntax, examples, common errors and practice exercises.`,
     path: `/functions/category/${slug}`,
   });
@@ -54,7 +54,7 @@ export default async function FunctionCategoryPage({
         ]}
       />
       <header>
-        <h1 className="text-3xl font-bold">{category} functions</h1>
+        <h1 className="text-3xl font-bold">Excel {category} functions</h1>
         <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
           {functions.length} Excel {category.toLowerCase()} functions, ordered for quick scanning.
           Open a function for syntax, examples, common errors and a practice exercise where available.
