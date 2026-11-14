@@ -118,19 +118,25 @@ const LOGIN_MAX_ATTEMPTS = 8;
 const LOGIN_WINDOW_MS = 10 * 60 * 1000;
 const ATTEMPTS_MAX_KEYS = 5000;
 
-/** Drop expired entries; hard-cap the map so distinct-key floods can't grow it. */
+/** Drop expired then non-blocked entries — never evict an active lockout. */
 function boundAttempts(now: number) {
   if (attempts.size <= ATTEMPTS_MAX_KEYS) return;
   for (const [k, v] of attempts) {
     if (v.resetAt <= now) attempts.delete(k);
   }
-  if (attempts.size > ATTEMPTS_MAX_KEYS) attempts.clear();
+  for (const [k, v] of attempts) {
+    if (attempts.size <= ATTEMPTS_MAX_KEYS) break;
+    if (v.count < LOGIN_MAX_ATTEMPTS) attempts.delete(k);
+  }
+  // Past this point everything left is a live lockout: don't add new keys
+  // (untracked failures) rather than erase someone's cooldown.
 }
 
 /** true while `key` is under the failed-login cap; records a failure. */
 export function recordFailedLogin(key: string): boolean {
   const now = Date.now();
   boundAttempts(now);
+  if (attempts.size > ATTEMPTS_MAX_KEYS && !attempts.has(key)) return true;
   const entry = attempts.get(key);
   if (entry && entry.resetAt <= now) attempts.delete(key);
   const cur = attempts.get(key) ?? { count: 0, resetAt: now + LOGIN_WINDOW_MS };
