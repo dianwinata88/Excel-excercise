@@ -1,8 +1,11 @@
+import { Suspense } from "react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import type { Exercise } from "../../../content/schema";
 import { PracticeBoard } from "@/components/exercise/PracticeBoard";
 import { ContextualLinks } from "@/components/seo/ContextualLinks";
 import { FaqSection } from "@/components/seo/FaqSection";
-import { getExercises } from "@/lib/content";
+import { getExercises, getProExerciseIds } from "@/lib/content";
+import { getSession } from "@/lib/auth";
 import { buildMetadata } from "@/lib/seo";
 
 const PRACTICE_FAQS = [
@@ -40,6 +43,12 @@ export const metadata = buildMetadata({
   path: "/practice",
 });
 
+async function Board({ exercises }: { exercises: Exercise[] }) {
+  const session = await getSession();
+  const lockedIds = session?.pro ? undefined : getProExerciseIds();
+  return <PracticeBoard exercises={exercises} lockedIds={lockedIds} />;
+}
+
 export default function PracticePage() {
   const exercises = getExercises();
   return (
@@ -52,7 +61,13 @@ export default function PracticePage() {
           streak are saved on this device.
         </p>
       </header>
-      <PracticeBoard exercises={exercises} />
+      <Suspense
+        fallback={
+          <div className="h-60 animate-pulse rounded-2xl border border-zinc-200 dark:border-zinc-800" />
+        }
+      >
+        <Board exercises={exercises} />
+      </Suspense>
       <ContextualLinks
         title="Preparing for an Excel assessment or certification?"
         description="Turn practice into a test-ready plan by focusing on the skills employers and examiners ask for most."

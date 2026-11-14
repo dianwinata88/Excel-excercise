@@ -15,3 +15,14 @@ model Lead {
   source    String   // e.g. "newsletter", "practice-file-download"
   createdAt DateTime @default(now())
 }
+
+// Whop-authenticated users and their Pro access (monthly/lifetime variants).
+model WhopUser {
+  whopUserId   String   @id
+  email        String?
+  name         String?
+  pro          Boolean  @default(false)
+  membershipId String?
+  syncedAt     DateTime @updatedAt
+  createdAt    DateTime @default(now())
+}

@@ -1,9 +1,13 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge, levelTone } from "@/components/Badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { LessonPlayer } from "@/components/exercise/LessonPlayer";
 import { JsonLd } from "@/components/JsonLd";
+import { ProGate } from "@/components/ProGate";
+import { getSession } from "@/lib/auth";
+import type { Exercise, Lesson } from "../../../../content/schema";
 import { ContextualLinks } from "@/components/seo/ContextualLinks";
 import {
   getExercise,
@@ -28,6 +32,22 @@ export async function generateMetadata({ params }: PageProps<"/lesson/[slug]">) 
     description: lesson.description,
     path: `/lesson/${slug}`,
   });
+}
+
+async function PracticeArea({
+  slug,
+  lesson,
+  exercises,
+}: {
+  slug: string;
+  lesson: Lesson;
+  exercises: Exercise[];
+}) {
+  const session = await getSession();
+  if (lesson.level !== "beginner" && !session?.pro) {
+    return <ProGate next={`/lesson/${slug}`} />;
+  }
+  return <LessonPlayer exercises={exercises} />;
 }
 
 export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">) {
@@ -118,7 +138,13 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">
       <section>
         <h2 className="text-xl font-semibold">Practice now</h2>
         <div className="mt-3">
-          <LessonPlayer exercises={exercises} />
+          <Suspense
+            fallback={
+              <div className="h-40 animate-pulse rounded-2xl border border-zinc-200 dark:border-zinc-800" />
+            }
+          >
+            <PracticeArea slug={slug} lesson={lesson} exercises={exercises} />
+          </Suspense>
         </div>
       </section>
 
