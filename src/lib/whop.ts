@@ -140,15 +140,19 @@ export async function getEffectivePro(whopUserId: string): Promise<boolean> {
     return stored.pro;
   }
   const check = await hasProMembership(whopUserId);
-  const pro = check.error ? (stored?.pro ?? false) : check.pro;
+  if (check.error) {
+    // Don't cache a failure-derived answer: keep syncedAt stale so the next
+    // gated request retries Whop instead of locking the stale value for 24h.
+    return stored?.pro ?? false;
+  }
   try {
     await getPrisma().whopUser.upsert({
       where: { whopUserId },
-      update: { pro, membershipId: check.error ? stored?.membershipId : check.membershipId },
-      create: { whopUserId, pro, membershipId: check.membershipId },
+      update: { pro: check.pro, membershipId: check.membershipId },
+      create: { whopUserId, pro: check.pro, membershipId: check.membershipId },
     });
   } catch (err) {
     console.error("WhopUser sync failed", err);
   }
-  return pro;
+  return check.pro;
 }

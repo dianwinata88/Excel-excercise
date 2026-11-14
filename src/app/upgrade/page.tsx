@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { buildMetadata } from "@/lib/seo";
-import { WHOP_LIFETIME_URL, WHOP_MONTHLY_URL } from "@/lib/whop";
+import { WHOP_LIFETIME_URL, WHOP_MONTHLY_URL, getEffectivePro } from "@/lib/whop";
 
 export const metadata = buildMetadata({
   title: "Pro — unlock intermediate & advanced Excel practice",
@@ -20,8 +20,11 @@ const PERKS = [
 
 async function PlansOrStatus() {
   const session = await getSession();
+  // Re-verify against Whop/DB rather than the cookie so an expired member
+  // sees the plans again and can renew.
+  const pro = session ? await getEffectivePro(session.sub) : false;
 
-  if (session?.pro) {
+  if (session && pro) {
     return (
       <section className="mx-auto w-full max-w-lg rounded-3xl border border-emerald-300 bg-emerald-50 p-8 text-center dark:border-emerald-800 dark:bg-emerald-950/40">
         <h2 className="text-2xl font-bold">You&apos;re Pro 🎉</h2>
