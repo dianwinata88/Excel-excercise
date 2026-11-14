@@ -29,7 +29,6 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [message, setMessage] = useState<string | null>(null);
-  const [hintsShown, setHintsShown] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
   const [picked, setPicked] = useState<number | null>(null);
   const [granted, setGranted] = useState(0);
@@ -52,9 +51,22 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
     } else {
       setStatus("wrong");
       setMessage(result.message ?? "Try again.");
-      setHintsShown((h) => Math.min(h + 1, exercise.hints.length));
       onResult?.(false);
     }
+  }
+
+  /** Insert a clicked cell's A1 reference into the formula at the caret. */
+  function insertRef(ref: string) {
+    const el = inputRef.current;
+    const start = el?.selectionStart ?? input.length;
+    const end = el?.selectionEnd ?? input.length;
+    setInput(input.slice(0, start) + ref + input.slice(end));
+    setStatus("idle");
+    setMessage(null);
+    requestAnimationFrame(() => {
+      el?.focus();
+      el?.setSelectionRange(start + ref.length, start + ref.length);
+    });
   }
 
   function submit() {
@@ -70,7 +82,6 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
     setInput("");
     setStatus("idle");
     setMessage(null);
-    setHintsShown(0);
     setSelected(null);
     setPicked(null);
     setGranted(0);
@@ -91,20 +102,7 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
         </span>
       </div>
 
-      <div className="mt-3">
-        <SpreadsheetGrid
-          exercise={exercise}
-          selected={selected}
-          onSelect={(ref) => {
-            if (done) return;
-            setSelected(ref);
-            setStatus("idle");
-            setMessage(null);
-          }}
-        />
-      </div>
-
-      {/* Input area per exercise type */}
+      {/* Formula bar above the sheet, like Excel's fx bar */}
       {exercise.type === "formula" && (
         <div className="mt-3 flex items-center gap-2">
           <label htmlFor={`fx-${exercise.id}`} className="font-mono text-sm text-zinc-500">
@@ -125,13 +123,30 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
                 submit();
               }
             }}
-            placeholder="=SUM(A1:A5)"
+            placeholder="Type a formula"
             spellCheck={false}
             autoComplete="off"
             className="flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 font-mono text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:focus:ring-emerald-900"
           />
         </div>
       )}
+
+      <div className="mt-3">
+        <SpreadsheetGrid
+          exercise={exercise}
+          selected={selected}
+          onSelect={(ref) => {
+            if (done) return;
+            if (exercise.type === "formula") {
+              insertRef(ref);
+              return;
+            }
+            setSelected(ref);
+            setStatus("idle");
+            setMessage(null);
+          }}
+        />
+      </div>
 
       {exercise.type === "shortcut" && (
         <div
@@ -188,17 +203,6 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
               </li>
             );
           })}
-        </ul>
-      )}
-
-      {/* Hints revealed on wrong answers */}
-      {hintsShown > 0 && (
-        <ul className="mt-3 space-y-1" aria-live="polite">
-          {exercise.hints.slice(0, hintsShown).map((h, i) => (
-            <li key={i} className="rounded-lg bg-amber-50 px-3 py-1.5 text-sm text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">
-              Hint: {h}
-            </li>
-          ))}
         </ul>
       )}
 

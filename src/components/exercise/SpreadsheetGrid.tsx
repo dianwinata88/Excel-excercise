@@ -18,14 +18,16 @@ function colLabel(col: number): string {
 
 /**
  * Mini spreadsheet rendered from the exercise's sparse grid.
- * Cells are clickable for cell-select exercises; otherwise inert.
+ * Cells are clickable for cell-select exercises (to answer) and formula
+ * exercises (to insert the A1 reference into the formula bar).
  */
 export function SpreadsheetGrid({ exercise, selected, onSelect, answerDisplay }: Props) {
   const { rows, cols } = gridBounds(exercise.grid, exercise.answerCell);
   const cells = new Map<string, string | number>();
   for (const [ref, v] of Object.entries(exercise.grid)) cells.set(ref.toUpperCase(), v);
   const answer = exercise.answerCell?.toUpperCase();
-  const interactive = exercise.type === "cell-select";
+  const interactive = exercise.type === "cell-select" || exercise.type === "formula";
+  const insertsRef = exercise.type === "formula";
 
   return (
     <div className="overflow-x-auto">
@@ -67,7 +69,7 @@ export function SpreadsheetGrid({ exercise, selected, onSelect, answerDisplay }:
                   "h-8 border border-zinc-300 px-2 text-left align-middle dark:border-zinc-700";
                 const state = isSelected
                   ? "bg-emerald-100 ring-2 ring-inset ring-emerald-500 dark:bg-emerald-950"
-                  : isAnswer && !interactive
+                  : isAnswer && exercise.type !== "cell-select"
                     ? "bg-emerald-50 dark:bg-emerald-950/40"
                     : "bg-white dark:bg-zinc-900";
                 const cell = (
@@ -78,8 +80,10 @@ export function SpreadsheetGrid({ exercise, selected, onSelect, answerDisplay }:
                     <button
                       type="button"
                       onClick={() => onSelect?.(ref)}
-                      aria-label={`Cell ${ref}`}
-                      className="h-8 w-full px-2 text-left"
+                      // Keep focus in the formula bar so the caret position survives the click.
+                      onMouseDown={insertsRef ? (e) => e.preventDefault() : undefined}
+                      aria-label={insertsRef ? `Insert cell ${ref} into formula` : `Cell ${ref}`}
+                      className={`h-8 w-full px-2 text-left ${insertsRef ? "cursor-cell" : ""}`}
                     >
                       {cell}
                     </button>
