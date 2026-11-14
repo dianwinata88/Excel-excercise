@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { ContextualLinks } from "@/components/seo/ContextualLinks";
 import { getTaskDoc, getTaskDocs } from "@/lib/content";
 import { buildMetadata, howToJsonLd } from "@/lib/seo";
 
@@ -9,14 +10,19 @@ export function generateStaticParams() {
   return getTaskDocs().map((t) => ({ task: t.slug }));
 }
 
+function displayTaskName(task: string): string {
+  return /\bexcel\b/i.test(task) ? task : `${task} in Excel`;
+}
+
 export async function generateMetadata({ params }: PageProps<"/how-to/[task]">) {
   const { task: slug } = await params;
   const task = getTaskDoc(slug);
   if (!task) return {};
   return buildMetadata({
-    title: `How to ${task.task} in Excel`,
+    title: `How to ${displayTaskName(task.task)}`,
     description: task.intro.slice(0, 155),
     path: `/how-to/${slug}`,
+    absoluteTitle: true,
   });
 }
 
@@ -24,18 +30,19 @@ export default async function TaskPage({ params }: PageProps<"/how-to/[task]">) 
   const { task: slug } = await params;
   const task = getTaskDoc(slug);
   if (!task) notFound();
+  const displayName = displayTaskName(task.task);
   return (
     <article className="flex flex-col gap-8">
       <JsonLd
         data={howToJsonLd({
-          name: `How to ${task.task} in Excel`,
+          name: `How to ${displayName}`,
           description: task.intro,
           steps: task.steps.map((s) => ({ name: s.heading, text: s.body })),
         })}
       />
       <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: task.task, path: `/how-to/${slug}` }]} />
       <header>
-        <h1 className="text-3xl font-bold">How to {task.task} in Excel</h1>
+        <h1 className="text-3xl font-bold">How to {displayName}</h1>
         <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">{task.intro}</p>
       </header>
       {task.steps.map((step, i) => (
@@ -76,6 +83,28 @@ export default async function TaskPage({ params }: PageProps<"/how-to/[task]">) 
           </ul>
         </section>
       )}
+
+      <ContextualLinks
+        title="Need more Excel practice?"
+        description="Use this guide as the reference, then reinforce the formulas in interactive exercises or assessment prep."
+        links={[
+          {
+            href: "/practice",
+            label: "Take the practice test",
+            description: "Free interactive exercises",
+          },
+          {
+            href: "/learn",
+            label: "Learn Excel online free",
+            description: "Structured lessons and tracks",
+          },
+          {
+            href: "/certification",
+            label: "Certification prep",
+            description: "Exam-focused practice",
+          },
+        ]}
+      />
     </article>
   );
 }

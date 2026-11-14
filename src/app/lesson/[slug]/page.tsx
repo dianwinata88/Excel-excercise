@@ -4,6 +4,7 @@ import { Badge, levelTone } from "@/components/Badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { LessonPlayer } from "@/components/exercise/LessonPlayer";
 import { JsonLd } from "@/components/JsonLd";
+import { ContextualLinks } from "@/components/seo/ContextualLinks";
 import {
   getExercise,
   getFunctionDoc,
@@ -23,7 +24,7 @@ export async function generateMetadata({ params }: PageProps<"/lesson/[slug]">) 
   const lesson = getLesson(slug);
   if (!lesson) return {};
   return buildMetadata({
-    title: `${lesson.title} — Interactive Excel Lesson`,
+    title: `${lesson.title} in Excel`,
     description: lesson.description,
     path: `/lesson/${slug}`,
   });
@@ -80,7 +81,7 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">
             {exercises.length} exercise{exercises.length === 1 ? "" : "s"}
           </Badge>
         </div>
-        <h1 className="mt-3 text-3xl font-bold">{lesson.title}</h1>
+        <h1 className="mt-3 text-3xl font-bold">{lesson.title} in Excel</h1>
         <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">{lesson.description}</p>
         {lesson.overview && (
           <p className="mt-4 text-zinc-700 dark:text-zinc-300">{lesson.overview}</p>
@@ -187,6 +188,28 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">
           )}
         </section>
       )}
+
+      <ContextualLinks
+        title="Using this for Excel test or interview prep?"
+        description="Turn the lesson into assessment-ready speed with timed practice, interview questions and certification-focused paths."
+        links={[
+          {
+            href: "/practice",
+            label: "Practice this skill",
+            description: "Free interactive exercises",
+          },
+          {
+            href: "/how-to/excel-interview-questions",
+            label: "Excel interview questions",
+            description: "Common test topics",
+          },
+          {
+            href: "/certification",
+            label: "Certification prep",
+            description: "Exam-focused practice",
+          },
+        ]}
+      />
     </article>
   );
 }

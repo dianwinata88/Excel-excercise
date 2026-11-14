@@ -18,9 +18,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: `${SITE_NAME} — Hands-On Excel Practice`, template: `%s | ${SITE_NAME}` },
+  title: { default: `${SITE_NAME} — Free Excel Practice & Training`, template: `%s | ${SITE_NAME}` },
   description:
-    "Learn Excel the fun way: bite-sized, interactive exercises that run right in your browser.",
+    "Learn Excel online free with interactive practice tests, lessons, formula guides, and keyboard shortcut drills.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

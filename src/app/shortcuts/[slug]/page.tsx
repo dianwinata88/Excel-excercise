@@ -13,9 +13,10 @@ export async function generateMetadata({ params }: PageProps<"/shortcuts/[slug]"
   const s = getShortcutDoc(slug);
   if (!s) return {};
   return buildMetadata({
-    title: `Excel Shortcut: ${s.action} (${s.keys.windows} / ${s.keys.mac})`,
+    title: `Excel shortcut: ${s.action}`,
     description: s.description,
     path: `/shortcuts/${slug}`,
+    absoluteTitle: true,
   });
 }
 
@@ -32,7 +33,7 @@ export default async function ShortcutPage({ params }: PageProps<"/shortcuts/[sl
           { name: s.action, path: `/shortcuts/${slug}` },
         ]}
       />
-      <h1 className="text-3xl font-bold">{s.action}</h1>
+      <h1 className="text-3xl font-bold">Excel shortcut: {s.action}</h1>
       <div className="flex gap-6">
         <div className="rounded-xl border border-zinc-200 p-4 text-center dark:border-zinc-800">
           <p className="text-xs uppercase text-zinc-500">Windows</p>
