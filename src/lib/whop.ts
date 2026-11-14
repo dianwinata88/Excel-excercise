@@ -12,6 +12,7 @@ export const WHOP_OAUTH_BASE =
 export const WHOP_APP_ID = process.env.WHOP_APP_ID ?? "";
 export const WHOP_MONTHLY_URL = process.env.WHOP_MONTHLY_URL ?? "";
 export const WHOP_LIFETIME_URL = process.env.WHOP_LIFETIME_URL ?? "";
+const WHOP_PRODUCT_ID = process.env.WHOP_PRODUCT_ID ?? "";
 
 const API_KEY = process.env.WHOP_API_KEY ?? "";
 const CLIENT_SECRET = process.env.WHOP_CLIENT_SECRET ?? "";
@@ -114,10 +115,16 @@ export async function hasProMembership(whopUserId: string): Promise<{
   }
   if (!res.ok) return { pro: false, membershipId: null, error: true };
   const json = (await res.json().catch(() => null)) as {
-    data?: { id: string; status: string }[];
+    data?: { id: string; status: string; product_id?: string }[];
   } | null;
   if (!json) return { pro: false, membershipId: null, error: true };
-  const active = (json.data ?? []).find((m) => PRO_STATUSES.has(m.status));
+  // Only memberships on the Pro product count — an account can sell other
+  // products that must not unlock this site.
+  const active = (json.data ?? []).find(
+    (m) =>
+      PRO_STATUSES.has(m.status) &&
+      (!WHOP_PRODUCT_ID || m.product_id === WHOP_PRODUCT_ID),
+  );
   return { pro: !!active, membershipId: active?.id ?? null, error: false };
 }
 
