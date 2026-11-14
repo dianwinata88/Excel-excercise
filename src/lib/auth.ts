@@ -94,6 +94,33 @@ export function applySession(
   );
 }
 
+// In-memory failed-login limiter — fine for a single-node app server.
+const attempts = new Map<string, { count: number; resetAt: number }>();
+const LOGIN_MAX_ATTEMPTS = 8;
+const LOGIN_WINDOW_MS = 10 * 60 * 1000;
+
+/** true while `key` is under the failed-login cap; records a failure. */
+export function recordFailedLogin(key: string): boolean {
+  const now = Date.now();
+  const entry = attempts.get(key);
+  if (entry && entry.resetAt <= now) attempts.delete(key);
+  const cur = attempts.get(key) ?? { count: 0, resetAt: now + LOGIN_WINDOW_MS };
+  cur.count += 1;
+  if (cur.count >= LOGIN_MAX_ATTEMPTS) {
+    attempts.delete(key);
+    // Cool the account down with a fresh window that blocks further tries.
+    attempts.set(key, { count: LOGIN_MAX_ATTEMPTS, resetAt: now + LOGIN_WINDOW_MS });
+    return false;
+  }
+  attempts.set(key, cur);
+  return true;
+}
+
+export function loginAttemptsBlocked(key: string): boolean {
+  const entry = attempts.get(key);
+  return !!entry && entry.count >= LOGIN_MAX_ATTEMPTS && entry.resetAt > Date.now();
+}
+
 export function hashPassword(password: string): string {
   const salt = randomBytes(16).toString("base64url");
   const hash = scryptSync(password, salt, 64).toString("base64url");

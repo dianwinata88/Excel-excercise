@@ -28,9 +28,24 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}${safeNext}`);
   }
 
-  const check = user.whopUserId
-    ? await hasProMembership(user.whopUserId)
-    : await hasProMembershipByEmail(user.email);
+  // Unlinked accounts can't prove ownership by email alone — but if a
+  // member with their email exists on the Pro product, send them through
+  // one Whop sign-in to claim it.
+  if (!user.whopUserId) {
+    const hint = await hasProMembershipByEmail(user.email);
+    if (!hint.error && hint.pro) {
+      return NextResponse.redirect(
+        `${origin}/api/auth/whop?next=${encodeURIComponent(safeNext)}`,
+      );
+    }
+    return NextResponse.redirect(
+      `${origin}/login?error=${encodeURIComponent(
+        "No Pro purchase found for your email — buy with the same email you registered",
+      )}&next=${encodeURIComponent(safeNext)}`,
+    );
+  }
+
+  const check = await hasProMembership(user.whopUserId);
   if (!check.error) {
     try {
       await getPrisma().appUser.update({

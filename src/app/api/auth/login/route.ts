@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { applySession, requestOrigin, verifyPassword } from "@/lib/auth";
+import {
+  applySession,
+  loginAttemptsBlocked,
+  recordFailedLogin,
+  requestOrigin,
+  verifyPassword,
+} from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
 
 function safeNext(value: FormDataEntryValue | null): string {
@@ -22,8 +28,13 @@ export async function POST(request: Request) {
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   const password = String(form.get("password") ?? "");
 
+  if (loginAttemptsBlocked(email)) {
+    return fail("Too many attempts — wait a few minutes and try again");
+  }
+
   const user = await getPrisma().appUser.findUnique({ where: { email } });
   if (!user || !verifyPassword(password, user.passwordHash)) {
+    recordFailedLogin(email);
     return fail("Invalid email or password");
   }
 

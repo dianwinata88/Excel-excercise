@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
-import {
-  applySession,
-  hashPassword,
-  requestOrigin,
-} from "@/lib/auth";
+import { applySession, hashPassword, requestOrigin } from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
-import { hasProMembershipByEmail } from "@/lib/whop";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -21,7 +16,7 @@ export async function POST(request: Request) {
   const next = safeNext(form?.get("next") ?? null);
   const fail = (reason: string) =>
     NextResponse.redirect(
-      `${origin}/login?error=${encodeURIComponent(reason)}&next=${encodeURIComponent(next)}`,
+      `${origin}/login?error=${encodeURIComponent(reason)}&next=${encodeURIComponent(next)}&tab=register`,
       303,
     );
 
@@ -44,19 +39,10 @@ export async function POST(request: Request) {
     );
   }
 
-  // If they bought Pro on Whop with this email before registering, unlock now.
-  const check = await hasProMembershipByEmail(email);
+  // Pro is never granted off an unverified email claim — it links when the
+  // account's Whop sign-in proves the purchase (see /api/auth/refresh).
   const user = await prisma.appUser.create({
-    data: {
-      email,
-      name,
-      passwordHash: hashPassword(password),
-      pro: check.error ? false : check.pro,
-      membershipId: check.error ? null : check.membershipId,
-      // A failed Whop check isn't a fact to cache — let the next gated
-      // request retry instead of holding pro=false for 24h.
-      ...(check.error ? { syncedAt: new Date(0) } : {}),
-    },
+    data: { email, name, passwordHash: hashPassword(password) },
   });
 
   const res = NextResponse.redirect(`${origin}${next}`, 303);

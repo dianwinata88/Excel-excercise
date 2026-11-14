@@ -176,13 +176,18 @@ const PRO_SYNC_STALE_MS = 24 * 60 * 60 * 1000;
 export async function getEffectivePro(appUserId: string): Promise<boolean> {
   const { getPrisma } = await import("./db");
   let stored: {
+    id: string;
     pro: boolean;
     email: string;
     whopUserId: string | null;
     syncedAt: Date;
   } | null = null;
   try {
-    stored = await getPrisma().appUser.findUnique({ where: { id: appUserId } });
+    // whopUserId fallback keeps sessions minted before the AppUser
+    // migration (sub = Whop user id) resolving.
+    stored = await getPrisma().appUser.findFirst({
+      where: { OR: [{ id: appUserId }, { whopUserId: appUserId }] },
+    });
   } catch {
     stored = null;
   }
@@ -190,11 +195,10 @@ export async function getEffectivePro(appUserId: string): Promise<boolean> {
   if (Date.now() - stored.syncedAt.getTime() < PRO_SYNC_STALE_MS) {
     return stored.pro;
   }
-  // Prefer the Whop-user check when the account is OAuth-linked; otherwise
-  // match the registered email against members of the Pro product.
-  const check = stored.whopUserId
-    ? await hasProMembership(stored.whopUserId)
-    : await hasProMembershipByEmail(stored.email);
+  // Pro is only provable via the linked Whop user — an unverified email
+  // must never grant a subscriber's entitlement.
+  if (!stored.whopUserId) return stored.pro;
+  const check = await hasProMembership(stored.whopUserId);
   if (check.error) {
     // Don't cache a failure-derived answer: keep syncedAt stale so the next
     // gated request retries Whop instead of locking the stale value for 24h.
@@ -202,7 +206,7 @@ export async function getEffectivePro(appUserId: string): Promise<boolean> {
   }
   try {
     await getPrisma().appUser.update({
-      where: { id: appUserId },
+      where: { id: stored.id },
       data: { pro: check.pro, membershipId: check.membershipId },
     });
   } catch (err) {

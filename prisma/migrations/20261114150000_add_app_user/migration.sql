@@ -15,3 +15,13 @@ CREATE TABLE "AppUser" (
 
 CREATE UNIQUE INDEX "AppUser_email_key" ON "AppUser"("email");
 CREATE UNIQUE INDEX "AppUser_whopUserId_key" ON "AppUser"("whopUserId");
+
+-- Backfill WhopUser rows so sessions minted before AppUser existed keep
+-- resolving (getEffectivePro also matches by whopUserId).
+INSERT INTO "AppUser" ("id", "email", "name", "passwordHash", "whopUserId", "pro", "membershipId", "syncedAt", "createdAt")
+SELECT 'bf_' || "whopUserId",
+       COALESCE("email", 'whop-' || "whopUserId" || '@oauth.local'),
+       COALESCE("name", 'Excel learner'),
+       NULL, "whopUserId", "pro", "membershipId", "syncedAt", "createdAt"
+FROM "WhopUser"
+ON CONFLICT ("whopUserId") DO NOTHING;

@@ -59,10 +59,21 @@ export async function GET(request: Request) {
     });
     const pro = check.error ? (existing?.pro ?? false) : check.pro;
     const membershipId = check.error ? existing?.membershipId : check.membershipId;
+    // First time Whop links into a password account, the proven email owner
+    // takes over: an account someone else may have registered with this
+    // email loses its password access.
+    const newlyLinked = existing !== null && existing.whopUserId !== user.sub;
     const appUser = existing
       ? await prisma.appUser.update({
           where: { id: existing.id },
-          data: { email, name, whopUserId: user.sub, pro, membershipId },
+          data: {
+            email,
+            name,
+            whopUserId: user.sub,
+            pro,
+            membershipId,
+            ...(newlyLinked ? { passwordHash: null } : {}),
+          },
         })
       : await prisma.appUser.create({
           data: { email, name, whopUserId: user.sub, pro, membershipId },
