@@ -161,6 +161,29 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials */}
+      <section>
+        <SectionHeading
+          eyebrow="Learners"
+          title="People are actually finishing these lessons"
+        />
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {TESTIMONIALS.map((t) => (
+            <figure key={t.name}>
+              <Card className="h-full">
+                <blockquote className="text-sm text-zinc-700 dark:text-zinc-300">
+                  “{t.quote}”
+                </blockquote>
+                <figcaption className="mt-4 text-sm">
+                  <span className="font-semibold">{t.name}</span>
+                  <span className="text-zinc-500"> · {t.role}</span>
+                </figcaption>
+              </Card>
+            </figure>
+          ))}
+        </div>
+      </section>
+
       {/* Value props */}
       <section>
         <SectionHeading
@@ -235,29 +258,6 @@ export default function Home() {
             );
           })}
         </ul>
-      </section>
-
-      {/* Testimonials */}
-      <section>
-        <SectionHeading
-          eyebrow="Learners"
-          title="People are actually finishing these lessons"
-        />
-        <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <figure key={t.name}>
-              <Card className="h-full">
-                <blockquote className="text-sm text-zinc-700 dark:text-zinc-300">
-                  “{t.quote}”
-                </blockquote>
-                <figcaption className="mt-4 text-sm">
-                  <span className="font-semibold">{t.name}</span>
-                  <span className="text-zinc-500"> · {t.role}</span>
-                </figcaption>
-              </Card>
-            </figure>
-          ))}
-        </div>
       </section>
 
       {/* Assessment CTA */}
