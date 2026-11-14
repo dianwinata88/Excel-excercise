@@ -27,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry("/compare", 0.8),
     entry("/shortcuts", 0.8),
     entry("/practice", 0.7),
+    entry("/upgrade", 0.7),
     entry("/certification", 0.7),
     ...getCertificationDocs().map((c) => entry(`/certification/${c.slug}`, 0.7)),
     ...getFunctionCategories().map((category) =>

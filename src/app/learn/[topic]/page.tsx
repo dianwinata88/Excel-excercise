@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Badge } from "@/components/Badge";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
@@ -47,6 +48,9 @@ export default async function TopicPage({ params }: PageProps<"/learn/[topic]">)
               <Link href={`/lesson/${lessonSlug}`} className="font-semibold text-emerald-700 hover:underline dark:text-emerald-400">
                 {i + 1}. {lesson.title}
               </Link>
+              {lesson.level !== "beginner" && (
+                <Badge tone="amber">PRO</Badge>
+              )}
               <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{lesson.description}</p>
             </li>
           );

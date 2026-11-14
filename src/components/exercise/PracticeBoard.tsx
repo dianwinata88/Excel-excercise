@@ -12,7 +12,13 @@ type TypeFilter = (typeof TYPES)[number];
  * Free practice mode: filter exercises by type, see which are done,
  * run through them with the same engine as lessons.
  */
-export function PracticeBoard({ exercises }: { exercises: Exercise[] }) {
+export function PracticeBoard({
+  exercises,
+  lockedIds,
+}: {
+  exercises: Exercise[];
+  lockedIds?: Set<string>;
+}) {
   const [filter, setFilter] = useState<TypeFilter>("all");
   const progress = useProgress();
 
@@ -43,16 +49,38 @@ export function PracticeBoard({ exercises }: { exercises: Exercise[] }) {
       </div>
 
       <div className="flex flex-col gap-4">
-        {visible.map((e) => (
-          <div key={e.id} className="relative">
-            {done.has(e.id) && (
-              <span className="absolute -top-2 right-3 z-10 rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white">
-                done
-              </span>
-            )}
-            <ExerciseCard exercise={e} />
-          </div>
-        ))}
+        {visible.map((e) => {
+          const locked = lockedIds?.has(e.id);
+          return (
+            <div key={e.id} className="relative">
+              {done.has(e.id) && (
+                <span className="absolute -top-2 right-3 z-10 rounded-full bg-emerald-600 px-2 py-0.5 text-xs font-semibold text-white">
+                  done
+                </span>
+              )}
+              {locked ? (
+                <a
+                  href="/upgrade"
+                  className="flex items-center justify-between gap-4 rounded-2xl border border-dashed border-amber-300 bg-amber-50/50 p-4 hover:border-amber-400 dark:border-amber-800 dark:bg-amber-950/20"
+                >
+                  <div>
+                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+                      PRO
+                    </span>
+                    <p className="mt-1 font-medium">
+                      {e.prompt}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                    Unlock →
+                  </span>
+                </a>
+              ) : (
+                <ExerciseCard exercise={e} />
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
