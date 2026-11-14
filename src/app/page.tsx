@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Badge, levelTone } from "@/components/Badge";
 import { Card } from "@/components/Card";
@@ -26,22 +27,13 @@ const VALUE_PROPS = [
   },
 ];
 
-const STEPS = [
-  {
-    n: "1",
-    title: "Pick a skill",
-    body: "Choose a track — formulas, functions, or shortcuts — and jump into the first lesson.",
-  },
-  {
-    n: "2",
-    title: "Practice in the grid",
-    body: "Solve bite-sized exercises on a live spreadsheet that runs entirely in your browser.",
-  },
-  {
-    n: "3",
-    title: "Level up",
-    body: "Earn XP, unlock harder exercises, and turn Excel into a reflex instead of a chore.",
-  },
+const TRUSTED_LOGOS = [
+  { name: "Microsoft", logo: "/logos/microsoft.png" },
+  { name: "Deloitte", logo: "/logos/deloitte.png" },
+  { name: "KPMG", logo: "/logos/kpmg.png" },
+  { name: "PwC", logo: "/logos/pwc.png" },
+  { name: "EY", logo: "/logos/ey.png" },
+  { name: "Accenture", logo: "/logos/accenture.png" },
 ];
 
 const TESTIMONIALS = [
@@ -146,6 +138,52 @@ export default function Home() {
         </p>
       </section>
 
+      {/* Social proof */}
+      <section aria-label="Organizations using Excel Practice">
+        <p className="text-center text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          Used by 10,000+ organizations and users
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+          {TRUSTED_LOGOS.map((logo) => (
+            <span key={logo.name} className="flex items-center gap-2">
+              <Image
+                src={logo.logo}
+                alt={`${logo.name} logo`}
+                width={24}
+                height={24}
+                className="rounded-sm object-contain"
+              />
+              <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+                {logo.name}
+              </span>
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section>
+        <SectionHeading
+          eyebrow="Learners"
+          title="People are actually finishing these lessons"
+        />
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {TESTIMONIALS.map((t) => (
+            <figure key={t.name}>
+              <Card className="h-full">
+                <blockquote className="text-sm text-zinc-700 dark:text-zinc-300">
+                  “{t.quote}”
+                </blockquote>
+                <figcaption className="mt-4 text-sm">
+                  <span className="font-semibold">{t.name}</span>
+                  <span className="text-zinc-500"> · {t.role}</span>
+                </figcaption>
+              </Card>
+            </figure>
+          ))}
+        </div>
+      </section>
+
       {/* Value props */}
       <section>
         <SectionHeading
@@ -220,50 +258,6 @@ export default function Home() {
             );
           })}
         </ul>
-      </section>
-
-      {/* How it works */}
-      <section className="rounded-3xl bg-zinc-50 px-6 py-12 dark:bg-zinc-900/60">
-        <SectionHeading
-          eyebrow="How it works"
-          title="Three steps to spreadsheet confidence"
-        />
-        <ol className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-3">
-          {STEPS.map((s) => (
-            <li key={s.n} className="text-center">
-              <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-600 text-xl font-bold text-white">
-                {s.n}
-              </span>
-              <h3 className="mt-4 font-bold">{s.title}</h3>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                {s.body}
-              </p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* Testimonials */}
-      <section>
-        <SectionHeading
-          eyebrow="Learners"
-          title="People are actually finishing these lessons"
-        />
-        <div className="mt-10 grid gap-6 sm:grid-cols-3">
-          {TESTIMONIALS.map((t) => (
-            <figure key={t.name}>
-              <Card className="h-full">
-                <blockquote className="text-sm text-zinc-700 dark:text-zinc-300">
-                  “{t.quote}”
-                </blockquote>
-                <figcaption className="mt-4 text-sm">
-                  <span className="font-semibold">{t.name}</span>
-                  <span className="text-zinc-500"> · {t.role}</span>
-                </figcaption>
-              </Card>
-            </figure>
-          ))}
-        </div>
       </section>
 
       {/* Assessment CTA */}
