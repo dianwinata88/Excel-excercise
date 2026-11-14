@@ -25,7 +25,7 @@ export function ProGate({ next }: { next: string }) {
           See Pro plans
         </Link>
         <Link
-          href={`/api/auth/whop?next=${encodeURIComponent(next)}`}
+          href={`/login?next=${encodeURIComponent(next)}`}
           className="rounded-full border border-zinc-300 px-5 py-2.5 text-sm font-semibold hover:border-emerald-400 dark:border-zinc-700"
         >
           Already a member? Sign in

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, requestOrigin, signSession } from "@/lib/auth";
+import { applySession, requestOrigin } from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
 import { exchangeCode, getUserInfo, hasProMembership } from "@/lib/whop";
 
@@ -46,41 +46,34 @@ export async function GET(request: Request) {
 
   const check = await hasProMembership(user.sub);
   const name = user.name ?? user.preferred_username ?? "Excel learner";
-  const email = user.email ?? null;
+  const email = (user.email ?? "").toLowerCase() || `whop-${user.sub}@oauth.local`;
 
+  // The AppUser is the account — linked by whopUserId or by matching email,
+  // so a Whop sign-in and an email registration converge on one record.
   // When Whop can't be checked, fall back to the stored entitlement rather
   // than overwriting a subscriber's pro with a transient failure.
-  let pro = check.pro;
   try {
     const prisma = getPrisma();
-    if (check.error) {
-      const stored = await prisma.whopUser.findUnique({
-        where: { whopUserId: user.sub },
-      });
-      pro = stored?.pro ?? false;
-    }
-    await prisma.whopUser.upsert({
-      where: { whopUserId: user.sub },
-      update: {
-        email,
-        name,
-        pro,
-        ...(check.error ? {} : { membershipId: check.membershipId }),
-      },
-      create: { whopUserId: user.sub, email, name, pro, membershipId: check.membershipId },
+    const existing = await prisma.appUser.findFirst({
+      where: { OR: [{ whopUserId: user.sub }, { email }] },
     });
-  } catch (err) {
-    console.error("WhopUser upsert failed", err);
-  }
+    const pro = check.error ? (existing?.pro ?? false) : check.pro;
+    const membershipId = check.error ? existing?.membershipId : check.membershipId;
+    const appUser = existing
+      ? await prisma.appUser.update({
+          where: { id: existing.id },
+          data: { email, name, whopUserId: user.sub, pro, membershipId },
+        })
+      : await prisma.appUser.create({
+          data: { email, name, whopUserId: user.sub, pro, membershipId },
+        });
 
-  const res = NextResponse.redirect(`${origin}${stored.next}`);
-  res.cookies.set(SESSION_COOKIE, signSession({ sub: user.sub, name, email, pro }), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: true,
-    maxAge: 30 * 24 * 60 * 60,
-    path: "/",
-  });
-  res.cookies.delete("ep_pkce");
-  return res;
+    const res = NextResponse.redirect(`${origin}${stored.next}`);
+    applySession(res, appUser);
+    res.cookies.delete("ep_pkce");
+    return res;
+  } catch (err) {
+    console.error("AppUser upsert failed", err);
+    return fail("Could not save your account — try again");
+  }
 }

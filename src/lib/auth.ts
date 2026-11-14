@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 
 export const SESSION_COOKIE = "ep_session";
@@ -71,6 +71,43 @@ function allowedForwardedHost(host: string): boolean {
     host.startsWith("127.0.0.1") ||
     host.endsWith(".preview.devinapps.com") ||
     host.endsWith(".devinapps.com")
+  );
+}
+
+export const SESSION_COOKIE_OPTS = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: true,
+  maxAge: 30 * 24 * 60 * 60,
+  path: "/",
+};
+
+/** Sets the signed session cookie for an AppUser on a response. */
+export function applySession(
+  res: { cookies: { set: (name: string, value: string, opts: object) => void } },
+  user: { id: string; name: string; email: string | null; pro: boolean },
+): void {
+  res.cookies.set(
+    SESSION_COOKIE,
+    signSession({ sub: user.id, name: user.name, email: user.email, pro: user.pro }),
+    SESSION_COOKIE_OPTS,
+  );
+}
+
+export function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString("base64url");
+  const hash = scryptSync(password, salt, 64).toString("base64url");
+  return `scrypt:${salt}:${hash}`;
+}
+
+export function verifyPassword(password: string, stored: string | null): boolean {
+  if (!stored) return false;
+  const [scheme, salt, hash] = stored.split(":");
+  if (scheme !== "scrypt" || !salt || !hash) return false;
+  const candidate = scryptSync(password, salt, 64).toString("base64url");
+  return (
+    candidate.length === hash.length &&
+    timingSafeEqual(Buffer.from(candidate), Buffer.from(hash))
   );
 }
 

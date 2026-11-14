@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, getSession, requestOrigin, signSession } from "@/lib/auth";
+import { applySession, getSession, requestOrigin } from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
-import { hasProMembership } from "@/lib/whop";
+import { hasProMembership, hasProMembershipByEmail } from "@/lib/whop";
 
 /**
  * GET /api/auth/refresh?next=/learn — re-check the membership with Whop
@@ -12,8 +12,8 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const next = url.searchParams.get("next") ?? "/";
   const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/";
-
   const origin = requestOrigin(request);
+
   const session = await getSession();
   if (!session) {
     return NextResponse.redirect(
@@ -21,26 +21,29 @@ export async function GET(request: Request) {
     );
   }
 
-  const check = await hasProMembership(session.sub);
-  const pro = check.error ? session.pro : check.pro;
+  const user = await getPrisma().appUser.findUnique({
+    where: { id: session.sub },
+  });
+  if (!user) {
+    return NextResponse.redirect(`${origin}${safeNext}`);
+  }
+
+  const check = user.whopUserId
+    ? await hasProMembership(user.whopUserId)
+    : await hasProMembershipByEmail(user.email);
   if (!check.error) {
     try {
-      await getPrisma().whopUser.update({
-        where: { whopUserId: session.sub },
+      await getPrisma().appUser.update({
+        where: { id: user.id },
         data: { pro: check.pro, membershipId: check.membershipId },
       });
+      user.pro = check.pro;
     } catch (err) {
-      console.error("WhopUser refresh sync failed", err);
+      console.error("AppUser refresh sync failed", err);
     }
   }
 
   const res = NextResponse.redirect(`${origin}${safeNext}`);
-  res.cookies.set(SESSION_COOKIE, signSession({ ...session, pro }), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: true,
-    maxAge: 30 * 24 * 60 * 60,
-    path: "/",
-  });
+  applySession(res, user);
   return res;
 }
