@@ -291,5 +291,418 @@
     "keys": "ctrl+z",
     "hints": ["Windows: Ctrl+Z · Mac: Cmd+Z"],
     "xp": 5
+  },
+  {
+    "id": "filter-flag-east-01",
+    "type": "formula",
+    "prompt": "In C2, write a formula that flags the region in A2 as \"Yes\" when it is \"East\" and \"No\" otherwise.",
+    "grid": {
+      "A1": "Region", "B1": "Sales",
+      "A2": "East", "B2": 120,
+      "A3": "West", "B3": 80,
+      "A4": "East", "B4": 200
+    },
+    "answerCell": "C2",
+    "expectValue": "Yes",
+    "acceptFns": ["IF"],
+    "hints": ["Compare A2 to \"East\" inside IF", "=IF(A2=\"East\",\"Yes\",\"No\")"],
+    "xp": 15
+  },
+  {
+    "id": "filter-count-north-01",
+    "type": "formula",
+    "prompt": "In C1, count how many rows in A2:A5 have the region \"North\".",
+    "grid": {
+      "A1": "Region",
+      "A2": "North", "A3": "South", "A4": "North", "A5": "East"
+    },
+    "answerCell": "C1",
+    "expectValue": 2,
+    "acceptFns": ["COUNTIF"],
+    "hints": ["COUNTIF counts cells that match one condition", "=COUNTIF(A2:A5,\"North\")"],
+    "xp": 15
+  },
+  {
+    "id": "filter-sum-west-01",
+    "type": "formula",
+    "prompt": "In D1, total the sales in B2:B5 only for rows where the region in A2:A5 is \"West\".",
+    "grid": {
+      "A1": "Region", "B1": "Sales",
+      "A2": "East", "B2": 120,
+      "A3": "West", "B3": 80,
+      "A4": "East", "B4": 200,
+      "A5": "West", "B5": 40
+    },
+    "answerCell": "D1",
+    "expectValue": 120,
+    "acceptFns": ["SUMIF"],
+    "hints": ["Criteria range first, criteria second, sum range third", "=SUMIF(A2:A5,\"West\",B2:B5)"],
+    "xp": 20
+  },
+  {
+    "id": "mcq-filter-icon-01",
+    "type": "mcq",
+    "prompt": "Which control adds filter dropdown arrows to each column header of a table?",
+    "grid": { "A1": "Region", "B1": "Sales", "A2": "East", "B2": 120 },
+    "options": [
+      "The funnel Filter button on the Data tab",
+      "The paint bucket Fill Color button",
+      "Data Validation on the Data tab",
+      "The Insert Chart button"
+    ],
+    "correctOption": 0,
+    "hints": ["Look for the word Filter — it lives on the Data tab"],
+    "xp": 5
+  },
+  {
+    "id": "sumproduct-revenue-01",
+    "type": "formula",
+    "prompt": "In C1, calculate total revenue: multiply quantity (A2:A4) by price (B2:B4) row by row, then add the results.",
+    "grid": {
+      "A1": "Qty", "B1": "Price",
+      "A2": 3, "B2": 10,
+      "A3": 5, "B3": 20,
+      "A4": 2, "B4": 15
+    },
+    "answerCell": "C1",
+    "expectValue": 160,
+    "acceptFns": ["SUMPRODUCT"],
+    "hints": ["SUMPRODUCT multiplies matching positions, then sums", "=SUMPRODUCT(A2:A4,B2:B4)"],
+    "xp": 20
+  },
+  {
+    "id": "sumproduct-weighted-avg-01",
+    "type": "formula",
+    "prompt": "In D1, calculate the weighted average of the values in B2:B4 using the weights in C2:C4.",
+    "grid": {
+      "B1": "Value", "C1": "Weight",
+      "B2": 10, "C2": 1,
+      "B3": 20, "C3": 2,
+      "B4": 30, "C4": 1
+    },
+    "answerCell": "D1",
+    "expectValue": 20,
+    "acceptFns": ["SUMPRODUCT", "SUM"],
+    "hints": ["Weighted average = SUMPRODUCT(values, weights) / SUM(weights)", "=SUMPRODUCT(B2:B4,C2:C4)/SUM(C2:C4)"],
+    "xp": 25
+  },
+  {
+    "id": "sumproduct-three-columns-01",
+    "type": "formula",
+    "prompt": "In D1, multiply all three columns row by row — quantity (A2:A4), price (B2:B4) and rate (C2:C4) — and add the results.",
+    "grid": {
+      "A1": "Qty", "B1": "Price", "C1": "Rate",
+      "A2": 2, "B2": 10, "C2": 0.5,
+      "A3": 3, "B3": 20, "C3": 0.5,
+      "A4": 4, "B4": 30, "C4": 0.5
+    },
+    "answerCell": "D1",
+    "expectValue": 100,
+    "acceptFns": ["SUMPRODUCT"],
+    "hints": ["SUMPRODUCT accepts more than two ranges", "=SUMPRODUCT(A2:A4,B2:B4,C2:C4)"],
+    "xp": 25
+  },
+  {
+    "id": "mcq-sumproduct-array-01",
+    "type": "mcq",
+    "prompt": "What does SUMPRODUCT(A2:A4,B2:B4) actually compute?",
+    "grid": { "A1": 2, "B1": 10 },
+    "options": [
+      "It multiplies each pair of matching values, then adds the products",
+      "It adds column A and column B separately, then multiplies the two totals",
+      "It returns the product of the first value in A2:A4 and B2:B4 only",
+      "It counts how many rows have values in both columns"
+    ],
+    "correctOption": 0,
+    "hints": ["Think \"sum of products\", not \"sum then product\""],
+    "xp": 5
+  },
+  {
+    "id": "text-lower-01",
+    "type": "formula",
+    "prompt": "In B1, convert the text in A1 to lowercase.",
+    "grid": { "A1": "EXCEL BASICS" },
+    "answerCell": "B1",
+    "expectValue": "excel basics",
+    "acceptFns": ["LOWER"],
+    "hints": ["LOWER is the opposite of UPPER", "=LOWER(A1)"],
+    "xp": 10
+  },
+  {
+    "id": "text-proper-01",
+    "type": "formula",
+    "prompt": "In B1, capitalize the first letter of each word in the text A1.",
+    "grid": { "A1": "ada lovelace" },
+    "answerCell": "B1",
+    "expectValue": "Ada Lovelace",
+    "acceptFns": ["PROPER"],
+    "hints": ["PROPER title-cases text", "=PROPER(A1)"],
+    "xp": 10
+  },
+  {
+    "id": "text-substitute-01",
+    "type": "formula",
+    "prompt": "In B1, replace every \"-\" in the date text A1 with a \"/\".",
+    "grid": { "A1": "2024-11-14" },
+    "answerCell": "B1",
+    "expectValue": "2024/11/14",
+    "acceptFns": ["SUBSTITUTE"],
+    "hints": ["SUBSTITUTE(text, old_text, new_text) replaces every occurrence", "=SUBSTITUTE(A1,\"-\",\"/\")"],
+    "xp": 15
+  },
+  {
+    "id": "mcq-text-chain-01",
+    "type": "mcq",
+    "prompt": "Cell A1 contains \"  john   doe  \". Which formula returns \"John Doe\"?",
+    "grid": { "A1": "  john   doe  " },
+    "options": [
+      "=UPPER(A1)",
+      "=PROPER(TRIM(A1))",
+      "=TRIM(A1)",
+      "=LEFT(A1,4)"
+    ],
+    "correctOption": 1,
+    "hints": ["You need to remove the extra spaces AND fix the case"],
+    "xp": 10
+  },
+  {
+    "id": "date-month-01",
+    "type": "formula",
+    "prompt": "In B1, extract the month number from the date serial in A1 (March 15, 2026).",
+    "grid": { "A1": 46096 },
+    "answerCell": "B1",
+    "expectValue": 3,
+    "acceptFns": ["MONTH"],
+    "hints": ["MONTH returns 1-12 from a date serial", "=MONTH(A1)"],
+    "xp": 10
+  },
+  {
+    "id": "date-day-01",
+    "type": "formula",
+    "prompt": "In B1, extract the day of the month from the date serial in A1 (March 15, 2026).",
+    "grid": { "A1": 46096 },
+    "answerCell": "B1",
+    "expectValue": 15,
+    "acceptFns": ["DAY"],
+    "hints": ["DAY returns the day number 1-31", "=DAY(A1)"],
+    "xp": 10
+  },
+  {
+    "id": "date-eomonth-last-day-01",
+    "type": "formula",
+    "prompt": "In B1, return the last day of the month containing the date in A1 (March 15, 2026).",
+    "grid": { "A1": 46096 },
+    "answerCell": "B1",
+    "expectValue": 31,
+    "acceptFns": ["EOMONTH", "DAY"],
+    "hints": ["EOMONTH(date, 0) gives the last day of the same month", "=DAY(EOMONTH(A1,0)) shows just the day number"],
+    "xp": 20
+  },
+  {
+    "id": "mcq-eomonth-01",
+    "type": "mcq",
+    "prompt": "What does EOMONTH(A1, 0) return when A1 holds any date in March 2026?",
+    "grid": { "A1": 46096 },
+    "options": [
+      "The last day of March 2026",
+      "The first day of April 2026",
+      "The date exactly one month after A1",
+      "The number 0 formatted as a date"
+    ],
+    "correctOption": 0,
+    "hints": ["EO = End Of, MONTH = month, and 0 means the same month"],
+    "xp": 5
+  },
+  {
+    "id": "percent-share-01",
+    "type": "formula",
+    "prompt": "In C2, write a formula showing what share of the total in B2:B4 the first value (B2) represents, as a decimal.",
+    "grid": {
+      "B1": "Sales",
+      "B2": 120, "B3": 80, "B4": 200
+    },
+    "answerCell": "C2",
+    "expectValue": 0.3,
+    "acceptFns": ["SUM"],
+    "hints": ["Divide the single value by the SUM of the whole range", "=B2/SUM($B$2:$B$4)"],
+    "xp": 15
+  },
+  {
+    "id": "percent-change-01",
+    "type": "formula",
+    "prompt": "In B1, calculate the percent change from the old value in A1 to the new value in A2, as a decimal.",
+    "grid": { "A1": 80, "A2": 100 },
+    "answerCell": "B1",
+    "expectValue": 0.25,
+    "acceptFns": [],
+    "hints": ["(new - old) / old", "=(A2-A1)/A1"],
+    "xp": 15
+  },
+  {
+    "id": "percent-of-total-100-01",
+    "type": "formula",
+    "prompt": "In C4, show the share of the total in B2:B4 that B4 represents, multiplied by 100 so it reads as a percent number.",
+    "grid": {
+      "B1": "Sales",
+      "B2": 120, "B3": 80, "B4": 200
+    },
+    "answerCell": "C4",
+    "expectValue": 50,
+    "acceptFns": ["SUM"],
+    "hints": ["Same as a share, then multiply by 100", "=B4/SUM(B2:B4)*100"],
+    "xp": 20
+  },
+  {
+    "id": "mcq-percent-format-01",
+    "type": "mcq",
+    "prompt": "A formula returns 0.25 and the cell uses the Percent number format. What does the user see?",
+    "grid": { "A1": 0.25 },
+    "options": ["25%", "0.25%", "250%", "2.5%"],
+    "correctOption": 0,
+    "hints": ["Percent format multiplies the stored value by 100 and adds %"],
+    "xp": 5
+  },
+  {
+    "id": "substitute-remove-dashes-01",
+    "type": "formula",
+    "prompt": "In B1, remove every \"-\" from the text in A1, leaving only the digits.",
+    "grid": { "A1": "2026-11-14" },
+    "answerCell": "B1",
+    "expectValue": "20261114",
+    "acceptFns": ["SUBSTITUTE"],
+    "hints": ["Replace \"-\" with an empty string \"\"", "=SUBSTITUTE(A1,\"-\",\"\")"],
+    "xp": 15
+  },
+  {
+    "id": "substitute-banana-01",
+    "type": "formula",
+    "prompt": "In B1, replace every letter \"a\" in the word in A1 with \"o\".",
+    "grid": { "A1": "banana" },
+    "answerCell": "B1",
+    "expectValue": "bonono",
+    "acceptFns": ["SUBSTITUTE"],
+    "hints": ["SUBSTITUTE replaces ALL occurrences, not just the first", "=SUBSTITUTE(A1,\"a\",\"o\")"],
+    "xp": 15
+  },
+  {
+    "id": "substitute-double-space-01",
+    "type": "formula",
+    "prompt": "In B1, collapse every double space in A1 into a single space.",
+    "grid": { "A1": "a  b  c" },
+    "answerCell": "B1",
+    "expectValue": "a b c",
+    "acceptFns": ["SUBSTITUTE"],
+    "hints": ["Old text is two spaces, new text is one space", "=SUBSTITUTE(A1,\"  \",\" \")"],
+    "xp": 15
+  },
+  {
+    "id": "mcq-find-replace-01",
+    "type": "mcq",
+    "prompt": "Which keyboard shortcut opens the Find and Replace dialog in Excel on Windows?",
+    "grid": { "A1": "hello world" },
+    "options": ["Ctrl+H", "Ctrl+F", "Ctrl+P", "Ctrl+N"],
+    "correctOption": 0,
+    "hints": ["Ctrl+F only finds; the replace dialog is one key further"],
+    "xp": 5
+  },
+  {
+    "id": "mcq-valid-name-01",
+    "type": "mcq",
+    "prompt": "Which of these is a valid name for a range in Excel?",
+    "grid": { "A1": 10 },
+    "options": ["Sales2024", "1stQuarter", "My Range", "A1"],
+    "correctOption": 0,
+    "hints": ["Names cannot start with a digit, contain spaces, or look like cell references"],
+    "xp": 5
+  },
+  {
+    "id": "named-range-sum-01",
+    "type": "formula",
+    "prompt": "The range B2:B4 is named \"Sales\". In C1, write a formula that totals it.",
+    "grid": {
+      "B1": "Sales",
+      "B2": 20, "B3": 20, "B4": 20
+    },
+    "answerCell": "C1",
+    "expectValue": 60,
+    "acceptFns": ["SUM"],
+    "hints": ["Named ranges work like normal ranges inside formulas", "=SUM(B2:B4)"],
+    "xp": 10
+  },
+  {
+    "id": "named-range-discount-01",
+    "type": "formula",
+    "prompt": "Cell A1 is named \"Price\". In B1, apply a 10% discount to it.",
+    "grid": { "A1": 200 },
+    "answerCell": "B1",
+    "expectValue": 180,
+    "acceptFns": [],
+    "hints": ["Multiply by 0.9 for a 10% discount", "=A1*0.9"],
+    "xp": 10
+  },
+  {
+    "id": "mcq-name-scope-01",
+    "type": "mcq",
+    "prompt": "What is the difference between workbook scope and worksheet scope for a defined name?",
+    "grid": { "A1": 10 },
+    "options": [
+      "Workbook scope makes the name available on every sheet; worksheet scope limits it to one sheet",
+      "Worksheet scope makes the name available on every sheet",
+      "Names cannot be scoped at all",
+      "Scope only changes how the name prints"
+    ],
+    "correctOption": 0,
+    "hints": ["Think about how many sheets can see the name"],
+    "xp": 5
+  },
+  {
+    "id": "mcq-sort-ascending-01",
+    "type": "mcq",
+    "prompt": "To sort a column of numbers from smallest to largest, which option do you pick?",
+    "grid": { "A1": 30, "A2": 10, "A3": 50, "A4": 20 },
+    "options": [
+      "Sort Smallest to Largest",
+      "Sort Largest to Smallest",
+      "Sort A to Z",
+      "Filter by Color"
+    ],
+    "correctOption": 0,
+    "hints": ["Smallest to Largest is the ascending order for numbers"],
+    "xp": 5
+  },
+  {
+    "id": "sort-top-cell-01",
+    "type": "cell-select",
+    "prompt": "After sorting column A ascending (smallest to largest), which cell holds the largest value?",
+    "grid": { "A2": 30, "A3": 10, "A4": 50, "A5": 20 },
+    "answerCell": "A5",
+    "hints": ["Ascending sort pushes the biggest number to the bottom row"],
+    "xp": 5
+  },
+  {
+    "id": "sort-second-smallest-01",
+    "type": "formula",
+    "prompt": "In B1, write a formula that returns the second smallest value in A2:A5 (as if the column were sorted ascending).",
+    "grid": { "A2": 30, "A3": 10, "A4": 50, "A5": 20 },
+    "answerCell": "B1",
+    "expectValue": 20,
+    "acceptFns": ["SMALL"],
+    "hints": ["SMALL(range, k) returns the kth smallest value", "=SMALL(A2:A5,2)"],
+    "xp": 20
+  },
+  {
+    "id": "mcq-clear-filter-01",
+    "type": "mcq",
+    "prompt": "How do you remove all filter arrows from a table at once?",
+    "grid": { "A1": "Region", "B1": "Sales" },
+    "options": [
+      "Click the Clear button in the Sort & Filter group on the Data tab",
+      "Sort the column Z to A",
+      "Delete the header row",
+      "Use Remove Duplicates"
+    ],
+    "correctOption": 0,
+    "hints": ["The same Data tab that applied the filter can clear it"],
+    "xp": 5
   }
 ]
