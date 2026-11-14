@@ -617,27 +617,25 @@
   },
   {
     "id": "named-range-sum-01",
-    "type": "formula",
-    "prompt": "The range B2:B4 is named \"Sales\". In C1, write a formula that totals it.",
+    "type": "mcq",
+    "prompt": "The range B2:B4 is named \"Sales\". Which formula correctly totals it?",
     "grid": {
       "B1": "Sales",
       "B2": 20, "B3": 20, "B4": 20
     },
-    "answerCell": "C1",
-    "expectValue": 60,
-    "acceptFns": ["SUM"],
-    "hints": ["Named ranges work like normal ranges inside formulas", "=SUM(B2:B4)"],
+    "options": ["=SUM(Sales)", "=SUM(\"Sales\")", "=TOTAL(Sales)", "=NAMED.SUM(Sales)"],
+    "correctOption": 0,
+    "hints": ["Named ranges drop straight into functions in place of cell references"],
     "xp": 10
   },
   {
     "id": "named-range-discount-01",
-    "type": "formula",
-    "prompt": "Cell A1 is named \"Price\". In B1, apply a 10% discount to it.",
+    "type": "mcq",
+    "prompt": "Cell A1 (value 200) is named \"Price\". Which formula applies a 10% discount to it?",
     "grid": { "A1": 200 },
-    "answerCell": "B1",
-    "expectValue": 180,
-    "acceptFns": [],
-    "hints": ["Multiply by 0.9 for a 10% discount", "=A1*0.9"],
+    "options": ["=Price*0.9", "=Price-10", "=DISCOUNT(Price,10)", "=Price*10"],
+    "correctOption": 0,
+    "hints": ["Multiply by 0.9 for a 10% discount — names work like references inside formulas"],
     "xp": 10
   },
   {
@@ -696,13 +694,13 @@
     "prompt": "How do you remove all filter arrows from a table at once?",
     "grid": { "A1": "Region", "B1": "Sales" },
     "options": [
+      "Toggle the Filter button off in the Sort & Filter group on the Data tab",
       "Click the Clear button in the Sort & Filter group on the Data tab",
       "Sort the column Z to A",
-      "Delete the header row",
-      "Use Remove Duplicates"
+      "Delete the header row"
     ],
     "correctOption": 0,
-    "hints": ["The same Data tab that applied the filter can clear it"],
+    "hints": ["Clear removes the filter criteria but leaves the arrows; toggling Filter removes them"],
     "xp": 5
   }
 ]

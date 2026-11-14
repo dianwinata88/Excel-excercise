@@ -1033,14 +1033,14 @@
       }
     ],
     "useLeftWhen": [
-      "The number of characters is fixed and known.",
-      "You must work in Excel 2019 or older.",
-      "You need a simple, universally compatible function for fixed-width text."
-    ],
-    "useRightWhen": [
       "The field length varies and a delimiter separates it from the rest.",
       "You want the text before or after a specific occurrence of a delimiter.",
       "You are on Microsoft 365 and want readable, delimiter-based extraction."
+    ],
+    "useRightWhen": [
+      "The number of characters is fixed and known.",
+      "You must work in Excel 2019 or older.",
+      "You need a simple, universally compatible function for fixed-width text."
     ],
     "relatedFunctions": [
       "left",

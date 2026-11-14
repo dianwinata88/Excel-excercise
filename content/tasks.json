@@ -509,7 +509,7 @@
       { "heading": "Copy the source range", "body": "Select the cells you want to flip and press Ctrl+C." },
       { "heading": "Pick the destination", "body": "Click the top-left cell where the transposed output should start, leaving enough empty space for the result." },
       { "heading": "Open Paste Special", "body": "Home → Paste → Paste Special, or right-click the destination and choose Paste Special." },
-      { "heading": "Check Transpose", "body": "Tick Transpose and click OK. Values are rearranged while formulas are pasted as their current results." }
+      { "heading": "Check Transpose", "body": "Tick Transpose and click OK. The range flips into the new orientation and formulas transpose with it, adjusting their references. Choose Values instead of All in the dialog first if you want static results." }
     ],
     "formulas": [],
     "relatedFunctions": [],
@@ -518,10 +518,10 @@
   {
     "slug": "remove-blank-rows",
     "task": "Remove blank rows",
-    "intro": "Blank rows split ranges, break charts and inflate pivot tables. Excel can select every blank cell in a range at once so you can delete the whole rows cleanly.",
+    "intro": "Blank rows split ranges, break charts and inflate pivot tables. Excel can select every blank cell in a column at once so you can delete the whole rows cleanly.",
     "steps": [
-      { "heading": "Select the range", "body": "Click any cell in your data and press Ctrl+A, or drag to select exactly the rows you want to clean." },
-      { "heading": "Find blanks with Go To Special", "body": "Press Ctrl+G → Special → Blanks, or F5 → Special → Blanks, to select every empty cell in the range." },
+      { "heading": "Select a key column", "body": "Drag down the column that is filled on every real record — an ID, name or date column. Restricting the selection to one column is what keeps partially filled rows safe." },
+      { "heading": "Find blanks with Go To Special", "body": "Press Ctrl+G → Special → Blanks, or F5 → Special → Blanks, to select every empty cell in the selected column. Rows flagged now are truly blank in the key field." },
       { "heading": "Delete entire rows", "body": "Right-click one selected blank → Delete → Entire row → OK. Excel removes the rows, not just the selected cells." },
       { "heading": "Check for space-only cells", "body": "Cells containing spaces are not truly blank. Clean them with TRIM first if Go To Special misses rows." },
       { "heading": "Alternative: filter blanks", "body": "Add a helper column with =IF(COUNTA(A2:D2)=0,\"Blank\",\"Data\"), filter to Blank, then delete the visible rows." }

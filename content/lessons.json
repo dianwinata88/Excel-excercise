@@ -316,7 +316,7 @@
     "steps": [
       { "heading": "For quick fixes, use the dialog", "body": "Ctrl+H opens Find and Replace. Type the text to find, the replacement, and click Replace All." },
       { "heading": "For formulas, use SUBSTITUTE", "body": "=SUBSTITUTE(A1,\"-\",\"/\") returns the changed text without touching the original cell." },
-      { "heading": "Replace every occurrence", "body": "SUBSTITUTE and Replace All both swap every match — there is no \"first only\" option in SUBSTITUTE." }
+      { "heading": "Replace every occurrence", "body": "SUBSTITUTE and Replace All both swap every match by default. Pass a fourth argument (instance_num) to SUBSTITUTE to replace only one occurrence, e.g. =SUBSTITUTE(A1,\"-\",\"\",1) replaces just the first dash." }
     ],
     "faqs": [
       { "question": "Find & Replace vs SUBSTITUTE?", "answer": "Find & Replace edits the cells themselves. SUBSTITUTE returns new text inside a formula, which is safer when the original data must stay unchanged." },

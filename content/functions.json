@@ -1538,8 +1538,8 @@
         "title": "Sum only larger quantities",
         "grid": { "A1": 1, "B1": 10, "A2": 3, "B2": 5, "A3": 4, "B3": 8 },
         "formula": "=SUMPRODUCT((A1:A3>=2)*B1:B3)",
-        "result": 47,
-        "note": "The Boolean test zeroes out the quantity-1 row."
+        "result": 13,
+        "note": "The Boolean test zeroes out the quantity-1 row, so only 5 + 8 = 13 counts."
       }
     ],
     "commonErrors": [
