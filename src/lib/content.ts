@@ -1,6 +1,7 @@
 import path from "node:path";
 import { readFileSync } from "node:fs";
 import {
+  CertificationDocSchema,
   ComparisonDocSchema,
   ExerciseSchema,
   FunctionDocSchema,
@@ -8,6 +9,7 @@ import {
   ShortcutDocSchema,
   TaskDocSchema,
   TopicSchema,
+  type CertificationDoc,
   type ComparisonDoc,
   type Exercise,
   type FunctionDoc,
@@ -41,6 +43,7 @@ export const getFunctionDocs = (): FunctionDoc[] => load("functions.json", Funct
 export const getTaskDocs = (): TaskDoc[] => load("tasks.json", TaskDocSchema);
 export const getShortcutDocs = (): ShortcutDoc[] => load("shortcuts.json", ShortcutDocSchema);
 export const getComparisonDocs = (): ComparisonDoc[] => load("comparisons.json", ComparisonDocSchema);
+export const getCertificationDocs = (): CertificationDoc[] => load("certification.json", CertificationDocSchema);
 
 export const getLesson = (slug: string) => getLessons().find((l) => l.slug === slug);
 export const getExercise = (id: string) => getExercises().find((e) => e.id === id);
@@ -49,6 +52,7 @@ export const getFunctionDoc = (slug: string) => getFunctionDocs().find((f) => f.
 export const getTaskDoc = (slug: string) => getTaskDocs().find((t) => t.slug === slug);
 export const getShortcutDoc = (slug: string) => getShortcutDocs().find((s) => s.slug === slug);
 export const getComparisonDoc = (slug: string) => getComparisonDocs().find((c) => c.slug === slug);
+export const getCertificationDoc = (slug: string) => getCertificationDocs().find((c) => c.slug === slug);
 
 export function getFunctionCategories(): string[] {
   return [...new Set(getFunctionDocs().map((f) => f.category))].sort((a, b) =>

@@ -3,6 +3,7 @@
  * Run: npx tsx scripts/validate-content.ts
  */
 import {
+  getCertificationDocs,
   getComparisonDocs,
   getExercises,
   getFunctionDocs,
@@ -26,6 +27,8 @@ const shortcuts = getShortcutDocs();
 const shortcutSlugs = new Set(shortcuts.map((s) => s.slug));
 const comparisons = getComparisonDocs();
 const comparisonSlugs = new Set(comparisons.map((c) => c.slug));
+const certifications = getCertificationDocs();
+const certificationSlugs = new Set(certifications.map((c) => c.slug));
 
 const errors: string[] = [];
 
@@ -43,6 +46,7 @@ checkUnique("functions", functions.map((f) => f.slug));
 checkUnique("tasks", tasks.map((t) => t.slug));
 checkUnique("shortcuts", shortcuts.map((s) => s.slug));
 checkUnique("comparisons", comparisons.map((c) => c.slug));
+checkUnique("certifications", certifications.map((c) => c.slug));
 
 for (const lesson of lessons) {
   if (!topicSlugs.has(lesson.topic)) errors.push(`lesson ${lesson.slug}: unknown topic ${lesson.topic}`);
@@ -70,6 +74,14 @@ for (const c of comparisons) {
   for (const rel of c.relatedFunctions) if (!functionSlugs.has(rel)) errors.push(`comparison ${c.slug}: unknown related function ${rel}`);
   for (const rel of c.relatedComparisons) if (!comparisonSlugs.has(rel)) errors.push(`comparison ${c.slug}: unknown related comparison ${rel}`);
 }
+for (const cert of certifications) {
+  for (const objective of cert.objectives) {
+    for (const slug of objective.lessonSlugs) if (!lessonSlugs.has(slug)) errors.push(`certification ${cert.slug}: objective "${objective.name}" unknown lesson ${slug}`);
+    for (const slug of objective.taskSlugs) if (!taskSlugs.has(slug)) errors.push(`certification ${cert.slug}: objective "${objective.name}" unknown task ${slug}`);
+    for (const slug of objective.functionSlugs) if (!functionSlugs.has(slug)) errors.push(`certification ${cert.slug}: objective "${objective.name}" unknown function ${slug}`);
+  }
+  for (const rel of cert.related) if (!certificationSlugs.has(rel)) errors.push(`certification ${cert.slug}: unknown related certification ${rel}`);
+}
 
 if (errors.length) {
   console.error(errors.join("\n"));
@@ -77,5 +89,5 @@ if (errors.length) {
 }
 console.log(
   `content OK: ${topics.length} topics, ${lessons.length} lessons, ${exercises.length} exercises, ` +
-    `${functions.length} functions, ${tasks.length} tasks, ${shortcutSlugs.size} shortcuts, ${comparisons.length} comparisons`,
+    `${functions.length} functions, ${tasks.length} tasks, ${shortcutSlugs.size} shortcuts, ${comparisons.length} comparisons, ${certifications.length} certifications`,
 );
