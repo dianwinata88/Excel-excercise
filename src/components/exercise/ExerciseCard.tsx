@@ -64,6 +64,7 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
     setStatus("idle");
     setMessage(null);
     requestAnimationFrame(() => {
+      el?.focus();
       el?.setSelectionRange(start + ref.length, start + ref.length);
     });
   }
