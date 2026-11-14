@@ -40,13 +40,19 @@ async function SessionCard({
               </span>
             )}
           </p>
-          <div className="mt-4 flex justify-center gap-3">
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
             <Link
               href={next}
               className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
             >
               Continue →
             </Link>
+            <a
+              href={`/api/auth/refresh?next=${encodeURIComponent(next)}`}
+              className="rounded-full border border-zinc-300 px-5 py-2 text-sm font-semibold dark:border-zinc-700"
+            >
+              Refresh access
+            </a>
             <a
               href="/api/auth/logout"
               className="rounded-full border border-zinc-300 px-5 py-2 text-sm font-semibold dark:border-zinc-700"

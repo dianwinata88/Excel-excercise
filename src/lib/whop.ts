@@ -96,19 +96,59 @@ export async function getUserInfo(accessToken: string): Promise<{
 export async function hasProMembership(whopUserId: string): Promise<{
   pro: boolean;
   membershipId: string | null;
+  /** true when Whop could not be checked — callers must not downgrade stored pro. */
+  error: boolean;
 }> {
-  if (!API_KEY) return { pro: false, membershipId: null };
-  const res = await fetch(
-    `${WHOP_API_BASE}/memberships?user_id=${encodeURIComponent(whopUserId)}&first=50`,
-    {
-      headers: { Authorization: `Bearer ${API_KEY}` },
-      cache: "no-store",
-    },
-  );
-  if (!res.ok) return { pro: false, membershipId: null };
-  const json = (await res.json()) as {
+  if (!API_KEY) return { pro: false, membershipId: null, error: false };
+  let res: Response;
+  try {
+    res = await fetch(
+      `${WHOP_API_BASE}/memberships?user_id=${encodeURIComponent(whopUserId)}&first=50`,
+      {
+        headers: { Authorization: `Bearer ${API_KEY}` },
+        cache: "no-store",
+      },
+    );
+  } catch {
+    return { pro: false, membershipId: null, error: true };
+  }
+  if (!res.ok) return { pro: false, membershipId: null, error: true };
+  const json = (await res.json().catch(() => null)) as {
     data?: { id: string; status: string }[];
-  };
+  } | null;
+  if (!json) return { pro: false, membershipId: null, error: true };
   const active = (json.data ?? []).find((m) => PRO_STATUSES.has(m.status));
-  return { pro: !!active, membershipId: active?.id ?? null };
+  return { pro: !!active, membershipId: active?.id ?? null, error: false };
+}
+
+const PRO_SYNC_STALE_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Effective Pro status: trusts the DB for 24h, then re-checks Whop.
+ * Gated pages call this so an expired subscription is revoked within a day
+ * and a fresh purchase is picked up without forcing a re-login.
+ */
+export async function getEffectivePro(whopUserId: string): Promise<boolean> {
+  const { getPrisma } = await import("./db");
+  let stored: { pro: boolean; membershipId: string | null; syncedAt: Date } | null = null;
+  try {
+    stored = await getPrisma().whopUser.findUnique({ where: { whopUserId } });
+  } catch {
+    stored = null;
+  }
+  if (stored && Date.now() - stored.syncedAt.getTime() < PRO_SYNC_STALE_MS) {
+    return stored.pro;
+  }
+  const check = await hasProMembership(whopUserId);
+  const pro = check.error ? (stored?.pro ?? false) : check.pro;
+  try {
+    await getPrisma().whopUser.upsert({
+      where: { whopUserId },
+      update: { pro, membershipId: check.error ? stored?.membershipId : check.membershipId },
+      create: { whopUserId, pro, membershipId: check.membershipId },
+    });
+  } catch (err) {
+    console.error("WhopUser sync failed", err);
+  }
+  return pro;
 }

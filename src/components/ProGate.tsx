@@ -31,6 +31,15 @@ export function ProGate({ next }: { next: string }) {
           Already a member? Sign in
         </Link>
       </div>
+      <p className="mt-3 text-xs text-zinc-500">
+        Just purchased?{" "}
+        <Link
+          href={`/api/auth/refresh?next=${encodeURIComponent(next)}`}
+          className="text-emerald-700 hover:underline dark:text-emerald-400"
+        >
+          Refresh my access
+        </Link>
+      </p>
     </div>
   );
 }

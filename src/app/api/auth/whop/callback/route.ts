@@ -44,16 +44,30 @@ export async function GET(request: Request) {
     return fail("Could not load your Whop profile");
   }
 
-  const { pro, membershipId } = await hasProMembership(user.sub);
+  const check = await hasProMembership(user.sub);
   const name = user.name ?? user.preferred_username ?? "Excel learner";
   const email = user.email ?? null;
 
+  // When Whop can't be checked, fall back to the stored entitlement rather
+  // than overwriting a subscriber's pro with a transient failure.
+  let pro = check.pro;
   try {
     const prisma = getPrisma();
+    if (check.error) {
+      const stored = await prisma.whopUser.findUnique({
+        where: { whopUserId: user.sub },
+      });
+      pro = stored?.pro ?? false;
+    }
     await prisma.whopUser.upsert({
       where: { whopUserId: user.sub },
-      update: { email, name, pro, membershipId },
-      create: { whopUserId: user.sub, email, name, pro, membershipId },
+      update: {
+        email,
+        name,
+        pro,
+        ...(check.error ? {} : { membershipId: check.membershipId }),
+      },
+      create: { whopUserId: user.sub, email, name, pro, membershipId: check.membershipId },
     });
   } catch (err) {
     console.error("WhopUser upsert failed", err);

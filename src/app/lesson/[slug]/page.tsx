@@ -7,6 +7,7 @@ import { LessonPlayer } from "@/components/exercise/LessonPlayer";
 import { JsonLd } from "@/components/JsonLd";
 import { ProGate } from "@/components/ProGate";
 import { getSession } from "@/lib/auth";
+import { getEffectivePro } from "@/lib/whop";
 import type { Exercise, Lesson } from "../../../../content/schema";
 import { ContextualLinks } from "@/components/seo/ContextualLinks";
 import {
@@ -44,7 +45,8 @@ async function PracticeArea({
   exercises: Exercise[];
 }) {
   const session = await getSession();
-  if (lesson.level !== "beginner" && !session?.pro) {
+  const pro = session ? await getEffectivePro(session.sub) : false;
+  if (lesson.level !== "beginner" && !pro) {
     return <ProGate next={`/lesson/${slug}`} />;
   }
   return <LessonPlayer exercises={exercises} />;

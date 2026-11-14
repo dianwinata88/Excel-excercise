@@ -6,6 +6,7 @@ import { ContextualLinks } from "@/components/seo/ContextualLinks";
 import { FaqSection } from "@/components/seo/FaqSection";
 import { getExercises, getProExerciseIds } from "@/lib/content";
 import { getSession } from "@/lib/auth";
+import { getEffectivePro } from "@/lib/whop";
 import { buildMetadata } from "@/lib/seo";
 
 const PRACTICE_FAQS = [
@@ -45,7 +46,8 @@ export const metadata = buildMetadata({
 
 async function Board({ exercises }: { exercises: Exercise[] }) {
   const session = await getSession();
-  const lockedIds = session?.pro ? undefined : getProExerciseIds();
+  const pro = session ? await getEffectivePro(session.sub) : false;
+  const lockedIds = pro ? undefined : getProExerciseIds();
   return <PracticeBoard exercises={exercises} lockedIds={lockedIds} />;
 }
 
