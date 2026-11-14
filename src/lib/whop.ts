@@ -173,31 +173,43 @@ const PRO_SYNC_STALE_MS = 24 * 60 * 60 * 1000;
  * Gated pages call this so an expired subscription is revoked within a day
  * and a fresh purchase is picked up without forcing a re-login.
  */
-export async function getEffectivePro(appUserId: string): Promise<boolean> {
+export async function getEffectivePro(session: {
+  sub: string;
+  iat: number;
+}): Promise<boolean> {
   const { getPrisma } = await import("./db");
   let stored: {
     id: string;
     pro: boolean;
     email: string;
     whopUserId: string | null;
+    sessionsRevokedAt: Date | null;
     syncedAt: Date;
   } | null = null;
   try {
     // whopUserId fallback keeps sessions minted before the AppUser
     // migration (sub = Whop user id) resolving.
     stored = await getPrisma().appUser.findFirst({
-      where: { OR: [{ id: appUserId }, { whopUserId: appUserId }] },
+      where: { OR: [{ id: session.sub }, { whopUserId: session.sub }] },
     });
   } catch {
     stored = null;
   }
   if (!stored) return false;
-  if (Date.now() - stored.syncedAt.getTime() < PRO_SYNC_STALE_MS) {
-    return stored.pro;
+  // Sessions minted before a Whop-claim are dead — otherwise whoever
+  // pre-registered the email would ride the buyer's entitlement.
+  if (
+    stored.sessionsRevokedAt &&
+    session.iat < stored.sessionsRevokedAt.getTime()
+  ) {
+    return false;
   }
   // Pro is only provable via the linked Whop user — an unverified email
   // must never grant a subscriber's entitlement.
-  if (!stored.whopUserId) return stored.pro;
+  if (!stored.whopUserId) return false;
+  if (Date.now() - stored.syncedAt.getTime() < PRO_SYNC_STALE_MS) {
+    return stored.pro;
+  }
   const check = await hasProMembership(stored.whopUserId);
   if (check.error) {
     // Don't cache a failure-derived answer: keep syncedAt stale so the next

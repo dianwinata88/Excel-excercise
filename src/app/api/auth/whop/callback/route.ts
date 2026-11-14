@@ -60,8 +60,9 @@ export async function GET(request: Request) {
     const pro = check.error ? (existing?.pro ?? false) : check.pro;
     const membershipId = check.error ? existing?.membershipId : check.membershipId;
     // First time Whop links into a password account, the proven email owner
-    // takes over: an account someone else may have registered with this
-    // email loses its password access.
+    // takes over: sessions minted before the claim are revoked and the
+    // password is cleared — whoever pre-registered the email can neither
+    // stay signed in nor log back in.
     const newlyLinked = existing !== null && existing.whopUserId !== user.sub;
     const appUser = existing
       ? await prisma.appUser.update({
@@ -72,7 +73,9 @@ export async function GET(request: Request) {
             whopUserId: user.sub,
             pro,
             membershipId,
-            ...(newlyLinked ? { passwordHash: null } : {}),
+            ...(newlyLinked
+              ? { passwordHash: null, sessionsRevokedAt: new Date() }
+              : {}),
           },
         })
       : await prisma.appUser.create({

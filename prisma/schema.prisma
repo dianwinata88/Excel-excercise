@@ -27,6 +27,10 @@ model AppUser {
   whopUserId   String?  @unique
   pro          Boolean  @default(false)
   membershipId String?
+  // Sessions minted before this timestamp are dead — set when a Whop
+  // sign-in claims an account so pre-registration sessions can't
+  // ride the new owner's purchase.
+  sessionsRevokedAt DateTime?
   syncedAt     DateTime @updatedAt
   createdAt    DateTime @default(now())
 }

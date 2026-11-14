@@ -45,7 +45,7 @@ async function PracticeArea({
   exercises: Exercise[];
 }) {
   const session = await getSession();
-  const pro = session ? await getEffectivePro(session.sub) : false;
+  const pro = session ? await getEffectivePro(session) : false;
   if (lesson.level !== "beginner" && !pro) {
     return <ProGate next={`/lesson/${slug}`} />;
   }

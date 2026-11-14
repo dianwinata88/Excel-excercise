@@ -22,7 +22,7 @@ async function PlansOrStatus() {
   const session = await getSession();
   // Re-verify against Whop/DB rather than the cookie so an expired member
   // sees the plans again and can renew.
-  const pro = session ? await getEffectivePro(session.sub) : false;
+  const pro = session ? await getEffectivePro(session) : false;
 
   if (!session) {
     return (

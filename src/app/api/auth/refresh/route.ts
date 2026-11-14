@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { applySession, getSession, requestOrigin } from "@/lib/auth";
+import {
+  applySession,
+  getSession,
+  requestOrigin,
+  SESSION_COOKIE,
+} from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
 import { hasProMembership, hasProMembershipByEmail } from "@/lib/whop";
 
@@ -26,6 +31,18 @@ export async function GET(request: Request) {
   });
   if (!user) {
     return NextResponse.redirect(`${origin}${safeNext}`);
+  }
+
+  // Sessions minted before a Whop-claim are dead — without this check a
+  // revoked cookie could re-mint itself here.
+  if (user.sessionsRevokedAt && session.iat < user.sessionsRevokedAt.getTime()) {
+    const res = NextResponse.redirect(
+      `${origin}/login?error=${encodeURIComponent(
+        "Please sign in again — this account was linked to a Whop sign-in",
+      )}&next=${encodeURIComponent(safeNext)}`,
+    );
+    res.cookies.delete(SESSION_COOKIE);
+    return res;
   }
 
   // Unlinked accounts can't prove ownership by email alone — but if a

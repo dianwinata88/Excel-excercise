@@ -46,7 +46,7 @@ export const metadata = buildMetadata({
 
 async function Board({ exercises }: { exercises: Exercise[] }) {
   const session = await getSession();
-  const pro = session ? await getEffectivePro(session.sub) : false;
+  const pro = session ? await getEffectivePro(session) : false;
   const lockedIds = pro ? undefined : getProExerciseIds();
   return <PracticeBoard exercises={exercises} lockedIds={lockedIds} />;
 }

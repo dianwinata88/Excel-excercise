@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import {
   applySession,
+  clearLoginAttempts,
   loginAttemptsBlocked,
   recordFailedLogin,
   requestOrigin,
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
     return fail("Invalid email or password");
   }
 
+  clearLoginAttempts(email);
   const res = NextResponse.redirect(`${origin}${next}`, 303);
   applySession(res, user);
   return res;

@@ -9,6 +9,8 @@ export type Session = {
   name: string;
   email: string | null;
   pro: boolean;
+  /** mint time (ms); sessions older than AppUser.sessionsRevokedAt are dead */
+  iat: number;
 };
 
 function secret(): string | undefined {
@@ -19,7 +21,11 @@ export function signSession(session: Session): string {
   const key = secret();
   if (!key) throw new Error("SESSION_SECRET is not configured");
   const payload = Buffer.from(
-    JSON.stringify({ ...session, exp: Date.now() + MAX_AGE_MS }),
+    JSON.stringify({
+      ...session,
+      iat: session.iat || Date.now(),
+      exp: Date.now() + MAX_AGE_MS,
+    }),
   ).toString("base64url");
   const sig = createHmac("sha256", key).update(payload).digest("base64url");
   return `${payload}.${sig}`;
@@ -40,7 +46,13 @@ export function verifySession(value: string): Session | null {
   try {
     const s = JSON.parse(Buffer.from(payload, "base64url").toString());
     if (typeof s.exp !== "number" || s.exp < Date.now()) return null;
-    return { sub: s.sub, name: s.name ?? "", email: s.email ?? null, pro: !!s.pro };
+    return {
+      sub: s.sub,
+      name: s.name ?? "",
+      email: s.email ?? null,
+      pro: !!s.pro,
+      iat: typeof s.iat === "number" ? s.iat : 0,
+    };
   } catch {
     return null;
   }
@@ -89,7 +101,13 @@ export function applySession(
 ): void {
   res.cookies.set(
     SESSION_COOKIE,
-    signSession({ sub: user.id, name: user.name, email: user.email, pro: user.pro }),
+    signSession({
+      sub: user.id,
+      name: user.name,
+      email: user.email,
+      pro: user.pro,
+      iat: Date.now(),
+    }),
     SESSION_COOKIE_OPTS,
   );
 }
@@ -98,10 +116,21 @@ export function applySession(
 const attempts = new Map<string, { count: number; resetAt: number }>();
 const LOGIN_MAX_ATTEMPTS = 8;
 const LOGIN_WINDOW_MS = 10 * 60 * 1000;
+const ATTEMPTS_MAX_KEYS = 5000;
+
+/** Drop expired entries; hard-cap the map so distinct-key floods can't grow it. */
+function boundAttempts(now: number) {
+  if (attempts.size <= ATTEMPTS_MAX_KEYS) return;
+  for (const [k, v] of attempts) {
+    if (v.resetAt <= now) attempts.delete(k);
+  }
+  if (attempts.size > ATTEMPTS_MAX_KEYS) attempts.clear();
+}
 
 /** true while `key` is under the failed-login cap; records a failure. */
 export function recordFailedLogin(key: string): boolean {
   const now = Date.now();
+  boundAttempts(now);
   const entry = attempts.get(key);
   if (entry && entry.resetAt <= now) attempts.delete(key);
   const cur = attempts.get(key) ?? { count: 0, resetAt: now + LOGIN_WINDOW_MS };
@@ -118,7 +147,17 @@ export function recordFailedLogin(key: string): boolean {
 
 export function loginAttemptsBlocked(key: string): boolean {
   const entry = attempts.get(key);
-  return !!entry && entry.count >= LOGIN_MAX_ATTEMPTS && entry.resetAt > Date.now();
+  if (!entry) return false;
+  if (entry.resetAt <= Date.now()) {
+    attempts.delete(key);
+    return false;
+  }
+  return entry.count >= LOGIN_MAX_ATTEMPTS;
+}
+
+/** Successful sign-in resets the counter. */
+export function clearLoginAttempts(key: string): void {
+  attempts.delete(key);
 }
 
 export function hashPassword(password: string): string {
