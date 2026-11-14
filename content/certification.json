@@ -123,7 +123,7 @@
         "weight": "High weight",
         "description": "Build PivotTables from raw data, group and filter fields, and turn summaries into PivotCharts for reporting.",
         "lessonSlugs": [],
-        "taskSlugs": ["total-sales-for-one-region"],
+        "taskSlugs": ["total-sales-for-one-region", "count-unique-values"],
         "functionSlugs": ["sumif", "countif"]
       },
       {

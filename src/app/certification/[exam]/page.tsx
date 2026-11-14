@@ -175,9 +175,10 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
                     )}
                   </div>
                 ) : (
-                  <p className="mt-3 text-sm">
+                  <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
+                    No dedicated drills for this objective yet.{" "}
                     <Link href="/practice" className="text-emerald-700 hover:underline dark:text-emerald-400">
-                      Practice this skill in the sandbox →
+                      Sharpen your overall speed in the practice sandbox →
                     </Link>
                   </p>
                 )}
@@ -190,8 +191,8 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
       <section className="rounded-xl border border-emerald-300 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950/40">
         <h2 className="text-xl font-semibold">Start practicing free</h2>
         <p className="mt-2 text-zinc-700 dark:text-zinc-300">
-          Work through the lessons above, then drill the same skills against timed exercises in the
-          practice sandbox. Everything runs in your browser and needs no signup.
+          Work through the lessons above, then drill the same skills against interactive exercises in
+          the practice sandbox. Everything runs in your browser and needs no signup.
         </p>
         <div className="mt-3 flex flex-wrap gap-3">
           <Link
