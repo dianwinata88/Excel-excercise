@@ -11,22 +11,26 @@ export type Session = {
   pro: boolean;
 };
 
-function secret(): string {
-  return process.env.SESSION_SECRET ?? "excel-practice-dev-secret";
+function secret(): string | undefined {
+  return process.env.SESSION_SECRET;
 }
 
 export function signSession(session: Session): string {
+  const key = secret();
+  if (!key) throw new Error("SESSION_SECRET is not configured");
   const payload = Buffer.from(
     JSON.stringify({ ...session, exp: Date.now() + MAX_AGE_MS }),
   ).toString("base64url");
-  const sig = createHmac("sha256", secret()).update(payload).digest("base64url");
+  const sig = createHmac("sha256", key).update(payload).digest("base64url");
   return `${payload}.${sig}`;
 }
 
 export function verifySession(value: string): Session | null {
+  const key = secret();
+  if (!key) return null;
   const [payload, sig] = value.split(".");
   if (!payload || !sig) return null;
-  const expected = createHmac("sha256", secret()).update(payload).digest("base64url");
+  const expected = createHmac("sha256", key).update(payload).digest("base64url");
   if (
     sig.length !== expected.length ||
     !timingSafeEqual(Buffer.from(sig), Buffer.from(expected))
