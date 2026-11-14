@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Badge, levelTone } from "@/components/Badge";
 import { Card } from "@/components/Card";
@@ -27,12 +28,33 @@ const VALUE_PROPS = [
 ];
 
 const TRUSTED_LOGOS = [
-  { name: "Acme Corp", mark: "◆" },
-  { name: "Northwind", mark: "▲" },
-  { name: "Globex", mark: "●" },
-  { name: "Contoso", mark: "■" },
-  { name: "Initech", mark: "▣" },
-  { name: "Umbrella", mark: "☂" },
+  { name: "Microsoft", logo: "/logos/microsoft.png" },
+  { name: "Deloitte", logo: "/logos/deloitte.png" },
+  { name: "KPMG", logo: "/logos/kpmg.png" },
+  { name: "PwC", logo: "/logos/pwc.png" },
+  { name: "EY", logo: "/logos/ey.png" },
+  { name: "Accenture", logo: "/logos/accenture.png" },
+];
+
+const TESTIMONIALS = [
+  {
+    quote:
+      "I finally understand VLOOKUP. Doing the exercises myself instead of watching a tutorial made it stick.",
+    name: "Maya R.",
+    role: "Operations analyst",
+  },
+  {
+    quote:
+      "The five-minute format is perfect. I do one lesson with my morning coffee and it adds up fast.",
+    name: "Daniel K.",
+    role: "Freelance bookkeeper",
+  },
+  {
+    quote:
+      "Our whole team uses it for onboarding. New hires are productive in Excel within the first week.",
+    name: "Priya S.",
+    role: "Finance manager",
+  },
 ];
 
 const HOMEPAGE_FAQS = [
@@ -121,16 +143,19 @@ export default function Home() {
         <p className="text-center text-sm font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
           Used by 10,000+ organizations and users
         </p>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-zinc-400 dark:text-zinc-500">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
           {TRUSTED_LOGOS.map((logo) => (
-            <span
-              key={logo.name}
-              className="flex items-center gap-2 text-lg font-bold tracking-tight"
-            >
-              <span aria-hidden className="text-sm">
-                {logo.mark}
+            <span key={logo.name} className="flex items-center gap-2">
+              <Image
+                src={logo.logo}
+                alt={`${logo.name} logo`}
+                width={24}
+                height={24}
+                className="rounded-sm object-contain"
+              />
+              <span className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">
+                {logo.name}
               </span>
-              {logo.name}
             </span>
           ))}
         </div>
@@ -210,6 +235,29 @@ export default function Home() {
             );
           })}
         </ul>
+      </section>
+
+      {/* Testimonials */}
+      <section>
+        <SectionHeading
+          eyebrow="Learners"
+          title="People are actually finishing these lessons"
+        />
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          {TESTIMONIALS.map((t) => (
+            <figure key={t.name}>
+              <Card className="h-full">
+                <blockquote className="text-sm text-zinc-700 dark:text-zinc-300">
+                  “{t.quote}”
+                </blockquote>
+                <figcaption className="mt-4 text-sm">
+                  <span className="font-semibold">{t.name}</span>
+                  <span className="text-zinc-500"> · {t.role}</span>
+                </figcaption>
+              </Card>
+            </figure>
+          ))}
+        </div>
       </section>
 
       {/* Assessment CTA */}
