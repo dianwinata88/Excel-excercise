@@ -91,7 +91,12 @@ export default function LearnPage() {
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 font-bold text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-300">
                         {i + 1}
                       </span>
-                      <Badge tone={levelTone(lesson.level)}>{lesson.level}</Badge>
+                      <span className="flex items-center gap-2">
+                        {lesson.level !== "beginner" && (
+                          <Badge tone="amber">PRO</Badge>
+                        )}
+                        <Badge tone={levelTone(lesson.level)}>{lesson.level}</Badge>
+                      </span>
                     </div>
                     <h3 className="mt-3 font-semibold">{lesson.title}</h3>
                     <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">

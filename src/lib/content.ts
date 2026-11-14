@@ -77,3 +77,17 @@ export function getFunctionDocsByCategory(category: string) {
 export function getFunctionCategoryBySlug(slug: string): string | undefined {
   return getFunctionCategories().find((c) => functionCategorySlug(c) === slug);
 }
+
+/**
+ * Exercise ids referenced by intermediate/advanced lessons — these make up
+ * the Pro practice surface (beginner lessons and their exercises stay free).
+ */
+export function getProExerciseIds(): Set<string> {
+  const ids = new Set<string>();
+  for (const lesson of getLessons()) {
+    if (lesson.level !== "beginner") {
+      for (const id of lesson.exercises) ids.add(id);
+    }
+  }
+  return ids;
+}
