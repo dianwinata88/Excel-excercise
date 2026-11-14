@@ -13,7 +13,12 @@ export async function generateMetadata({ params }: PageProps<"/learn/[topic]">) 
   const { topic: slug } = await params;
   const topic = getTopic(slug);
   if (!topic) return {};
-  return buildMetadata({ title: topic.title, description: topic.description, path: `/learn/${slug}` });
+  return buildMetadata({
+    title: topic.title,
+    description: topic.description,
+    path: `/learn/${slug}`,
+    absoluteTitle: true,
+  });
 }
 
 export default async function TopicPage({ params }: PageProps<"/learn/[topic]">) {
@@ -31,7 +36,7 @@ export default async function TopicPage({ params }: PageProps<"/learn/[topic]">)
           { name: topic.name, path: `/learn/${slug}` },
         ]}
       />
-      <h1 className="text-3xl font-bold">{topic.name} lessons</h1>
+      <h1 className="text-3xl font-bold">Excel lessons: {topic.name}</h1>
       <p className="text-zinc-600 dark:text-zinc-400">{topic.description}</p>
       <ul className="space-y-3">
         {topic.lessons.map((lessonSlug, i) => {

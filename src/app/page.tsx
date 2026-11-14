@@ -3,8 +3,10 @@ import { Badge, levelTone } from "@/components/Badge";
 import { Card } from "@/components/Card";
 import { LeadCaptureForm } from "@/components/LeadCaptureForm";
 import { SectionHeading } from "@/components/SectionHeading";
+import { ContextualLinks } from "@/components/seo/ContextualLinks";
+import { FaqSection } from "@/components/seo/FaqSection";
 import { getLessons, getTopics } from "@/lib/content";
-import { SITE_NAME } from "@/lib/seo";
+import { SITE_NAME, buildMetadata } from "@/lib/seo";
 
 const VALUE_PROPS = [
   {
@@ -63,6 +65,41 @@ const TESTIMONIALS = [
   },
 ];
 
+const HOMEPAGE_FAQS = [
+  {
+    question: "Is Excel Practice really free?",
+    answer:
+      "Yes. The lessons, practice tests, function guides, how-to articles and shortcut drills are free to use in your browser.",
+  },
+  {
+    question: "Do I need Microsoft Excel installed?",
+    answer:
+      "No. Every exercise runs in the browser, so you can practice formulas, lookups and shortcuts from any computer.",
+  },
+  {
+    question: "What is the best way to learn Excel online free?",
+    answer:
+      "Start with short interactive lessons, then reinforce the skill in the practice test. Immediate feedback helps the formulas stick faster than passive video tutorials.",
+  },
+  {
+    question: "Can this help with an Excel certification or job test?",
+    answer:
+      "The practice areas cover the formulas, functions, lookups and shortcuts commonly tested in assessments. Use the certification prep page for exam-focused paths.",
+  },
+  {
+    question: "Which Excel practice test should I take first?",
+    answer:
+      "Start with the free practice test on the Practice page. It gives you a broad sample of formulas, functions, shortcuts and spreadsheet judgment questions.",
+  },
+];
+
+export const metadata = buildMetadata({
+  title: "Free Excel Practice & Training Online",
+  description:
+    "Learn Excel online free with interactive practice tests, formula exercises, function guides, and bite-sized lessons. No install needed.",
+  path: "/",
+});
+
 function topicBadge(slug: string): string {
   if (slug.includes("shortcut")) return "⌨️";
   if (slug.includes("sum") || slug.includes("math")) return "∑";
@@ -83,10 +120,10 @@ export default function Home() {
         />
         <Badge tone="green">Duolingo-style Excel training</Badge>
         <h1 className="mx-auto mt-4 max-w-2xl text-4xl font-extrabold tracking-tight sm:text-6xl">
-          Learn Excel by doing — not watching
+          Free Excel practice and training — learn by doing
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
-          {SITE_NAME} turns Excel practice into a game: bite-sized interactive
+          {SITE_NAME} is free interactive Excel practice and training: bite-sized
           exercises that run right in your browser. Type real formulas, press
           real shortcuts, earn XP.
         </p>
@@ -228,6 +265,31 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Assessment CTA */}
+      <ContextualLinks
+        title="Preparing for an Excel test or certification?"
+        description="Use the free practice test to find weak spots, then follow the assessment or certification path that matches your goal."
+        links={[
+          {
+            href: "/practice",
+            label: "Take a free Excel practice test",
+            description: "Interactive formulas, functions and shortcuts",
+          },
+          {
+            href: "/how-to/prepare-for-excel-assessment-test",
+            label: "Read assessment prep guide",
+            description: "A practical plan for Excel tests",
+          },
+          {
+            href: "/certification",
+            label: "Explore certification prep",
+            description: "MO-200, MO-201 and job assessments",
+          },
+        ]}
+      />
+
+      <FaqSection faqs={HOMEPAGE_FAQS} title="Excel practice questions, answered" />
 
       {/* Email capture CTA */}
       <section className="rounded-3xl bg-emerald-100/70 px-6 py-12 dark:bg-emerald-950/40">

@@ -457,5 +457,125 @@
     ],
     "relatedFunctions": ["sumif", "countif", "sum"],
     "relatedLessons": ["sumif-countif-basics", "if-logic"]
+  },
+  {
+    "slug": "excel-interview-questions",
+    "task": "Answer Excel interview questions",
+    "intro": "Excel interview questions usually test whether you can choose the right function, explain your logic and work quickly under time pressure.",
+    "steps": [
+      {
+        "heading": "Learn the core formula families",
+        "body": "Focus first on math functions such as SUM, COUNT and AVERAGE, then logic with IF, lookups with VLOOKUP or XLOOKUP, and conditional totals with SUMIF or COUNTIF."
+      },
+      {
+        "heading": "Practice explaining your logic",
+        "body": "Interviewers often ask why a formula works, not just for the final answer. Be ready to explain ranges, exact match, criteria and absolute references."
+      },
+      {
+        "heading": "Drill common question types",
+        "body": "Rehearse lookups, totals by condition, duplicate checks, text cleanup and simple date math. These map closely to spreadsheet exercises used in assessments."
+      },
+      {
+        "heading": "Take a timed practice test",
+        "body": "Use the Practice page or Excel skills test guide to simulate exam conditions, then review every mistake until the formula feels automatic."
+      }
+    ],
+    "formulas": [
+      { "formula": "=VLOOKUP(D1,A2:B10,2,0)", "explanation": "Classic interview lookup: find an exact value and return the matching result." },
+      { "formula": "=IF(B2>100,\"High\",\"Standard\")", "explanation": "Shows that you understand conditional logic and text output." },
+      { "formula": "=SUMIF(A2:A10,\"East\",B2:B10)", "explanation": "Answers the common 'total by category' question efficiently." }
+    ],
+    "relatedFunctions": ["vlookup", "if", "sumif", "index", "match"],
+    "relatedLessons": ["vlookup-basics", "if-logic", "sumif-countif-basics"]
+  },
+  {
+    "slug": "prepare-for-excel-assessment-test",
+    "task": "Prepare for Excel assessment tests",
+    "intro": "Employer Excel tests are usually timed, practical and focused on formulas, lookups, cleanup and shortcuts rather than theory.",
+    "steps": [
+      {
+        "heading": "Identify the test format",
+        "body": "Find out whether the assessment uses multiple choice, spreadsheet tasks or both. If possible, ask which Excel version and whether macros or pivot tables are included."
+      },
+      {
+        "heading": "Build a formula checklist",
+        "body": "Make sure you can write SUM, COUNT, AVERAGE, IF, VLOOKUP or XLOOKUP, SUMIF, COUNTIF and basic text functions without hesitation."
+      },
+      {
+        "heading": "Practice under time pressure",
+        "body": "Take short timed sessions on the Practice page. Track which question types slow you down, then repeat those exercises until they become routine."
+      },
+      {
+        "heading": "Review common mistakes",
+        "body": "Check exact-match flags in lookups, absolute references in copied formulas, criteria syntax in SUMIF and whether dates are formatted as real dates."
+      }
+    ],
+    "formulas": [
+      { "formula": "=XLOOKUP(D1,A2:A10,B2:B10,\"Not found\")", "explanation": "A modern exact-match lookup with a readable default for missing values." },
+      { "formula": "=INDEX(C2:C10,MATCH(D1,A2:A10,0))", "explanation": "INDEX + MATCH is a reliable alternative when interviewers ask for lookup options." },
+      { "formula": "=COUNTIF(B2:B10,\">=500\")", "explanation": "Counts values meeting a numeric criterion, a frequent assessment task." }
+    ],
+    "relatedFunctions": ["xlookup", "index", "match", "sumif", "countif"],
+    "relatedLessons": ["xlookup-basics", "sumif-countif-basics", "vlookup-basics"]
+  },
+  {
+    "slug": "excel-skills-test-practice",
+    "task": "Practice for an Excel skills test",
+    "intro": "A free Excel skills test should measure whether you can solve realistic spreadsheet tasks, not just recognize function names.",
+    "steps": [
+      {
+        "heading": "Start with a broad practice test",
+        "body": "Begin on the Practice page and complete a mixed set of formula, lookup, text, date and shortcut exercises."
+      },
+      {
+        "heading": "Identify weak areas",
+        "body": "Note which prompts take too long or produce errors. Weak lookups, conditional totals and text cleanup are the most common gaps."
+      },
+      {
+        "heading": "Repeat targeted drills",
+        "body": "Use the relevant lesson or function page to practice the exact skill, then return to the mixed test to confirm improvement."
+      },
+      {
+        "heading": "Simulate the real test",
+        "body": "Set a timer, avoid opening reference notes, and work through questions in order. Review mistakes after the session rather than during it."
+      }
+    ],
+    "formulas": [
+      { "formula": "=SUM(B2:B10)", "explanation": "The baseline aggregate every skills test expects you to know." },
+      { "formula": "=ROUND(C2,2)", "explanation": "A common formatting and accuracy check in assessments." },
+      { "formula": "=TRIM(A2)", "explanation": "Text cleanup appears often because real spreadsheet data is messy." }
+    ],
+    "relatedFunctions": ["sum", "count", "average", "round", "trim"],
+    "relatedLessons": ["sum-basics", "count-basics", "text-cleanup-basics"]
+  },
+  {
+    "slug": "excel-formulas-job-interview",
+    "task": "Use Excel formulas in job interviews",
+    "intro": "Job interviews often ask you to explain or recreate formulas for reporting, lookups, cleanup and conditional analysis.",
+    "steps": [
+      {
+        "heading": "Prepare lookup formulas",
+        "body": "Know when to use VLOOKUP, XLOOKUP and INDEX + MATCH, including exact match, approximate match and what to do when a value is missing."
+      },
+      {
+        "heading": "Prepare conditional formulas",
+        "body": "Practice IF for logic checks, SUMIF or SUMIFS for totals by criteria, and COUNTIF or COUNTIFS for counts by criteria."
+      },
+      {
+        "heading": "Prepare text and date formulas",
+        "body": "Be ready to clean imported data with TRIM, extract parts of text with LEFT, RIGHT, MID and FIND, and calculate date differences with DAYS or DATEDIF."
+      },
+      {
+        "heading": "Explain the business answer",
+        "body": "After the formula, say what the result means in business terms: total sales by region, count of overdue invoices, or cleaned customer names."
+      }
+    ],
+    "formulas": [
+      { "formula": "=SUMIFS(D2:D20,A2:A20,\"East\",C2:C20,\">=500\")", "explanation": "Multiple criteria make conditional totals interview-ready." },
+      { "formula": "=IFERROR(VLOOKUP(E2,A2:C20,3,0),\"Review ID\")", "explanation": "Handles missing lookups gracefully, which is a common best-practice question." },
+      { "formula": "=DATEDIF(A2,B2,\"d\")", "explanation": "Useful for date-difference questions in operations and finance roles." }
+    ],
+    "relatedFunctions": ["vlookup", "xlookup", "sumifs", "countifs", "datedif"],
+    "relatedLessons": ["vlookup-basics", "sumif-countif-basics", "date-math-basics"]
   }
 ]

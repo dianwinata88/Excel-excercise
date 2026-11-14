@@ -1,0 +1,245 @@
+[
+  {
+    "slug": "mo-210",
+    "code": "MO-210",
+    "name": "Microsoft Office Specialist: Excel Associate (Microsoft 365 Apps)",
+    "shortName": "Excel Associate",
+    "title": "MO-210 Practice Exam — Free Excel Associate Test Prep",
+    "description": "Free MO-210 practice exam prep for the Excel Associate certification. Timed, interactive drills for worksheets, ranges, tables, formulas and charts — no signup needed.",
+    "intro": "The MO-210 Excel Associate exam tests whether you can build and manage real workbooks under time pressure: formatting sheets, cleaning ranges, working with tables, writing formulas and building charts. This page breaks the exam into its five scored skill areas and maps each one to free interactive practice you can start right now.",
+    "provider": "Microsoft",
+    "aliases": ["MO-200", "Excel 2019", "Microsoft Office Specialist Excel Associate", "MOS Excel Associate"],
+    "facts": [
+      { "label": "Exam code", "value": "MO-210" },
+      { "label": "Credential", "value": "Microsoft Office Specialist: Excel Associate" },
+      { "label": "Duration", "value": "50 minutes" },
+      { "label": "Format", "value": "Task-based performance exam in a live workbook" },
+      { "label": "Scoring", "value": "Scaled score out of 1000" },
+      { "label": "Passing score", "value": "700" }
+    ],
+    "objectives": [
+      {
+        "name": "Create and manage worksheets and workbooks",
+        "weight": "25-30% of the exam",
+        "description": "Insert, rename, hide and protect worksheets, manage workbook structure, and navigate large files quickly.",
+        "lessonSlugs": ["shortcut-basics"],
+        "taskSlugs": [],
+        "functionSlugs": []
+      },
+      {
+        "name": "Manage data cells and ranges",
+        "weight": "25-30% of the exam",
+        "description": "Enter and edit data, apply number formats, use paste special, fill series and clean up messy ranges.",
+        "lessonSlugs": ["sum-basics", "count-basics"],
+        "taskSlugs": ["clean-extra-spaces", "convert-text-to-number"],
+        "functionSlugs": ["sum", "count", "counta", "average", "max", "min"]
+      },
+      {
+        "name": "Manage tables",
+        "weight": "10-15% of the exam",
+        "description": "Create and format Excel tables, use structured references, filter and sort, and remove duplicates.",
+        "lessonSlugs": [],
+        "taskSlugs": ["remove-duplicates", "create-drop-down-list"],
+        "functionSlugs": ["sumif", "countif", "sumifs", "countifs"]
+      },
+      {
+        "name": "Perform operations using formulas and functions",
+        "weight": "15-20% of the exam",
+        "description": "Write formulas with absolute references, use common functions, handle errors and combine functions for real calculations.",
+        "lessonSlugs": ["if-logic", "vlookup-basics", "xlookup-basics", "date-math-basics", "sumif-countif-basics"],
+        "taskSlugs": ["look-up-a-price-with-vlookup", "vlookup-two-criteria", "round-to-2-decimals", "calculate-days-between-dates", "absolute-reference"],
+        "functionSlugs": ["if", "ifs", "vlookup", "xlookup", "index", "match", "iferror", "round", "text"]
+      },
+      {
+        "name": "Create and manage charts",
+        "weight": "15-20% of the exam",
+        "description": "Insert and format column, line and pie charts, add titles and labels, and change chart types to tell a story with data.",
+        "lessonSlugs": [],
+        "taskSlugs": [],
+        "functionSlugs": []
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Is this a real MO-210 practice exam?",
+        "answer": "This is a free skill-by-skill practice plan built from the published MO-210 exam objectives, with interactive drills for the formulas, lookups and data tasks the exam tests. It is not a timed replica of the official exam, and it is not affiliated with Microsoft."
+      },
+      {
+        "question": "What is the difference between MO-210 and MO-200?",
+        "answer": "MO-210 is the current Microsoft 365 Apps version of the Excel Associate exam. MO-200 was the Excel 2019 version. The skills tested overlap heavily, so this prep works for both — search traffic for either code lands here."
+      },
+      {
+        "question": "Do I need MO-210 before taking MO-211?",
+        "answer": "Microsoft does not require the Associate certification before the Expert certification, but most people find MO-211 much harder without the foundations MO-210 covers."
+      },
+      {
+        "question": "How long should I study for the MO-210 exam?",
+        "answer": "If you use Excel weekly, two to four weeks of focused practice is usually enough. If you are newer, plan for six to eight weeks, spending most of your time on formulas, lookups and table operations."
+      },
+      {
+        "question": "Is MO-210 certification worth it?",
+        "answer": "For roles that list Excel as a core skill, a MOS credential signals verified competence to employers and recruiters. It is most valuable when the job description mentions Excel, reporting or data work."
+      }
+    ],
+    "related": ["mo-211", "job-assessment"]
+  },
+  {
+    "slug": "mo-211",
+    "code": "MO-211",
+    "name": "Microsoft Office Specialist: Excel Expert (Microsoft 365 Apps)",
+    "shortName": "Excel Expert",
+    "title": "MO-211 Practice Exam — Free Excel Expert Test Prep",
+    "description": "Free MO-211 practice exam prep for the Excel Expert certification. Interactive drills for advanced formulas, lookups, PivotTables and workbook automation.",
+    "intro": "The MO-211 Excel Expert exam assumes you already work comfortably in Excel and tests advanced work: nested and dynamic formulas, multi-criteria lookups, PivotTables, advanced charts and efficient workbook structures. Work through the objectives below and practice each skill in a real interactive grid.",
+    "provider": "Microsoft",
+    "aliases": ["MO-201", "Excel 2019 Expert", "Microsoft Office Specialist Excel Expert", "MOS Excel Expert"],
+    "facts": [
+      { "label": "Exam code", "value": "MO-211" },
+      { "label": "Credential", "value": "Microsoft Office Specialist: Excel Expert" },
+      { "label": "Duration", "value": "50 minutes" },
+      { "label": "Format", "value": "Task-based performance exam in a live workbook" },
+      { "label": "Scoring", "value": "Scaled score out of 1000" },
+      { "label": "Passing score", "value": "700" }
+    ],
+    "objectives": [
+      {
+        "name": "Manage data and workbook structures",
+        "weight": "Advanced",
+        "description": "Structure large workbooks, manage named ranges, data validation, grouping and protecting sheets so advanced formulas stay reliable.",
+        "lessonSlugs": ["shortcut-basics"],
+        "taskSlugs": ["split-name-into-columns", "clean-extra-spaces", "highlight-blank-cells"],
+        "functionSlugs": ["text", "trim"]
+      },
+      {
+        "name": "Perform advanced formula and function tasks",
+        "weight": "Core of the exam",
+        "description": "Combine functions, use XLOOKUP and INDEX/MATCH for two-way lookups, handle errors and work with conditional aggregation.",
+        "lessonSlugs": ["vlookup-basics", "xlookup-basics", "if-logic", "sumif-countif-basics"],
+        "taskSlugs": ["vlookup-two-criteria", "sum-top-n-values", "count-cells-between-two-numbers", "count-unique-values"],
+        "functionSlugs": ["xlookup", "index", "match", "ifs", "sumifs", "countifs", "large", "small", "text", "iferror"]
+      },
+      {
+        "name": "Manage PivotTables and PivotCharts",
+        "weight": "High weight",
+        "description": "Build PivotTables from raw data, group and filter fields, and turn summaries into PivotCharts for reporting.",
+        "lessonSlugs": [],
+        "taskSlugs": ["total-sales-for-one-region", "count-unique-values"],
+        "functionSlugs": ["sumif", "countif"]
+      },
+      {
+        "name": "Create advanced charts and visualizations",
+        "weight": "Moderate",
+        "description": "Choose the right chart type, combine chart elements, format axes and use sparklines and conditional formatting to surface insights.",
+        "lessonSlugs": [],
+        "taskSlugs": ["highlight-blank-cells"],
+        "functionSlugs": []
+      }
+    ],
+    "faqs": [
+      {
+        "question": "Is this a real MO-211 practice exam?",
+        "answer": "This is a free practice plan built from the published MO-211 exam objectives, with interactive drills for the advanced formulas and data tasks the exam tests. It is not a timed replica of the official exam and is not affiliated with Microsoft."
+      },
+      {
+        "question": "What is the difference between MO-210 and MO-211?",
+        "answer": "MO-210 (Excel Associate) covers core workbook, table, formula and chart skills. MO-211 (Excel Expert) assumes that foundation and tests advanced formulas, multi-criteria lookups, PivotTables and advanced charting."
+      },
+      {
+        "question": "What is the difference between MO-211 and MO-201?",
+        "answer": "MO-211 is the Microsoft 365 Apps version of the Excel Expert exam; MO-201 was the Excel 2019 version. The skills overlap heavily, so this prep covers both."
+      },
+      {
+        "question": "Which functions should I master for MO-211?",
+        "answer": "Focus on XLOOKUP, INDEX and MATCH for lookups, IF/IFS for logic, SUMIF/SUMIFS and COUNTIF/COUNTIFS for conditional totals, and LARGE/SMALL for top-N analysis. Error handling with IFERROR also appears often."
+      },
+      {
+        "question": "How long should I study for the MO-211 exam?",
+        "answer": "Plan for four to eight weeks if you already use Excel daily, and longer if advanced formulas are new to you. Practice building summaries from raw data, since that mirrors the exam tasks."
+      }
+    ],
+    "related": ["mo-210", "job-assessment"]
+  },
+  {
+    "slug": "job-assessment",
+    "code": "Job assessment",
+    "name": "Excel Test for Job Interviews and Skills Assessments",
+    "shortName": "Excel job test",
+    "title": "Excel Test for Job Interviews — Free Assessment Practice",
+    "description": "Free practice for employer Excel tests and skills assessments, including the Indeed Excel test. Timed drills for cleaning data, lookups, formulas and summaries.",
+    "intro": "Many employers screen candidates with a timed Excel assessment — the Indeed Excel test is the best known — where you clean a messy dataset, build a lookup and produce a summary under pressure. This page breaks the assessment into the task types that actually appear and gives you interactive practice for each one.",
+    "provider": "Employer screening tests (Indeed, TestGorilla, eSkill and similar)",
+    "aliases": ["indeed excel test", "excel skills assessment", "excel assessment test", "excel test for job interview", "excel aptitude test"],
+    "facts": [
+      { "label": "Typical length", "value": "10-30 minutes" },
+      { "label": "Format", "value": "Timed practical tasks in a spreadsheet" },
+      { "label": "Common tasks", "value": "Clean data, lookups, formulas, summaries" },
+      { "label": "Scoring", "value": "Accuracy and speed, set by the employer" },
+      { "label": "Where it appears", "value": "Job applications and interview stages" }
+    ],
+    "objectives": [
+      {
+        "name": "Clean and prepare data",
+        "weight": "Almost always tested",
+        "description": "Remove duplicates, fix extra spaces, convert text to numbers and split or combine cells so the data can be analyzed.",
+        "lessonSlugs": ["text-cleanup-basics"],
+        "taskSlugs": ["remove-duplicates", "clean-extra-spaces", "convert-text-to-number", "split-name-into-columns", "combine-cells"],
+        "functionSlugs": ["trim", "text"]
+      },
+      {
+        "name": "Lookups and matching",
+        "weight": "Very common",
+        "description": "Find prices, names or rates from a reference table with VLOOKUP or XLOOKUP, including two-criteria lookups.",
+        "lessonSlugs": ["vlookup-basics", "xlookup-basics"],
+        "taskSlugs": ["look-up-a-price-with-vlookup", "vlookup-two-criteria"],
+        "functionSlugs": ["vlookup", "xlookup", "index", "match"]
+      },
+      {
+        "name": "Summarize with formulas",
+        "weight": "Core of the test",
+        "description": "Total, count and average data, filter by criteria with SUMIF/COUNTIF and find top values for quick summaries.",
+        "lessonSlugs": ["sum-basics", "count-basics", "sumif-countif-basics"],
+        "taskSlugs": ["total-sales-for-one-region", "sum-top-n-values", "count-unique-values", "count-cells-between-two-numbers"],
+        "functionSlugs": ["sum", "count", "average", "sumif", "countif", "sumifs", "countifs"]
+      },
+      {
+        "name": "Dates, rounding and quick calculations",
+        "weight": "Common",
+        "description": "Calculate days between dates, round to currency, and use absolute references so formulas copy correctly.",
+        "lessonSlugs": ["date-math-basics"],
+        "taskSlugs": ["calculate-days-between-dates", "round-to-2-decimals", "absolute-reference"],
+        "functionSlugs": ["today", "now", "date", "datedif", "round"]
+      },
+      {
+        "name": "Formatting and usability",
+        "weight": "Occasional",
+        "description": "Apply number formats, build drop-down lists with data validation and highlight problems like blank cells.",
+        "lessonSlugs": ["shortcut-basics"],
+        "taskSlugs": ["create-drop-down-list", "highlight-blank-cells"],
+        "functionSlugs": []
+      }
+    ],
+    "faqs": [
+      {
+        "question": "What is the Indeed Excel test?",
+        "answer": "The Indeed Excel test is a timed practical assessment employers add to job applications. You work in a spreadsheet on tasks like cleaning data, writing lookups and producing summaries. Scores are compared against other applicants, so speed and accuracy both matter."
+      },
+      {
+        "question": "How do I pass an Excel assessment test?",
+        "answer": "Practice the four core task types — data cleaning, lookups, summary formulas and date calculations — until they are automatic, then take timed practice runs so the clock pressure feels familiar."
+      },
+      {
+        "question": "Is the Excel skills assessment hard?",
+        "answer": "For people who use Excel regularly it is usually straightforward but time-pressured. For beginners it can feel hard because tasks combine several skills at once, such as cleaning data before a lookup."
+      },
+      {
+        "question": "Do I need macros or VBA for job Excel tests?",
+        "answer": "Almost never. Employer screening tests focus on everyday spreadsheet work: formulas, lookups, PivotTables-style summaries and formatting. Macros and VBA are not tested."
+      },
+      {
+        "question": "Should I prepare differently for a job test than for MO-210?",
+        "answer": "Yes. MO-210 also covers workbook management and charts in depth, while job assessments emphasize speed on a small set of practical tasks. This page focuses on the job-assessment task types; the MO-210 page covers the certification."
+      }
+    ],
+    "related": ["mo-210", "mo-211"]
+  }
+]
