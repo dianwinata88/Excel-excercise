@@ -1,4 +1,4 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 
 export const SESSION_COOKIE = "ep_session";
@@ -9,6 +9,8 @@ export type Session = {
   name: string;
   email: string | null;
   pro: boolean;
+  /** mint time (ms); sessions older than AppUser.sessionsRevokedAt are dead */
+  iat: number;
 };
 
 function secret(): string | undefined {
@@ -19,7 +21,11 @@ export function signSession(session: Session): string {
   const key = secret();
   if (!key) throw new Error("SESSION_SECRET is not configured");
   const payload = Buffer.from(
-    JSON.stringify({ ...session, exp: Date.now() + MAX_AGE_MS }),
+    JSON.stringify({
+      ...session,
+      iat: session.iat || Date.now(),
+      exp: Date.now() + MAX_AGE_MS,
+    }),
   ).toString("base64url");
   const sig = createHmac("sha256", key).update(payload).digest("base64url");
   return `${payload}.${sig}`;
@@ -40,7 +46,13 @@ export function verifySession(value: string): Session | null {
   try {
     const s = JSON.parse(Buffer.from(payload, "base64url").toString());
     if (typeof s.exp !== "number" || s.exp < Date.now()) return null;
-    return { sub: s.sub, name: s.name ?? "", email: s.email ?? null, pro: !!s.pro };
+    return {
+      sub: s.sub,
+      name: s.name ?? "",
+      email: s.email ?? null,
+      pro: !!s.pro,
+      iat: typeof s.iat === "number" ? s.iat : 0,
+    };
   } catch {
     return null;
   }
@@ -71,6 +83,103 @@ function allowedForwardedHost(host: string): boolean {
     host.startsWith("127.0.0.1") ||
     host.endsWith(".preview.devinapps.com") ||
     host.endsWith(".devinapps.com")
+  );
+}
+
+export const SESSION_COOKIE_OPTS = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: true,
+  maxAge: 30 * 24 * 60 * 60,
+  path: "/",
+};
+
+/** Sets the signed session cookie for an AppUser on a response. */
+export function applySession(
+  res: { cookies: { set: (name: string, value: string, opts: object) => void } },
+  user: { id: string; name: string; email: string | null; pro: boolean },
+): void {
+  res.cookies.set(
+    SESSION_COOKIE,
+    signSession({
+      sub: user.id,
+      name: user.name,
+      email: user.email,
+      pro: user.pro,
+      iat: Date.now(),
+    }),
+    SESSION_COOKIE_OPTS,
+  );
+}
+
+// In-memory failed-login limiter — fine for a single-node app server.
+const attempts = new Map<string, { count: number; resetAt: number }>();
+const LOGIN_MAX_ATTEMPTS = 8;
+const LOGIN_WINDOW_MS = 10 * 60 * 1000;
+const ATTEMPTS_MAX_KEYS = 5000;
+
+/** Drop expired then non-blocked entries — never evict an active lockout. */
+function boundAttempts(now: number) {
+  if (attempts.size <= ATTEMPTS_MAX_KEYS) return;
+  for (const [k, v] of attempts) {
+    if (v.resetAt <= now) attempts.delete(k);
+  }
+  for (const [k, v] of attempts) {
+    if (attempts.size <= ATTEMPTS_MAX_KEYS) break;
+    if (v.count < LOGIN_MAX_ATTEMPTS) attempts.delete(k);
+  }
+  // Past this point everything left is a live lockout: don't add new keys
+  // (untracked failures) rather than erase someone's cooldown.
+}
+
+/** true while `key` is under the failed-login cap; records a failure. */
+export function recordFailedLogin(key: string): boolean {
+  const now = Date.now();
+  boundAttempts(now);
+  if (attempts.size > ATTEMPTS_MAX_KEYS && !attempts.has(key)) return true;
+  const entry = attempts.get(key);
+  if (entry && entry.resetAt <= now) attempts.delete(key);
+  const cur = attempts.get(key) ?? { count: 0, resetAt: now + LOGIN_WINDOW_MS };
+  cur.count += 1;
+  if (cur.count >= LOGIN_MAX_ATTEMPTS) {
+    attempts.delete(key);
+    // Cool the account down with a fresh window that blocks further tries.
+    attempts.set(key, { count: LOGIN_MAX_ATTEMPTS, resetAt: now + LOGIN_WINDOW_MS });
+    return false;
+  }
+  attempts.set(key, cur);
+  return true;
+}
+
+export function loginAttemptsBlocked(key: string): boolean {
+  const entry = attempts.get(key);
+  if (!entry) return false;
+  if (entry.resetAt <= Date.now()) {
+    attempts.delete(key);
+    return false;
+  }
+  return entry.count >= LOGIN_MAX_ATTEMPTS;
+}
+
+/** Successful sign-in resets the counter. */
+export function clearLoginAttempts(key: string): void {
+  attempts.delete(key);
+}
+
+export function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString("base64url");
+  const hash = scryptSync(password, salt, 64).toString("base64url");
+  return `scrypt:${salt}:${hash}`;
+}
+
+export function verifyPassword(password: string, stored: string | null): boolean {
+  if (!stored) return false;
+  const [scheme, salt, hash] = stored.split(":");
+  if (scheme !== "scrypt" || !salt || !hash) return false;
+  const candidate = scryptSync(password, salt, 64).toString("base64url");
+  return (
+    candidate.length === hash.length &&
+    timingSafeEqual(Buffer.from(candidate), Buffer.from(hash))
   );
 }
 

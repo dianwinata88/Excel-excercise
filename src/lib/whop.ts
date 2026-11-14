@@ -91,6 +91,44 @@ export async function getUserInfo(accessToken: string): Promise<{
 }
 
 /**
+ * True when a member whose email matches holds an active membership on the
+ * Pro product. This is how email-registered accounts get Pro linked: buy on
+ * Whop checkout with the same email, then refresh.
+ */
+export async function hasProMembershipByEmail(email: string): Promise<{
+  pro: boolean;
+  membershipId: string | null;
+  error: boolean;
+}> {
+  if (!API_KEY) return { pro: false, membershipId: null, error: false };
+  const params = new URLSearchParams({
+    query: email,
+    membership_status: "active",
+    first: "20",
+  });
+  if (WHOP_PRODUCT_ID) params.set("product_ids", WHOP_PRODUCT_ID);
+  let res: Response;
+  try {
+    res = await fetch(`${WHOP_API_BASE}/members?${params}`, {
+      headers: { Authorization: `Bearer ${API_KEY}` },
+      cache: "no-store",
+    });
+  } catch {
+    return { pro: false, membershipId: null, error: true };
+  }
+  if (!res.ok) return { pro: false, membershipId: null, error: true };
+  const json = (await res.json().catch(() => null)) as {
+    data?: { id: string; email?: string | null }[];
+  } | null;
+  if (!json) return { pro: false, membershipId: null, error: true };
+  // `query` also matches names/usernames — require an exact email match.
+  const match = (json.data ?? []).find(
+    (m) => m.email?.toLowerCase() === email.toLowerCase(),
+  );
+  return { pro: !!match, membershipId: match?.id ?? null, error: false };
+}
+
+/**
  * True when the Whop user holds a usable membership to any of this
  * account's products (monthly or lifetime both count as Pro).
  */
@@ -135,31 +173,56 @@ const PRO_SYNC_STALE_MS = 24 * 60 * 60 * 1000;
  * Gated pages call this so an expired subscription is revoked within a day
  * and a fresh purchase is picked up without forcing a re-login.
  */
-export async function getEffectivePro(whopUserId: string): Promise<boolean> {
+export async function getEffectivePro(session: {
+  sub: string;
+  iat: number;
+}): Promise<boolean> {
   const { getPrisma } = await import("./db");
-  let stored: { pro: boolean; membershipId: string | null; syncedAt: Date } | null = null;
+  let stored: {
+    id: string;
+    pro: boolean;
+    email: string;
+    whopUserId: string | null;
+    sessionsRevokedAt: Date | null;
+    syncedAt: Date;
+  } | null = null;
   try {
-    stored = await getPrisma().whopUser.findUnique({ where: { whopUserId } });
+    // whopUserId fallback keeps sessions minted before the AppUser
+    // migration (sub = Whop user id) resolving.
+    stored = await getPrisma().appUser.findFirst({
+      where: { OR: [{ id: session.sub }, { whopUserId: session.sub }] },
+    });
   } catch {
     stored = null;
   }
-  if (stored && Date.now() - stored.syncedAt.getTime() < PRO_SYNC_STALE_MS) {
+  if (!stored) return false;
+  // Sessions minted before a Whop-claim are dead — otherwise whoever
+  // pre-registered the email would ride the buyer's entitlement.
+  if (
+    stored.sessionsRevokedAt &&
+    session.iat < stored.sessionsRevokedAt.getTime()
+  ) {
+    return false;
+  }
+  // Pro is only provable via the linked Whop user — an unverified email
+  // must never grant a subscriber's entitlement.
+  if (!stored.whopUserId) return false;
+  if (Date.now() - stored.syncedAt.getTime() < PRO_SYNC_STALE_MS) {
     return stored.pro;
   }
-  const check = await hasProMembership(whopUserId);
+  const check = await hasProMembership(stored.whopUserId);
   if (check.error) {
     // Don't cache a failure-derived answer: keep syncedAt stale so the next
     // gated request retries Whop instead of locking the stale value for 24h.
-    return stored?.pro ?? false;
+    return stored.pro;
   }
   try {
-    await getPrisma().whopUser.upsert({
-      where: { whopUserId },
-      update: { pro: check.pro, membershipId: check.membershipId },
-      create: { whopUserId, pro: check.pro, membershipId: check.membershipId },
+    await getPrisma().appUser.update({
+      where: { id: stored.id },
+      data: { pro: check.pro, membershipId: check.membershipId },
     });
   } catch (err) {
-    console.error("WhopUser sync failed", err);
+    console.error("AppUser sync failed", err);
   }
   return check.pro;
 }
