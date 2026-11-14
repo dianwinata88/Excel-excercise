@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import {
   functionCategorySlug,
+  getCertificationDocs,
   getComparisonDocs,
   getFunctionCategories,
   getFunctionDocs,
@@ -27,6 +28,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     entry("/shortcuts", 0.8),
     entry("/practice", 0.7),
     entry("/certification", 0.7),
+    ...getCertificationDocs().map((c) => entry(`/certification/${c.slug}`, 0.7)),
     ...getFunctionCategories().map((category) =>
       entry(`/functions/category/${functionCategorySlug(category)}`, 0.7),
     ),
