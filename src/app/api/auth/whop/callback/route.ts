@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, signSession } from "@/lib/auth";
+import { SESSION_COOKIE, requestOrigin, signSession } from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
 import { exchangeCode, getUserInfo, hasProMembership } from "@/lib/whop";
 
 /** GET /api/auth/whop/callback — finish OAuth, set the session cookie. */
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const origin = url.origin;
+  const origin = requestOrigin(request);
   const fail = (reason: string) =>
     NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(reason)}`);
 

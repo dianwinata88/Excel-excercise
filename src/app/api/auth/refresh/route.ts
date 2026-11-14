@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { SESSION_COOKIE, getSession, signSession } from "@/lib/auth";
+import { SESSION_COOKIE, getSession, requestOrigin, signSession } from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
 import { hasProMembership } from "@/lib/whop";
 
@@ -13,10 +13,11 @@ export async function GET(request: Request) {
   const next = url.searchParams.get("next") ?? "/";
   const safeNext = next.startsWith("/") && !next.startsWith("//") ? next : "/";
 
+  const origin = requestOrigin(request);
   const session = await getSession();
   if (!session) {
     return NextResponse.redirect(
-      `${url.origin}/login?next=${encodeURIComponent(safeNext)}`,
+      `${origin}/login?next=${encodeURIComponent(safeNext)}`,
     );
   }
 
@@ -33,7 +34,7 @@ export async function GET(request: Request) {
     }
   }
 
-  const res = NextResponse.redirect(`${url.origin}${safeNext}`);
+  const res = NextResponse.redirect(`${origin}${safeNext}`);
   res.cookies.set(SESSION_COOKIE, signSession({ ...session, pro }), {
     httpOnly: true,
     sameSite: "lax",

@@ -51,3 +51,35 @@ export async function getSession(): Promise<Session | null> {
   const value = store.get(SESSION_COOKIE)?.value;
   return value ? verifySession(value) : null;
 }
+
+/**
+ * Public origin of the incoming request. Behind a reverse proxy
+ * `new URL(request.url).origin` is the internal host; use the
+ * forwarded headers so absolute redirects and OAuth redirect_uri
+ * match what the browser actually sees.
+ */
+function allowedForwardedHost(host: string): boolean {
+  try {
+    const site = process.env.NEXT_PUBLIC_SITE_URL;
+    if (site && new URL(site).host === host) return true;
+  } catch {
+    // fall through to the pattern checks below
+  }
+  return (
+    host === "localhost" ||
+    host.startsWith("localhost:") ||
+    host.startsWith("127.0.0.1") ||
+    host.endsWith(".preview.devinapps.com") ||
+    host.endsWith(".devinapps.com")
+  );
+}
+
+export function requestOrigin(request: Request): string {
+  const url = new URL(request.url);
+  const host = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  if (!host || !allowedForwardedHost(host)) return url.origin;
+  const proto =
+    request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() ??
+    url.protocol.replace(":", "");
+  return `${proto === "http" || proto === "https" ? proto : "https"}://${host}`;
+}
