@@ -51,3 +51,19 @@ export async function getSession(): Promise<Session | null> {
   const value = store.get(SESSION_COOKIE)?.value;
   return value ? verifySession(value) : null;
 }
+
+/**
+ * Public origin of the incoming request. Behind a reverse proxy
+ * `new URL(request.url).origin` is the internal host; use the
+ * forwarded headers so absolute redirects and OAuth redirect_uri
+ * match what the browser actually sees.
+ */
+export function requestOrigin(request: Request): string {
+  const url = new URL(request.url);
+  const host = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  if (!host) return url.origin;
+  const proto =
+    request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() ??
+    url.protocol.replace(":", "");
+  return `${proto}://${host}`;
+}
