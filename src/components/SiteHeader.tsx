@@ -12,9 +12,6 @@ function GuestLinks() {
       >
         Go Pro
       </Link>
-      <Link href="/login" className="hover:underline">
-        Sign in
-      </Link>
     </>
   );
 }
