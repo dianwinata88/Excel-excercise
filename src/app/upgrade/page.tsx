@@ -24,32 +24,6 @@ async function PlansOrStatus() {
   // sees the plans again and can renew.
   const pro = session ? await getEffectivePro(session) : false;
 
-  if (!session) {
-    return (
-      <section className="mx-auto w-full max-w-lg rounded-3xl border border-zinc-200 p-8 text-center dark:border-zinc-800">
-        <h2 className="text-2xl font-bold">Create an account to subscribe</h2>
-        <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          Pro unlocks on your account — register first so your purchase knows
-          where to land. Use the same email at Whop checkout.
-        </p>
-        <div className="mt-5 flex justify-center gap-3">
-          <Link
-            href="/login?tab=register&next=/upgrade"
-            className="rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
-          >
-            Create account
-          </Link>
-          <Link
-            href="/login?next=/upgrade"
-            className="rounded-full border border-zinc-300 px-6 py-2.5 text-sm font-semibold dark:border-zinc-700"
-          >
-            Sign in
-          </Link>
-        </div>
-      </section>
-    );
-  }
-
   if (session && pro) {
     return (
       <section className="mx-auto w-full max-w-lg rounded-3xl border border-emerald-300 bg-emerald-50 p-8 text-center dark:border-emerald-800 dark:bg-emerald-950/40">
@@ -158,13 +132,14 @@ export default function UpgradePage() {
           How it works
         </h2>
         <ol className="mt-2 list-decimal space-y-1 pl-5">
-          <li>Register or sign in, then pick a plan on Whop&apos;s secure checkout.</li>
+          <li>Pick a plan — checkout happens on Whop&apos;s secure page.</li>
           <li>
-            Use the <strong>same email</strong> you registered with.
+            Pay with the email you want on your account — no account needed
+            first.
           </li>
           <li>
-            Come back and hit <strong>Refresh my access</strong> — one Whop
-            sign-in links the purchase and unlocks Pro.
+            You land back here signed in with Pro unlocked — intermediate
+            and advanced practice opens right away.
           </li>
         </ol>
       </section>

@@ -34,7 +34,7 @@ export function ProGate({ next }: { next: string }) {
       <p className="mt-3 text-xs text-zinc-500">
         Just purchased?{" "}
         <Link
-          href={`/api/auth/refresh?next=${encodeURIComponent(next)}`}
+          href={`/api/auth/whop?next=${encodeURIComponent(next)}`}
           className="text-emerald-700 hover:underline dark:text-emerald-400"
         >
           Refresh my access
