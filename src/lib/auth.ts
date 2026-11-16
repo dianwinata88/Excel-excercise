@@ -212,24 +212,36 @@ function forwardedHostProto(request: Request): {
   return { host, proto };
 }
 
+function isLocalHost(host: string): boolean {
+  return (
+    host === "localhost" ||
+    host.startsWith("localhost:") ||
+    host.startsWith("127.0.0.1")
+  );
+}
+
 export function requestOrigin(request: Request): string {
   const url = new URL(request.url);
-  // Canonical public origin wins when configured — proxies don't always
-  // forward the external host reliably.
+  const { host, proto } = forwardedHostProto(request);
+  // A trusted external forwarded host wins — proxies often send only the
+  // host, so default the scheme to https rather than the internal http.
+  if (host && allowedForwardedHost(host) && !isLocalHost(host)) {
+    const scheme = proto === "http" || proto === "https" ? proto : "https";
+    return `${scheme}://${host}`;
+  }
+  // Ingresses that rewrite Host to the upstream (localhost:300x) mark the
+  // request as proxied — fall back to the canonical public origin when one
+  // is configured, so OAuth redirects never emit an internal address.
+  const proxied = Boolean(
+    request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      request.headers.get("forwarded"),
+  );
   try {
     const site = process.env.NEXT_PUBLIC_SITE_URL;
-    if (site) {
-      const siteHost = new URL(site).host;
-      const { host } = forwardedHostProto(request);
-      if (host === siteHost || !host || !allowedForwardedHost(host)) {
-        return new URL(site).origin;
-      }
-    }
+    if (site && (proxied || host)) return new URL(site).origin;
   } catch {
-    // malformed NEXT_PUBLIC_SITE_URL — fall through to header parsing
+    // malformed NEXT_PUBLIC_SITE_URL — fall through to the request URL
   }
-  const { host, proto } = forwardedHostProto(request);
-  if (!host || !allowedForwardedHost(host)) return url.origin;
-  const scheme = proto ?? url.protocol.replace(":", "");
-  return `${scheme === "http" || scheme === "https" ? scheme : "https"}://${host}`;
+  return url.origin;
 }
