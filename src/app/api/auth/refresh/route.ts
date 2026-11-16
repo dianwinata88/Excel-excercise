@@ -21,8 +21,11 @@ export async function GET(request: Request) {
 
   const session = await getSession();
   if (!session) {
+    // Send signed-out visitors (e.g. Whop checkout redirect_url) back
+    // through this route after sign-in so the membership check still runs.
+    const resume = `/api/auth/refresh?next=${encodeURIComponent(safeNext)}`;
     return NextResponse.redirect(
-      `${origin}/login?next=${encodeURIComponent(safeNext)}`,
+      `${origin}/login?next=${encodeURIComponent(resume)}`,
     );
   }
 
