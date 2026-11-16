@@ -183,12 +183,53 @@ export function verifyPassword(password: string, stored: string | null): boolean
   );
 }
 
+/** First host/proto the proxy reports, across common header spellings. */
+function forwardedHostProto(request: Request): {
+  host: string | null;
+  proto: string | null;
+} {
+  const h = request.headers;
+  // RFC 7239: Forwarded: for=...;host=example.com;proto=https
+  const fwd = h.get("forwarded");
+  let host: string | null = null;
+  let proto: string | null = null;
+  if (fwd) {
+    host = fwd.match(/host=([^;,]+)/i)?.[1]?.replace(/["[\]]/g, "").trim() ?? null;
+    proto = fwd.match(/proto=([^;,]+)/i)?.[1]?.replace(/"/g, "").trim() ?? null;
+  }
+  host =
+    host ??
+    h.get("x-forwarded-host")?.split(",")[0]?.trim() ??
+    h.get("x-original-host")?.split(",")[0]?.trim() ??
+    h.get("x-real-host")?.split(",")[0]?.trim() ??
+    null;
+  proto =
+    proto ??
+    h.get("x-forwarded-proto")?.split(",")[0]?.trim() ??
+    h.get("x-forwarded-scheme")?.split(",")[0]?.trim() ??
+    h.get("x-url-scheme")?.split(",")[0]?.trim() ??
+    null;
+  return { host, proto };
+}
+
 export function requestOrigin(request: Request): string {
   const url = new URL(request.url);
-  const host = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  // Canonical public origin wins when configured — proxies don't always
+  // forward the external host reliably.
+  try {
+    const site = process.env.NEXT_PUBLIC_SITE_URL;
+    if (site) {
+      const siteHost = new URL(site).host;
+      const { host } = forwardedHostProto(request);
+      if (host === siteHost || !host || !allowedForwardedHost(host)) {
+        return new URL(site).origin;
+      }
+    }
+  } catch {
+    // malformed NEXT_PUBLIC_SITE_URL — fall through to header parsing
+  }
+  const { host, proto } = forwardedHostProto(request);
   if (!host || !allowedForwardedHost(host)) return url.origin;
-  const proto =
-    request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() ??
-    url.protocol.replace(":", "");
-  return `${proto === "http" || proto === "https" ? proto : "https"}://${host}`;
+  const scheme = proto ?? url.protocol.replace(":", "");
+  return `${scheme === "http" || scheme === "https" ? scheme : "https"}://${host}`;
 }
