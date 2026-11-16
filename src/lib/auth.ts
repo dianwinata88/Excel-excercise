@@ -223,25 +223,40 @@ function isLocalHost(host: string): boolean {
 export function requestOrigin(request: Request): string {
   const url = new URL(request.url);
   const { host, proto } = forwardedHostProto(request);
-  // A trusted external forwarded host wins — proxies often send only the
-  // host, so default the scheme to https rather than the internal http.
-  if (host && allowedForwardedHost(host) && !isLocalHost(host)) {
-    const scheme = proto === "http" || proto === "https" ? proto : "https";
+  let site: URL | null = null;
+  try {
+    site = process.env.NEXT_PUBLIC_SITE_URL
+      ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+      : null;
+  } catch {
+    site = null;
+  }
+
+  if (host && allowedForwardedHost(host)) {
+    // With a canonical origin configured, a forwarded *local* host is the
+    // ingress's internal upstream (localhost:300x), not the browser-facing
+    // host — use the canonical origin. Without one, a forwarded localhost
+    // is the best guess of the browser-facing host (local reverse proxy).
+    if (site && isLocalHost(host)) return site.origin;
+    const scheme =
+      proto === "http" || proto === "https"
+        ? proto
+        : isLocalHost(host)
+          ? url.protocol.replace(":", "")
+          : "https";
     return `${scheme}://${host}`;
   }
-  // Ingresses that rewrite Host to the upstream (localhost:300x) mark the
-  // request as proxied — fall back to the canonical public origin when one
-  // is configured, so OAuth redirects never emit an internal address.
+
+  // Any proxy marker (even a bare x-forwarded-proto) with a configured
+  // canonical origin resolves to it — never emit the internal upstream.
   const proxied = Boolean(
-    request.headers.get("x-forwarded-for") ||
+    proto ||
+      request.headers.get("x-forwarded-for") ||
       request.headers.get("x-real-ip") ||
-      request.headers.get("forwarded"),
+      request.headers.get("x-forwarded-host") ||
+      request.headers.get("x-original-host") ||
+      request.headers.get("x-real-host"),
   );
-  try {
-    const site = process.env.NEXT_PUBLIC_SITE_URL;
-    if (site && (proxied || host)) return new URL(site).origin;
-  } catch {
-    // malformed NEXT_PUBLIC_SITE_URL — fall through to the request URL
-  }
+  if (site && proxied) return site.origin;
   return url.origin;
 }
