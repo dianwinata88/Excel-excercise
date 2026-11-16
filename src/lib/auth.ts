@@ -251,6 +251,7 @@ export function requestOrigin(request: Request): string {
   // canonical origin resolves to it — never emit the internal upstream.
   const proxied = Boolean(
     proto ||
+      request.headers.get("forwarded") ||
       request.headers.get("x-forwarded-for") ||
       request.headers.get("x-real-ip") ||
       request.headers.get("x-forwarded-host") ||
