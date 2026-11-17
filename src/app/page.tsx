@@ -126,12 +126,6 @@ export default function Home() {
           >
             Start practicing — it&apos;s free
           </Link>
-          <Link
-            href="/functions"
-            className="w-full rounded-2xl border-2 border-zinc-200 bg-white px-8 py-4 text-lg font-semibold transition hover:border-emerald-400 sm:w-auto dark:border-zinc-700 dark:bg-zinc-900"
-          >
-            Browse functions
-          </Link>
         </div>
         <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-500">
           No sign-up. No download. Just practice.

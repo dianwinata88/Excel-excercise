@@ -12,6 +12,9 @@ function GuestLinks() {
       >
         Go Pro
       </Link>
+      <Link href="/login" className="hover:underline">
+        Sign in
+      </Link>
     </>
   );
 }
@@ -48,20 +51,8 @@ export function SiteHeader() {
           {SITE_NAME}
         </Link>
         <nav className="flex items-center gap-4 text-sm">
-          <Link href="/learn" className="hover:underline">
-            Lessons
-          </Link>
-          <Link href="/functions" className="hover:underline">
-            Functions
-          </Link>
-          <Link href="/how-to" className="hover:underline">
-            How-to
-          </Link>
-          <Link href="/shortcuts" className="hover:underline">
-            Shortcuts
-          </Link>
-          <Link href="/practice" className="hover:underline">
-            Practice
+          <Link href="/learn" className="font-semibold text-emerald-700 hover:underline dark:text-emerald-400">
+            Start for free
           </Link>
           <Suspense fallback={<GuestLinks />}>
             <HeaderAuth />
