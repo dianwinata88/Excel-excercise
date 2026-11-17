@@ -183,12 +183,81 @@ export function verifyPassword(password: string, stored: string | null): boolean
   );
 }
 
+/** First host/proto the proxy reports, across common header spellings. */
+function forwardedHostProto(request: Request): {
+  host: string | null;
+  proto: string | null;
+} {
+  const h = request.headers;
+  // RFC 7239: Forwarded: for=...;host=example.com;proto=https
+  const fwd = h.get("forwarded");
+  let host: string | null = null;
+  let proto: string | null = null;
+  if (fwd) {
+    host = fwd.match(/host=([^;,]+)/i)?.[1]?.replace(/["[\]]/g, "").trim() ?? null;
+    proto = fwd.match(/proto=([^;,]+)/i)?.[1]?.replace(/"/g, "").trim() ?? null;
+  }
+  host =
+    host ??
+    h.get("x-forwarded-host")?.split(",")[0]?.trim() ??
+    h.get("x-original-host")?.split(",")[0]?.trim() ??
+    h.get("x-real-host")?.split(",")[0]?.trim() ??
+    null;
+  proto =
+    proto ??
+    h.get("x-forwarded-proto")?.split(",")[0]?.trim() ??
+    h.get("x-forwarded-scheme")?.split(",")[0]?.trim() ??
+    h.get("x-url-scheme")?.split(",")[0]?.trim() ??
+    null;
+  return { host, proto };
+}
+
+function isLocalHost(host: string): boolean {
+  return (
+    host === "localhost" ||
+    host.startsWith("localhost:") ||
+    host.startsWith("127.0.0.1")
+  );
+}
+
 export function requestOrigin(request: Request): string {
   const url = new URL(request.url);
-  const host = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
-  if (!host || !allowedForwardedHost(host)) return url.origin;
-  const proto =
-    request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() ??
-    url.protocol.replace(":", "");
-  return `${proto === "http" || proto === "https" ? proto : "https"}://${host}`;
+  const { host, proto } = forwardedHostProto(request);
+  let site: URL | null = null;
+  try {
+    site = process.env.NEXT_PUBLIC_SITE_URL
+      ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+      : null;
+  } catch {
+    site = null;
+  }
+
+  if (host && allowedForwardedHost(host)) {
+    // With a canonical origin configured, a forwarded *local* host is the
+    // ingress's internal upstream (localhost:300x), not the browser-facing
+    // host — use the canonical origin. Without one, a forwarded localhost
+    // is the best guess of the browser-facing host (local reverse proxy).
+    if (site && isLocalHost(host)) return site.origin;
+    const scheme =
+      proto === "http" || proto === "https"
+        ? proto
+        : isLocalHost(host)
+          ? url.protocol.replace(":", "")
+          : "https";
+    return `${scheme}://${host}`;
+  }
+
+  // Any proxy marker (even a bare x-forwarded-proto) with a configured
+  // canonical origin resolves to it — never emit the internal upstream.
+  const proxied = Boolean(
+    proto ||
+      request.headers.get("forwarded") ||
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      request.headers.get("x-forwarded-host") ||
+      request.headers.get("x-original-host") ||
+      request.headers.get("x-real-host"),
+  );
+  if (site && proxied) return site.origin;
+  return url.origin;
 }
