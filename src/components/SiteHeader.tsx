@@ -46,11 +46,11 @@ async function HeaderAuth() {
 export function SiteHeader() {
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
+        <Link href="/" className="shrink-0 whitespace-nowrap text-lg font-bold text-emerald-700 dark:text-emerald-400">
           {SITE_NAME}
         </Link>
-        <nav className="flex items-center gap-4 text-sm">
+        <nav className="flex shrink-0 items-center gap-4 whitespace-nowrap text-sm">
           <Link href="/learn" className="font-semibold text-emerald-700 hover:underline dark:text-emerald-400">
             Start for free
           </Link>
