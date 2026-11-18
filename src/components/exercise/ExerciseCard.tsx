@@ -74,10 +74,14 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
   const firstOptionRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    // Only autofocus when this is the only exercise card on the page (lesson
-    // player or a single embed). Boards with many cards mounted would
-    // otherwise have the last card win focus and scroll the page.
-    if (document.querySelectorAll("[data-exercise]").length > 1) return;
+    // Only autofocus when this is the only visible exercise card on the page
+    // (lesson player or a single embed). Boards with many cards mounted would
+    // otherwise have the last card win focus and scroll the page; hidden or
+    // stale cards from a previous navigation don't count.
+    const visibleCards = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-exercise]"),
+    ).filter((el) => el.offsetParent !== null);
+    if (visibleCards.length !== 1 || visibleCards[0] !== cardRef.current) return;
     if (exercise.type === "formula") inputRef.current?.focus();
     if (exercise.type === "shortcut") shortcutRef.current?.focus();
     if (exercise.type === "mcq") firstOptionRef.current?.focus();
