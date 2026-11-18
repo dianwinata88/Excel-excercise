@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Badge } from "@/components/Badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ExamCard } from "@/components/certification/ExamCard";
 import { FaqSection } from "@/components/certification/FaqSection";
@@ -75,6 +76,10 @@ export default function CertificationPage() {
           Every skill area below is mapped to real lessons, how-to guides and exercises you can
           try in your browser — no paid practice-exam bundle required.
         </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Badge tone="green">Free interactive practice</Badge>
+          <Badge tone="zinc">{certifications.length} exam paths</Badge>
+        </div>
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -44,7 +44,7 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
   ];
 
   return (
-    <article className="flex flex-col gap-8">
+    <article className="mx-auto flex w-full max-w-3xl flex-col gap-8">
       <JsonLd
         data={[
           learningResourceJsonLd({
@@ -73,9 +73,9 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
         <h1 className="mt-3 text-3xl font-bold">
           {doc.code} {doc.shortName} practice
         </h1>
-        <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">{doc.intro}</p>
+        <p className="mt-3 text-lg leading-7 text-zinc-600 dark:text-zinc-400">{doc.intro}</p>
         {doc.aliases.length > 0 && (
-          <p className="mt-3 text-sm text-zinc-500">
+          <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
             Also searched as: {doc.aliases.join(", ")}.
           </p>
         )}
@@ -87,7 +87,7 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
           <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {doc.facts.map((fact) => (
               <div key={fact.label} className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
-                <dt className="text-sm font-medium text-zinc-500">{fact.label}</dt>
+                <dt className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{fact.label}</dt>
                 <dd className="mt-1 text-zinc-900 dark:text-zinc-100">{fact.value}</dd>
               </div>
             ))}
@@ -130,7 +130,7 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
                   <div className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
                     {lessons.length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-zinc-500">Lessons</h4>
+                        <h4 className="font-semibold text-zinc-500 dark:text-zinc-400">Lessons</h4>
                         <ul className="mt-1 space-y-1">
                           {lessons.map((l) => (
                             <li key={l.slug}>
@@ -144,7 +144,7 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
                     )}
                     {tasks.length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-zinc-500">How-to guides</h4>
+                        <h4 className="font-semibold text-zinc-500 dark:text-zinc-400">How-to guides</h4>
                         <ul className="mt-1 space-y-1">
                           {tasks.map((t) => (
                             <li key={t.slug}>
@@ -158,7 +158,7 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
                     )}
                     {functions.length > 0 && (
                       <div>
-                        <h4 className="font-semibold text-zinc-500">Functions</h4>
+                        <h4 className="font-semibold text-zinc-500 dark:text-zinc-400">Functions</h4>
                         <ul className="mt-1 flex flex-wrap gap-1.5">
                           {functions.map((f) => (
                             <li key={f.slug}>
@@ -188,22 +188,22 @@ export default async function CertificationExamPage({ params }: PageProps<"/cert
         </div>
       </section>
 
-      <section className="rounded-xl border border-emerald-300 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-950/40">
+      <section className="rounded-2xl border border-emerald-300 bg-emerald-50 p-5 dark:border-emerald-800 dark:bg-emerald-950/40">
         <h2 className="text-xl font-semibold">Start practicing free</h2>
-        <p className="mt-2 text-zinc-700 dark:text-zinc-300">
+        <p className="mt-2 leading-7 text-zinc-700 dark:text-zinc-300">
           Work through the lessons above, then drill the same skills against interactive exercises in
           the practice sandbox. Everything runs in your browser and needs no signup.
         </p>
         <div className="mt-3 flex flex-wrap gap-3">
           <Link
             href="/practice"
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+            className="inline-flex min-h-11 items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
           >
             Open the practice sandbox
           </Link>
           <Link
             href="/learn"
-            className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-semibold hover:border-emerald-400 dark:border-zinc-700"
+            className="inline-flex min-h-11 items-center rounded-lg border border-zinc-300 px-4 py-2 text-sm font-semibold hover:border-emerald-400 dark:border-zinc-700"
           >
             Browse all lessons
           </Link>

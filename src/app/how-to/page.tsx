@@ -1,6 +1,7 @@
-import Link from "next/link";
+import { Badge } from "@/components/Badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { SeoSearchGrid } from "@/components/SeoSearchGrid";
 import { getTaskDocs } from "@/lib/content";
 import { buildMetadata, collectionPageJsonLd } from "@/lib/seo";
 
@@ -25,28 +26,25 @@ export default function HowToIndexPage() {
       />
       <Breadcrumbs items={[{ name: "Home", path: "/" }, { name: "How-to guides", path: "/how-to" }]} />
       <header>
-        <h1 className="text-3xl font-bold">Excel interview questions and how-to guides</h1>
+        <Badge tone="green">{tasks.length} guides</Badge>
+        <h1 className="mt-3 text-3xl font-bold">Excel interview questions and how-to guides</h1>
         <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
           Practical, formula-first walkthroughs for the tasks people search for most: lookups,
           duplicates, text cleanup, conditional totals and spreadsheet shortcuts.
         </p>
       </header>
-      <ul className="grid gap-4 sm:grid-cols-2">
-        {tasks.map((task) => (
-          <li key={task.slug}>
-            <Link
-              href={`/how-to/${task.slug}`}
-              className="block h-full rounded-xl border border-zinc-200 p-5 hover:border-emerald-400 dark:border-zinc-800"
-            >
-              <h2 className="font-semibold">{task.task}</h2>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">{task.intro}</p>
-              <p className="mt-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                Read the guide →
-              </p>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <SeoSearchGrid
+        items={tasks.map((task) => ({
+          href: `/how-to/${task.slug}`,
+          title: task.task,
+          description: task.intro,
+          badge: "Guide",
+          badgeTone: "zinc",
+        }))}
+        searchLabel="Search how-to guides"
+        placeholder="Search tasks, formulas or topics"
+        emptyMessage="No guides match that search. Try a broader term like lookup, text or duplicates."
+      />
     </div>
   );
 }
