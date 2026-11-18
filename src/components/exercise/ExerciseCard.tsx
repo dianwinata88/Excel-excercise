@@ -14,6 +14,41 @@ import { SpreadsheetGrid } from "./SpreadsheetGrid";
 
 type Status = "idle" | "wrong" | "correct";
 
+const FOCUS_RING =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-emerald-400";
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+/** True when the user prefers reduced motion — skip decorative animations. */
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
 type Props = {
   exercise: Exercise;
   /**
@@ -35,11 +70,19 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
   const progress = useProgress();
   const inputRef = useRef<HTMLInputElement>(null);
   const shortcutRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLElement>(null);
+  const firstOptionRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (exercise.type === "formula") inputRef.current?.focus();
     if (exercise.type === "shortcut") shortcutRef.current?.focus();
+    if (exercise.type === "mcq") firstOptionRef.current?.focus();
   }, [exercise.id, exercise.type]);
+
+  function animate(keyframes: Keyframe[], duration = 300) {
+    if (prefersReducedMotion()) return;
+    cardRef.current?.animate(keyframes, { duration, easing: "ease-out" });
+  }
 
   function finish(result: { ok: boolean; message?: string }) {
     if (result.ok) {
@@ -48,10 +91,28 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
       setStatus("correct");
       setMessage(null);
       onResult?.(true);
+      animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(1.015)", offset: 0.6 },
+          { transform: "scale(1)" },
+        ],
+        280,
+      );
     } else {
       setStatus("wrong");
       setMessage(result.message ?? "Try again.");
       onResult?.(false);
+      animate(
+        [
+          { transform: "translateX(0)" },
+          { transform: "translateX(-6px)" },
+          { transform: "translateX(6px)" },
+          { transform: "translateX(-3px)" },
+          { transform: "translateX(0)" },
+        ],
+        350,
+      );
     }
   }
 
@@ -90,9 +151,16 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
   const done = status === "correct";
   const alreadyDone = progress.completed.includes(exercise.id);
 
+  const cardBorder = done
+    ? "border-emerald-400 dark:border-emerald-700"
+    : status === "wrong"
+      ? "border-red-300 dark:border-red-800"
+      : "border-zinc-200 dark:border-zinc-700";
+
   return (
     <section
-      className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900"
+      ref={cardRef}
+      className={`rounded-xl border bg-white p-4 transition-colors duration-300 dark:bg-zinc-900 ${cardBorder}`}
       data-exercise={exercise.id}
     >
       <div className="flex items-start justify-between gap-4">
@@ -104,8 +172,11 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
 
       {/* Formula bar above the sheet, like Excel's fx bar */}
       {exercise.type === "formula" && (
-        <div className="mt-3 flex items-center gap-2">
-          <label htmlFor={`fx-${exercise.id}`} className="font-mono text-sm text-zinc-500">
+        <div className="mt-3 flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2">
+          <label
+            htmlFor={`fx-${exercise.id}`}
+            className="font-mono text-sm text-zinc-500 sm:w-14 sm:shrink-0"
+          >
             {exercise.answerCell} =
           </label>
           <input
@@ -113,6 +184,7 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
             ref={inputRef}
             value={input}
             disabled={done}
+            aria-invalid={status === "wrong"}
             onChange={(e) => {
               setInput(e.target.value);
               setStatus("idle");
@@ -126,7 +198,11 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
             placeholder="Type a formula"
             spellCheck={false}
             autoComplete="off"
-            className="flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 font-mono text-sm outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:focus:ring-emerald-900"
+            className={`min-h-11 flex-1 rounded-lg border bg-white px-3 py-2 font-mono text-sm dark:bg-zinc-950 ${FOCUS_RING} disabled:opacity-60 ${
+              status === "wrong"
+                ? "border-red-400 dark:border-red-700"
+                : "border-zinc-300 dark:border-zinc-700"
+            }`}
           />
         </div>
       )}
@@ -161,7 +237,7 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
             e.preventDefault();
             finish(checkShortcut(exercise, combo));
           }}
-          className="mt-3 rounded-lg border border-dashed border-zinc-300 px-3 py-4 text-center text-sm text-zinc-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:border-zinc-700 dark:focus:ring-emerald-900"
+          className={`mt-3 min-h-11 rounded-lg border border-dashed border-zinc-300 px-3 py-4 text-center text-sm text-zinc-500 ${FOCUS_RING} dark:border-zinc-700`}
         >
           {done ? "Done!" : "Click here, then press the key combination"}
         </div>
@@ -184,11 +260,13 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
                 <button
                   type="button"
                   disabled={done}
+                  ref={i === 0 ? firstOptionRef : undefined}
+                  aria-pressed={isPicked}
                   onClick={() => {
                     setPicked(i);
                     setStatus("idle");
                   }}
-                  className={`w-full rounded-lg border px-3 py-2 text-left font-mono text-sm disabled:opacity-70 ${
+                  className={`min-h-11 w-full rounded-lg border px-3 py-2 text-left font-mono text-sm ${FOCUS_RING} disabled:cursor-default disabled:opacity-70 ${
                     good
                       ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50"
                       : bad
@@ -207,7 +285,7 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
       )}
 
       {/* Feedback + actions */}
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
         {!done && exercise.type !== "shortcut" && (
           <button
             type="button"
@@ -217,26 +295,37 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
               (exercise.type === "cell-select" && !selected) ||
               (exercise.type === "mcq" && picked === null)
             }
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className={`min-h-11 rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700 ${FOCUS_RING} disabled:cursor-not-allowed disabled:opacity-50`}
           >
             Check
           </button>
         )}
-        {status === "wrong" && message && (
-          <p className="text-sm text-red-600 dark:text-red-400" role="alert">
-            {message}
-          </p>
-        )}
-        {done && (
-          <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400" role="status">
-            Correct{granted > 0 ? ` — +${granted} XP` : alreadyDone ? " (already completed)" : "!"}
-          </p>
-        )}
+        <div aria-live="polite" className="flex items-center gap-1.5">
+          {status === "wrong" && message && (
+            <p
+              key={`wrong-${message}`}
+              className="flex items-center gap-1.5 text-sm font-medium text-red-600 dark:text-red-400"
+              role="alert"
+            >
+              <XIcon />
+              {message}
+            </p>
+          )}
+          {done && (
+            <p
+              className="flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-400"
+              role="status"
+            >
+              <CheckIcon />
+              Correct{granted > 0 ? ` — +${granted} XP` : alreadyDone ? " (already completed)" : "!"}
+            </p>
+          )}
+        </div>
         {done && standalone && (
           <button
             type="button"
             onClick={reset}
-            className="text-sm text-zinc-500 underline hover:text-zinc-700 dark:hover:text-zinc-300"
+            className={`min-h-11 rounded-lg px-3 text-sm text-zinc-500 underline hover:text-zinc-700 ${FOCUS_RING} dark:hover:text-zinc-300`}
           >
             Try again
           </button>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import type { Exercise } from "../../../content/schema";
 import { gridBounds, toA1 } from "./engine";
 
@@ -29,8 +30,39 @@ export function SpreadsheetGrid({ exercise, selected, onSelect, answerDisplay }:
   const interactive = exercise.type === "cell-select" || exercise.type === "formula";
   const insertsRef = exercise.type === "formula";
 
+  // Show the right-edge fade only while the grid actually overflows.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showFade, setShowFade] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const update = () =>
+      setShowFade(el.scrollWidth > el.clientWidth + 1 && el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
+  }, [exercise.id]);
+
   return (
-    <div className="overflow-x-auto">
+    <div className="relative">
+      {showFade && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent dark:from-zinc-900"
+        />
+      )}
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto pb-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+        role="region"
+        aria-label="Spreadsheet grid — scroll horizontally if needed"
+        tabIndex={0}
+      >
       <table
         className="border-collapse text-sm"
         aria-label="Exercise spreadsheet"
@@ -65,8 +97,8 @@ export function SpreadsheetGrid({ exercise, selected, onSelect, answerDisplay }:
                     : raw === undefined
                       ? ""
                       : String(raw);
-                const base =
-                  "h-8 border border-zinc-300 px-2 text-left align-middle dark:border-zinc-700";
+                const rowH = interactive ? "h-11" : "h-8";
+                const base = `border border-zinc-300 px-2 text-left align-middle dark:border-zinc-700 ${rowH}`;
                 const state = isSelected
                   ? "bg-emerald-100 ring-2 ring-inset ring-emerald-500 dark:bg-emerald-950"
                   : isAnswer && exercise.type !== "cell-select"
@@ -83,7 +115,7 @@ export function SpreadsheetGrid({ exercise, selected, onSelect, answerDisplay }:
                       // Keep focus in the formula bar so the caret position survives the click.
                       onMouseDown={insertsRef ? (e) => e.preventDefault() : undefined}
                       aria-label={insertsRef ? `Insert cell ${ref} into formula` : `Cell ${ref}`}
-                      className={`h-8 w-full px-2 text-left ${insertsRef ? "cursor-cell" : ""}`}
+                      className={`h-11 w-full min-w-16 px-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500 ${insertsRef ? "cursor-cell" : ""}`}
                     >
                       {cell}
                     </button>
@@ -98,6 +130,7 @@ export function SpreadsheetGrid({ exercise, selected, onSelect, answerDisplay }:
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }
