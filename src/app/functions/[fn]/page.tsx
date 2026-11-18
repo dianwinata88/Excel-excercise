@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Badge } from "@/components/Badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ExerciseEmbed } from "@/components/ExerciseEmbed";
 import { JsonLd } from "@/components/JsonLd";
+import { PillLink } from "@/components/PillLink";
 import { ContextualLinks } from "@/components/seo/ContextualLinks";
-import { getFunctionDoc, getFunctionDocs } from "@/lib/content";
+import { functionCategorySlug, getFunctionDoc, getFunctionDocs } from "@/lib/content";
 import { buildMetadata, faqJsonLd, howToJsonLd } from "@/lib/seo";
 
 export function generateStaticParams() {
@@ -26,9 +27,10 @@ export default async function FunctionPage({ params }: PageProps<"/functions/[fn
   const { fn: slug } = await params;
   const fn = getFunctionDoc(slug);
   if (!fn) notFound();
+  const categorySlug = functionCategorySlug(fn.category);
 
   return (
-    <article className="flex flex-col gap-8">
+    <article className="mx-auto flex w-full max-w-3xl flex-col gap-8">
       <JsonLd
         data={[
           howToJsonLd({
@@ -52,20 +54,26 @@ export default async function FunctionPage({ params }: PageProps<"/functions/[fn
         items={[
           { name: "Home", path: "/" },
           { name: "Functions", path: "/functions" },
+          { name: fn.category, path: `/functions/category/${categorySlug}` },
           { name: fn.name, path: `/functions/${slug}` },
         ]}
       />
       <header>
-        <h1 className="text-3xl font-bold">How to use {fn.name} in Excel</h1>
-        <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">{fn.intro}</p>
+        <div className="flex flex-wrap gap-2">
+          <Badge tone="zinc">{fn.category}</Badge>
+          {fn.exerciseId && <Badge tone="green">Interactive exercise</Badge>}
+        </div>
+        <h1 className="mt-3 text-3xl font-bold">How to use {fn.name} in Excel</h1>
+        <p className="mt-3 text-lg leading-7 text-zinc-600 dark:text-zinc-400">{fn.intro}</p>
       </header>
 
       <section>
         <h2 className="text-xl font-semibold">Syntax</h2>
-        <code className="mt-2 block rounded-lg bg-zinc-100 p-4 font-mono text-sm dark:bg-zinc-900">
+        <code className="mt-2 block overflow-x-auto rounded-lg bg-zinc-100 p-4 font-mono text-sm dark:bg-zinc-900">
           {fn.syntax}
         </code>
-        <table className="mt-4 w-full text-left text-sm">
+        <div className="mt-4 overflow-x-auto rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <table className="w-full min-w-[34rem] text-left text-sm">
           <thead>
             <tr className="border-b border-zinc-200 dark:border-zinc-800">
               <th className="py-2 pr-4">Argument</th>
@@ -82,7 +90,8 @@ export default async function FunctionPage({ params }: PageProps<"/functions/[fn
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       </section>
 
       <section>
@@ -92,7 +101,7 @@ export default async function FunctionPage({ params }: PageProps<"/functions/[fn
             <li key={ex.title} className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
               <h3 className="font-semibold">{ex.title}</h3>
               <p className="mt-2">
-                <code className="rounded bg-zinc-100 px-2 py-1 font-mono text-sm dark:bg-zinc-900">
+                <code className="rounded bg-zinc-100 px-2 py-1 font-mono text-sm break-words dark:bg-zinc-900">
                   {ex.formula}
                 </code>{" "}
                 → <strong>{String(ex.result)}</strong>
@@ -118,7 +127,7 @@ export default async function FunctionPage({ params }: PageProps<"/functions/[fn
           <ul className="mt-3 space-y-3">
             {fn.commonErrors.map((e) => (
               <li key={e.error} className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-800">
-                <p className="font-mono font-semibold text-red-600">{e.error}</p>
+                <p className="font-mono font-semibold text-red-600 dark:text-red-400">{e.error}</p>
                 <p className="mt-1 text-sm">{e.cause}</p>
                 <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">Fix: {e.fix}</p>
               </li>
@@ -133,12 +142,7 @@ export default async function FunctionPage({ params }: PageProps<"/functions/[fn
           <ul className="mt-2 flex flex-wrap gap-2">
             {fn.relatedFunctions.map((rel) => (
               <li key={rel}>
-                <Link
-                  href={`/functions/${rel}`}
-                  className="rounded-full border border-zinc-300 px-3 py-1 text-sm hover:border-emerald-400 dark:border-zinc-700"
-                >
-                  {rel.toUpperCase()}
-                </Link>
+                <PillLink href={`/functions/${rel}`}>{rel.toUpperCase()}</PillLink>
               </li>
             ))}
           </ul>

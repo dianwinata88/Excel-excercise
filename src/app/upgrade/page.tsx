@@ -26,7 +26,7 @@ async function PlansOrStatus() {
 
   if (session && pro) {
     return (
-      <section className="mx-auto w-full max-w-lg rounded-3xl border border-emerald-300 bg-emerald-50 p-8 text-center dark:border-emerald-800 dark:bg-emerald-950/40">
+      <section className="mx-auto w-full max-w-lg rounded-3xl border border-emerald-300 bg-emerald-50 p-6 text-center shadow-sm sm:p-8 dark:border-emerald-800 dark:bg-emerald-950/40">
         <h2 className="text-2xl font-bold">You&apos;re Pro 🎉</h2>
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
           Signed in as {session.name}. All intermediate and advanced practice is
@@ -34,7 +34,7 @@ async function PlansOrStatus() {
         </p>
         <Link
           href="/learn"
-          className="mt-5 inline-block rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
+          className="mt-5 inline-flex min-h-11 items-center rounded-full bg-emerald-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
         >
           Continue learning →
         </Link>
@@ -44,10 +44,10 @@ async function PlansOrStatus() {
 
   return (
     <section className="mx-auto grid w-full max-w-3xl gap-6 sm:grid-cols-2">
-      <div className="flex flex-col rounded-3xl border border-zinc-200 p-8 dark:border-zinc-800">
+      <div className="flex flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 sm:p-8">
         <h2 className="text-lg font-semibold">Monthly</h2>
         <p className="mt-2 text-4xl font-extrabold">
-          $10<span className="text-base font-medium text-zinc-500">/mo</span>
+          $10<span className="text-base font-medium text-zinc-500 dark:text-zinc-400">/mo</span>
         </p>
         <ul className="mt-4 flex-1 space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
           {PERKS.map((perk) => (
@@ -57,25 +57,25 @@ async function PlansOrStatus() {
         {WHOP_MONTHLY_URL ? (
           <a
             href={WHOP_MONTHLY_URL}
-            className="mt-6 rounded-full bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
           >
             Subscribe monthly
           </a>
         ) : (
-          <span className="mt-6 rounded-full bg-zinc-200 px-6 py-3 text-center text-sm font-semibold text-zinc-500 dark:bg-zinc-800">
+          <span className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-zinc-200 px-6 py-3 text-center text-sm font-semibold text-zinc-500 dark:bg-zinc-800">
             Coming soon
           </span>
         )}
-        <p className="mt-3 text-center text-xs text-zinc-500">Cancel anytime</p>
+        <p className="mt-3 text-center text-xs text-zinc-500 dark:text-zinc-400">Cancel anytime</p>
       </div>
 
-      <div className="relative flex flex-col rounded-3xl border-2 border-emerald-500 p-8">
+      <div className="relative flex flex-col rounded-3xl border-2 border-emerald-500 bg-emerald-50/70 p-6 shadow-sm dark:border-emerald-400 dark:bg-emerald-950/30 sm:p-8">
         <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-emerald-600 px-3 py-0.5 text-xs font-bold text-white">
           BEST VALUE
         </span>
         <h2 className="text-lg font-semibold">Lifetime</h2>
         <p className="mt-2 text-4xl font-extrabold">
-          $100<span className="text-base font-medium text-zinc-500"> once</span>
+          $100<span className="text-base font-medium text-zinc-500 dark:text-zinc-400"> once</span>
         </p>
         <ul className="mt-4 flex-1 space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
           {PERKS.map((perk) => (
@@ -86,16 +86,16 @@ async function PlansOrStatus() {
         {WHOP_LIFETIME_URL ? (
           <a
             href={WHOP_LIFETIME_URL}
-            className="mt-6 rounded-full bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
           >
             Get lifetime access
           </a>
         ) : (
-          <span className="mt-6 rounded-full bg-zinc-200 px-6 py-3 text-center text-sm font-semibold text-zinc-500 dark:bg-zinc-800">
+          <span className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-zinc-200 px-6 py-3 text-center text-sm font-semibold text-zinc-500 dark:bg-zinc-800">
             Coming soon
           </span>
         )}
-        <p className="mt-3 text-center text-xs text-zinc-500">
+        <p className="mt-3 text-center text-xs text-zinc-500 dark:text-zinc-400">
           One-time payment, no renewals
         </p>
       </div>
@@ -127,7 +127,7 @@ export default function UpgradePage() {
         <PlansOrStatus />
       </Suspense>
 
-      <section className="mx-auto w-full max-w-2xl rounded-2xl border border-zinc-200 p-6 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+      <section className="mx-auto w-full max-w-2xl rounded-2xl border border-zinc-200 bg-white p-6 text-sm text-zinc-600 shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
         <h2 className="font-semibold text-zinc-900 dark:text-zinc-100">
           How it works
         </h2>

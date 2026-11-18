@@ -114,7 +114,7 @@ export default function Home() {
         <h1 className="mx-auto mt-4 max-w-2xl text-4xl font-extrabold tracking-tight sm:text-6xl">
           Free Excel practice and training — learn by doing
         </h1>
-        <p className="mx-auto mt-5 max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
+        <p className="mx-auto mt-5 max-w-xl text-lg leading-7 text-zinc-600 dark:text-zinc-400">
           {SITE_NAME} is free interactive Excel practice and training: bite-sized
           exercises that run right in your browser. Type real formulas, press
           real shortcuts, earn XP.
@@ -127,7 +127,7 @@ export default function Home() {
             Start practicing — it&apos;s free
           </Link>
         </div>
-        <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-500">
+        <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
           No sign-up. No download. Just practice.
         </p>
       </section>
@@ -170,7 +170,7 @@ export default function Home() {
                 </blockquote>
                 <figcaption className="mt-4 text-sm">
                   <span className="font-semibold">{t.name}</span>
-                  <span className="text-zinc-500"> · {t.role}</span>
+                  <span className="text-zinc-500 dark:text-zinc-400"> · {t.role}</span>
                 </figcaption>
               </Card>
             </figure>
@@ -192,7 +192,7 @@ export default function Home() {
                 {v.icon}
               </div>
               <h3 className="mt-3 font-bold">{v.title}</h3>
-              <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+              <p className="mt-2 text-sm leading-6 text-zinc-600 dark:text-zinc-400">
                 {v.body}
               </p>
             </Card>

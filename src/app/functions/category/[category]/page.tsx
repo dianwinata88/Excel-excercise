@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Badge } from "@/components/Badge";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { FunctionDocCard } from "@/components/FunctionDocCard";
 import { JsonLd } from "@/components/JsonLd";
 import {
   functionCategorySlug,
@@ -54,7 +56,16 @@ export default async function FunctionCategoryPage({
         ]}
       />
       <header>
-        <h1 className="text-3xl font-bold">Excel {category} functions</h1>
+        <Link
+          href="/functions"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-emerald-600 hover:underline dark:text-emerald-400"
+        >
+          ← All functions
+        </Link>
+        <div className="mt-2 flex flex-wrap items-center gap-3">
+          <h1 className="text-3xl font-bold">Excel {category} functions</h1>
+          <Badge tone="zinc">{functions.length}</Badge>
+        </div>
         <p className="mt-3 text-lg text-zinc-600 dark:text-zinc-400">
           {functions.length} Excel {category.toLowerCase()} functions, ordered for quick scanning.
           Open a function for syntax, examples, common errors and a practice exercise where available.
@@ -62,14 +73,8 @@ export default async function FunctionCategoryPage({
       </header>
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {functions.map((fn) => (
-          <li key={fn.slug}>
-            <Link
-              href={`/functions/${fn.slug}`}
-              className="block h-full rounded-lg border border-zinc-200 p-4 hover:border-emerald-400 dark:border-zinc-800"
-            >
-              <span className="font-mono font-semibold">{fn.name}</span>
-              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">{fn.summary}</p>
-            </Link>
+          <li key={fn.slug} className="min-w-0">
+            <FunctionDocCard fn={fn} showCategory />
           </li>
         ))}
       </ul>

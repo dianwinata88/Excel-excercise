@@ -23,14 +23,16 @@ export function levelTone(level: string): BadgeTone {
 
 export function Badge({
   tone = "zinc",
+  className = "",
   children,
 }: {
   tone?: BadgeTone;
+  className?: string;
   children: ReactNode;
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${tones[tone]}`}
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${tones[tone]} ${className}`}
     >
       {children}
     </span>

@@ -67,7 +67,7 @@ export function LeadCaptureForm({
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="rounded-xl bg-emerald-700 px-6 py-3 font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60 dark:bg-emerald-500 dark:text-emerald-950 dark:hover:bg-emerald-400"
+          className="inline-flex min-h-11 items-center justify-center rounded-xl bg-emerald-700 px-6 py-3 font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-60 dark:bg-emerald-500 dark:text-emerald-950 dark:hover:bg-emerald-400"
         >
           {status === "submitting" ? "Joining…" : ctaLabel}
         </button>

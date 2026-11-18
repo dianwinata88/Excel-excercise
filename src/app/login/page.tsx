@@ -13,7 +13,7 @@ export const metadata = {
 };
 
 const inputCls =
-  "w-full rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-emerald-500 dark:border-zinc-700 dark:bg-zinc-900";
+  "w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none placeholder-zinc-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:ring-emerald-900";
 
 function Field({
   label,
@@ -30,7 +30,7 @@ function Field({
 }) {
   return (
     <label className="block text-left">
-      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-500">
+      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
         {label}
       </span>
       <input
@@ -59,12 +59,15 @@ async function SessionCard({
   return (
     <>
       {error && (
-        <p className="w-full rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
+        <p
+          role="alert"
+          className="w-full rounded-xl border border-red-300 bg-red-50 p-3 text-left text-sm text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300"
+        >
           {error}
         </p>
       )}
       {session ? (
-        <div className="w-full rounded-2xl border border-zinc-200 p-6 dark:border-zinc-800">
+        <div className="w-full rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             Signed in as <strong>{session.name}</strong>
             {session.pro && (
@@ -76,43 +79,43 @@ async function SessionCard({
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             <Link
               href={next}
-              className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+              className="inline-flex min-h-11 items-center rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
             >
               Continue →
             </Link>
             <a
               href={`/api/auth/refresh?next=${encodeURIComponent(next)}`}
-              className="rounded-full border border-zinc-300 px-5 py-2 text-sm font-semibold dark:border-zinc-700"
+              className="inline-flex min-h-11 items-center rounded-full border border-zinc-300 px-5 py-2 text-sm font-semibold dark:border-zinc-700"
             >
               Refresh access
             </a>
             <a
               href="/api/auth/logout"
-              className="rounded-full border border-zinc-300 px-5 py-2 text-sm font-semibold dark:border-zinc-700"
+              className="inline-flex min-h-11 items-center rounded-full border border-zinc-300 px-5 py-2 text-sm font-semibold dark:border-zinc-700"
             >
               Sign out
             </a>
           </div>
         </div>
       ) : (
-        <div className="w-full rounded-2xl border border-zinc-200 p-6 text-left dark:border-zinc-800">
+        <div className="w-full rounded-2xl border border-zinc-200 bg-white p-6 text-left shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
           <div className="mb-5 grid grid-cols-2 gap-1 rounded-full bg-zinc-100 p-1 text-sm font-semibold dark:bg-zinc-800">
             <Link
               href={`/login?${next !== "/" ? `next=${encodeURIComponent(next)}&` : ""}tab=signin`}
-              className={`rounded-full px-4 py-2 text-center ${
+              className={`inline-flex min-h-11 items-center justify-center rounded-full px-4 ${
                 tab !== "register"
                   ? "bg-white shadow-sm dark:bg-zinc-950"
-                  : "text-zinc-500"
+                  : "text-zinc-500 dark:text-zinc-400"
               }`}
             >
               Sign in
             </Link>
             <Link
               href={`/login?${next !== "/" ? `next=${encodeURIComponent(next)}&` : ""}tab=register`}
-              className={`rounded-full px-4 py-2 text-center ${
+              className={`inline-flex min-h-11 items-center justify-center rounded-full px-4 ${
                 tab === "register"
                   ? "bg-white shadow-sm dark:bg-zinc-950"
-                  : "text-zinc-500"
+                  : "text-zinc-500 dark:text-zinc-400"
               }`}
             >
               Create account
@@ -132,11 +135,11 @@ async function SessionCard({
               />
               <button
                 type="submit"
-                className="mt-1 rounded-full bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700"
+                className="mt-1 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
               >
                 Create account
               </button>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 Buying Pro? Use this same email at Whop checkout so your
                 purchase links to this account.
               </p>
@@ -148,7 +151,7 @@ async function SessionCard({
               <Field label="Password" name="password" type="password" placeholder="Your password" />
               <button
                 type="submit"
-                className="mt-1 rounded-full bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700"
+                className="mt-1 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
               >
                 Sign in
               </button>
@@ -175,7 +178,7 @@ export default function LoginPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col items-center gap-6 py-16 text-center">
+    <div className="mx-auto flex w-full max-w-md flex-col items-center gap-6 py-10 text-center sm:py-16">
       <h1 className="text-3xl font-bold">Your Excel Practice account</h1>
       <p className="text-zinc-600 dark:text-zinc-400">
         Create an account to subscribe to Pro. Beginner lessons stay free — no
@@ -190,7 +193,7 @@ export default function LoginPage({
         <SessionCard searchParams={searchParams} />
       </Suspense>
 
-      <p className="text-sm text-zinc-500">
+      <p className="text-sm text-zinc-500 dark:text-zinc-400">
         Don&apos;t have Pro yet?{" "}
         <Link href="/upgrade" className="text-emerald-700 hover:underline dark:text-emerald-400">
           See plans
