@@ -74,10 +74,13 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
   const firstOptionRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
+    // Only steal focus in lesson-player mode (one card at a time); on boards
+    // with many cards mounted, auto-focusing would scroll to the last card.
+    if (standalone) return;
     if (exercise.type === "formula") inputRef.current?.focus();
     if (exercise.type === "shortcut") shortcutRef.current?.focus();
     if (exercise.type === "mcq") firstOptionRef.current?.focus();
-  }, [exercise.id, exercise.type]);
+  }, [exercise.id, exercise.type, standalone]);
 
   function animate(keyframes: Keyframe[], duration = 300) {
     if (prefersReducedMotion()) return;
