@@ -39,17 +39,19 @@ async function PracticeArea({
   slug,
   lesson,
   exercises,
+  nextLesson,
 }: {
   slug: string;
   lesson: Lesson;
   exercises: Exercise[];
+  nextLesson: { href: string; title: string } | null;
 }) {
   const session = await getSession();
   const pro = session ? await getEffectivePro(session) : false;
   if (lesson.level !== "beginner" && !pro) {
     return <ProGate next={`/lesson/${slug}`} />;
   }
-  return <LessonPlayer exercises={exercises} />;
+  return <LessonPlayer exercises={exercises} nextLesson={nextLesson} />;
 }
 
 export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">) {
@@ -60,6 +62,11 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">
   const exercises = lesson.exercises
     .map((id) => getExercise(id))
     .filter((e) => e !== undefined);
+  const ordered = getLessons();
+  const next = ordered[ordered.findIndex((l) => l.slug === lesson.slug) + 1];
+  const nextLesson = next
+    ? { href: `/lesson/${next.slug}`, title: next.title }
+    : null;
   const relatedFunctions = lesson.relatedFunctions
     .map((rel) => getFunctionDoc(rel))
     .filter((f) => f !== undefined);
@@ -145,7 +152,7 @@ export default async function LessonPage({ params }: PageProps<"/lesson/[slug]">
               <div className="h-40 animate-pulse rounded-2xl border border-zinc-200 dark:border-zinc-800" />
             }
           >
-            <PracticeArea slug={slug} lesson={lesson} exercises={exercises} />
+            <PracticeArea slug={slug} lesson={lesson} exercises={exercises} nextLesson={nextLesson} />
           </Suspense>
         </div>
       </section>

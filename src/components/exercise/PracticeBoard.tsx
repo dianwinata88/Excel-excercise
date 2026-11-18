@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Exercise } from "../../../content/schema";
 import { ExerciseCard } from "./ExerciseCard";
@@ -7,6 +8,21 @@ import { useProgress } from "./progress";
 
 const TYPES = ["all", "formula", "shortcut", "mcq", "cell-select"] as const;
 type TypeFilter = (typeof TYPES)[number];
+
+const FOCUS_RING =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-emerald-400";
+
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M10 1a4 4 0 0 0-4 4v3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-1V5a4 4 0 0 0-4-4Zm2 7V5a2 2 0 1 0-4 0v3h4Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
 
 /**
  * Free practice mode: filter exercises by type, see which are done,
@@ -33,7 +49,7 @@ export function PracticeBoard({
             key={t}
             type="button"
             onClick={() => setFilter(t)}
-            className={`rounded-full px-3 py-1 text-sm font-medium ${
+            className={`min-h-11 rounded-full px-4 py-2 text-sm font-medium ${FOCUS_RING} ${
               filter === t
                 ? "bg-emerald-600 text-white"
                 : "border border-zinc-300 text-zinc-600 hover:border-emerald-400 dark:border-zinc-700 dark:text-zinc-400"
@@ -59,22 +75,28 @@ export function PracticeBoard({
                 </span>
               )}
               {locked ? (
-                <a
+                <Link
                   href="/upgrade"
-                  className="flex items-center justify-between gap-4 rounded-2xl border border-dashed border-amber-300 bg-amber-50/50 p-4 hover:border-amber-400 dark:border-amber-800 dark:bg-amber-950/20"
+                  aria-label={`${e.prompt} — locked, Pro only. Opens upgrade page.`}
+                  className={`flex items-center justify-between gap-4 rounded-2xl border border-dashed border-amber-300 bg-amber-50/50 p-4 opacity-80 transition hover:border-amber-400 hover:opacity-100 ${FOCUS_RING} dark:border-amber-800 dark:bg-amber-950/20`}
                 >
-                  <div>
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
-                      PRO
+                  <div className="flex min-w-0 items-start gap-3">
+                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
+                      <LockIcon />
                     </span>
-                    <p className="mt-1 font-medium">
-                      {e.prompt}
-                    </p>
+                    <div className="min-w-0">
+                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-bold text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">
+                        PRO
+                      </span>
+                      <p className="mt-1 font-medium text-zinc-500 dark:text-zinc-400">
+                        {e.prompt}
+                      </p>
+                    </div>
                   </div>
                   <span className="shrink-0 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-                    Unlock →
+                    Unlock with Pro →
                   </span>
-                </a>
+                </Link>
               ) : (
                 <ExerciseCard exercise={e} />
               )}
