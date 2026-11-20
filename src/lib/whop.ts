@@ -166,6 +166,126 @@ export async function hasProMembership(whopUserId: string): Promise<{
   return { pro: !!active, membershipId: active?.id ?? null, error: false };
 }
 
+/** Full membership row for the self-service plan page. */
+export type WhopMembership = {
+  id: string;
+  status: string;
+  user_id: string;
+  product_id: string;
+  variant_id: string | null;
+  billing_period_days: number | null;
+  renewal_price: { amount: string; currency: string } | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean;
+  manage_url: string | null;
+  created_at: string | null;
+};
+
+/**
+ * Active-or-pending-cancel Pro memberships for a Whop user, newest shape.
+ * Powers the /account self-service page.
+ */
+export async function listProMemberships(whopUserId: string): Promise<{
+  memberships: WhopMembership[];
+  error: boolean;
+}> {
+  if (!API_KEY) return { memberships: [], error: false };
+  let res: Response;
+  try {
+    res = await fetch(
+      `${WHOP_API_BASE}/memberships?user_id=${encodeURIComponent(whopUserId)}&first=50`,
+      {
+        headers: { Authorization: `Bearer ${API_KEY}` },
+        cache: "no-store",
+      },
+    );
+  } catch {
+    return { memberships: [], error: true };
+  }
+  if (!res.ok) return { memberships: [], error: true };
+  const json = (await res.json().catch(() => null)) as {
+    data?: WhopMembership[];
+  } | null;
+  if (!json) return { memberships: [], error: true };
+  const active = (json.data ?? []).filter(
+    (m) =>
+      PRO_STATUSES.has(m.status) &&
+      (!WHOP_PRODUCT_ID || m.product_id === WHOP_PRODUCT_ID),
+  );
+  return { memberships: active, error: false };
+}
+
+/** Plan id is the last path segment of a checkout URL env var. */
+function planIdFromUrl(url: string): string | null {
+  const tail = url.trim().split("/").filter(Boolean).pop();
+  return tail && tail.startsWith("plan_") ? tail : null;
+}
+
+/** "monthly" | "lifetime" | "other" for a Pro membership. */
+export function planKind(m: WhopMembership): "monthly" | "lifetime" | "other" {
+  const monthlyId = planIdFromUrl(WHOP_MONTHLY_URL);
+  const lifetimeId = planIdFromUrl(WHOP_LIFETIME_URL);
+  if (m.variant_id && monthlyId && m.variant_id === monthlyId) return "monthly";
+  if (m.variant_id && lifetimeId && m.variant_id === lifetimeId)
+    return "lifetime";
+  // Unmatched or missing variant — billing cadence is the real signal: a
+  // monthly-billing membership still needs cancel/upgrade controls even
+  // when its plan isn't the configured monthly or lifetime plan.
+  if (m.billing_period_days === null) return "lifetime";
+  return m.billing_period_days <= 40 ? "monthly" : "other";
+}
+
+async function membershipPost(
+  path: string,
+  body: object,
+): Promise<{ ok: boolean; status: number }> {
+  if (!API_KEY) return { ok: false, status: 0 };
+  try {
+    const res = await fetch(`${WHOP_API_BASE}${path}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      cache: "no-store",
+    });
+    return { ok: res.ok, status: res.status };
+  } catch {
+    return { ok: false, status: 0 };
+  }
+}
+
+/** Stop auto-renewal; the member keeps access until the period ends. */
+export async function cancelMembershipAtPeriodEnd(
+  membershipId: string,
+): Promise<{ ok: boolean; status: number }> {
+  return membershipPost(`/memberships/${membershipId}/cancel`, {
+    cancel_at_period_end: true,
+  });
+}
+
+/** Undo a pending period-end cancellation. */
+export async function resumeMembership(
+  membershipId: string,
+): Promise<{ ok: boolean; status: number }> {
+  if (!API_KEY) return { ok: false, status: 0 };
+  try {
+    const res = await fetch(`${WHOP_API_BASE}/memberships/${membershipId}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ cancel_at_period_end: false }),
+      cache: "no-store",
+    });
+    return { ok: res.ok, status: res.status };
+  } catch {
+    return { ok: false, status: 0 };
+  }
+}
+
 const PRO_SYNC_STALE_MS = 24 * 60 * 60 * 1000;
 
 /**
