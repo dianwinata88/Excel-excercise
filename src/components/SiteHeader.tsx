@@ -7,6 +7,12 @@ function GuestLinks() {
   return (
     <>
       <Link
+        href="/learn"
+        className="font-semibold text-emerald-700 hover:underline dark:text-emerald-400"
+      >
+        Start for free
+      </Link>
+      <Link
         href="/upgrade"
         className="rounded-full bg-emerald-600 px-3 py-1 font-semibold text-white hover:bg-emerald-700"
       >
@@ -54,9 +60,6 @@ export function SiteHeader() {
           {SITE_NAME}
         </Link>
         <nav className="flex shrink-0 items-center gap-4 whitespace-nowrap text-sm">
-          <Link href="/learn" className="font-semibold text-emerald-700 hover:underline dark:text-emerald-400">
-            Start for free
-          </Link>
           <Suspense fallback={<GuestLinks />}>
             <HeaderAuth />
           </Suspense>
