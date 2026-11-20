@@ -7,7 +7,6 @@ import { getSession } from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
 import { buildMetadata } from "@/lib/seo";
 import {
-  cancelMembershipAtPeriodEnd,
   listProMemberships,
   planKind,
   WHOP_LIFETIME_URL,
@@ -38,10 +37,12 @@ function PlanCard({
   m,
   kind,
   confirmCancel,
+  hasLifetime,
 }: {
   m: WhopMembership;
   kind: "monthly" | "lifetime" | "other";
   confirmCancel: boolean;
+  hasLifetime: boolean;
 }) {
   const pendingCancel = m.cancel_at_period_end;
   const renewsAt = fmtDate(m.current_period_end);
@@ -84,10 +85,17 @@ function PlanCard({
         </p>
       )}
 
+      {kind === "monthly" && hasLifetime && (
+        <p className="rounded-lg bg-zinc-100 px-3 py-2 text-sm text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+          You also have Lifetime — this monthly renewal is redundant. Cancel
+          it and you keep Pro forever.
+        </p>
+      )}
+
       <div className="mt-auto flex flex-col gap-2">
         {kind === "monthly" && !pendingCancel && (
           <>
-            {WHOP_LIFETIME_URL && (
+            {!hasLifetime && WHOP_LIFETIME_URL && (
               <a
                 href={WHOP_LIFETIME_URL}
                 className="rounded-lg bg-emerald-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-emerald-700"
@@ -174,10 +182,17 @@ async function AccountBody({
   const session = await getSession();
   if (!session) redirect("/login?next=/account");
 
-  const user = await getPrisma().appUser.findUnique({
-    where: { id: session.sub },
+  const user = await getPrisma().appUser.findFirst({
+    where: { OR: [{ id: session.sub }, { whopUserId: session.sub }] },
   });
-  if (!user) redirect("/login?next=/account");
+  // Sessions minted before a Whop-claim are dead — same check as
+  // getEffectivePro so a stale session can't read or change billing.
+  if (
+    !user ||
+    (user.sessionsRevokedAt && session.iat < user.sessionsRevokedAt.getTime())
+  ) {
+    redirect("/login?next=/account");
+  }
 
   const confirmCancel = params.confirm === "cancel";
 
@@ -187,19 +202,9 @@ async function AccountBody({
     const list = await listProMemberships(user.whopUserId);
     memberships = list.memberships;
     whopError = list.error;
-
-    // Upgraded to Lifetime while still on Monthly? Stop the monthly
-    // renewal automatically — the member clearly means to switch.
-    const hasLifetime = memberships.some(
-      (m) => planKind(m) === "lifetime",
-    );
-    for (const m of memberships) {
-      if (hasLifetime && planKind(m) === "monthly" && !m.cancel_at_period_end) {
-        const res = await cancelMembershipAtPeriodEnd(m.id);
-        if (res.ok) m.cancel_at_period_end = true;
-      }
-    }
   }
+
+  const hasLifetime = memberships.some((m) => planKind(m) === "lifetime");
 
   const errors: Record<string, string> = {
     noplan: "No Whop-linked plan found on this account.",
@@ -282,6 +287,7 @@ async function AccountBody({
           m={m}
           kind={planKind(m)}
           confirmCancel={confirmCancel}
+          hasLifetime={hasLifetime}
         />
       ))}
     </div>
