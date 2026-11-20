@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { applySession, requestOrigin } from "@/lib/auth";
 import { getPrisma } from "@/lib/db";
-import { exchangeCode, getUserInfo, hasProMembership } from "@/lib/whop";
+import {
+  cancelMembershipAtPeriodEnd,
+  exchangeCode,
+  getUserInfo,
+  hasProMembership,
+  listProMemberships,
+  planKind,
+} from "@/lib/whop";
 
 /** GET /api/auth/whop/callback — finish OAuth, set the session cookie. */
 export async function GET(request: Request) {
@@ -81,6 +88,27 @@ export async function GET(request: Request) {
       : await prisma.appUser.create({
           data: { email, name, whopUserId: user.sub, pro, membershipId },
         });
+
+    // Returning from a lifetime checkout while a monthly plan is still
+    // active? The member clearly switched — stop the monthly renewal here,
+    // at the upgrade moment, so it never fights an explicit resume later.
+    try {
+      const list = await listProMemberships(user.sub);
+      const hasLifetime = list.memberships.some(
+        (m) => planKind(m) === "lifetime",
+      );
+      if (!list.error && hasLifetime) {
+        await Promise.all(
+          list.memberships
+            .filter(
+              (m) => planKind(m) === "monthly" && !m.cancel_at_period_end,
+            )
+            .map((m) => cancelMembershipAtPeriodEnd(m.id)),
+        );
+      }
+    } catch {
+      // Best-effort cleanup — never block the sign-in over it.
+    }
 
     const res = NextResponse.redirect(`${origin}${stored.next}`);
     applySession(res, appUser);
