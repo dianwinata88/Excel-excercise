@@ -90,14 +90,19 @@ export async function GET(request: Request) {
         });
 
     // Returning from a lifetime checkout while a monthly plan is still
-    // active? The member clearly switched — stop the monthly renewal here,
-    // at the upgrade moment, so it never fights an explicit resume later.
+    // active? The member clearly switched — stop the monthly renewal once,
+    // at the upgrade moment. Scoped to a fresh (<24h) lifetime so a plain
+    // sign-in never re-cancels a monthly the member deliberately resumed.
     try {
       const list = await listProMemberships(user.sub);
-      const hasLifetime = list.memberships.some(
-        (m) => planKind(m) === "lifetime",
+      const justUpgraded = list.memberships.some(
+        (m) =>
+          planKind(m) === "lifetime" &&
+          m.created_at !== null &&
+          Date.now() - new Date(m.created_at).getTime() <
+            24 * 60 * 60 * 1000,
       );
-      if (!list.error && hasLifetime) {
+      if (!list.error && justUpgraded) {
         await Promise.all(
           list.memberships
             .filter(

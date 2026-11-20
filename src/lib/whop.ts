@@ -178,6 +178,7 @@ export type WhopMembership = {
   current_period_end: string | null;
   cancel_at_period_end: boolean;
   manage_url: string | null;
+  created_at: string | null;
 };
 
 /**
