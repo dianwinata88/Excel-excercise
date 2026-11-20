@@ -36,6 +36,9 @@ async function HeaderAuth() {
           Go Pro
         </Link>
       )}
+      <Link href="/account" className="hover:underline">
+        Account
+      </Link>
       <a href="/api/auth/logout" className="text-zinc-500 hover:underline">
         Sign out
       </a>
