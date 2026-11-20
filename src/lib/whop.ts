@@ -227,8 +227,9 @@ export function planKind(m: WhopMembership): "monthly" | "lifetime" | "other" {
   if (m.variant_id && monthlyId && m.variant_id === monthlyId) return "monthly";
   if (m.variant_id && lifetimeId && m.variant_id === lifetimeId)
     return "lifetime";
-  if (monthlyId || lifetimeId) return "other";
-  // Env plan ids unset — fall back to billing cadence.
+  // Unmatched or missing variant — billing cadence is the real signal: a
+  // monthly-billing membership still needs cancel/upgrade controls even
+  // when its plan isn't the configured monthly or lifetime plan.
   if (m.billing_period_days === null) return "lifetime";
   return m.billing_period_days <= 40 ? "monthly" : "other";
 }
