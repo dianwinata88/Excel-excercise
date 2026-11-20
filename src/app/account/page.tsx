@@ -236,8 +236,8 @@ async function AccountBody({
       )}
       {whopError && (
         <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950/40 dark:text-red-300">
-          We couldn't reach Whop to load your plan — try refreshing in a
-          moment.
+          We couldn&apos;t reach Whop to load your plan — try refreshing in
+          a moment.
         </p>
       )}
 
@@ -265,7 +265,7 @@ async function AccountBody({
       {user.whopUserId && memberships.length === 0 && !whopError && (
         <Card className="flex flex-col gap-3">
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            You don't have an active Pro plan right now.
+            You don&apos;t have an active Pro plan right now.
           </p>
           <Link
             href="/upgrade"
