@@ -98,6 +98,9 @@ function PlanCard({
             {!hasLifetime && WHOP_LIFETIME_URL && (
               <a
                 href={WHOP_LIFETIME_URL}
+                data-track="checkout_start"
+                data-track-prop-plan="lifetime"
+                data-track-prop-location="account_upgrade"
                 className="rounded-lg bg-emerald-600 px-4 py-2.5 text-center text-sm font-semibold text-white hover:bg-emerald-700"
               >
                 Upgrade to Lifetime — one payment, forever
@@ -117,6 +120,7 @@ function PlanCard({
                 <div className="mt-3 flex gap-2">
                   <button
                     type="submit"
+                    data-track="cancel_confirm"
                     className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
                   >
                     Confirm cancellation
@@ -145,6 +149,7 @@ function PlanCard({
             <input type="hidden" name="membershipId" value={m.id} />
             <button
               type="submit"
+              data-track="resume_click"
               className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
             >
               Keep my subscription

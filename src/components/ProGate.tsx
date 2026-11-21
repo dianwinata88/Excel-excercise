@@ -20,6 +20,8 @@ export function ProGate({ next }: { next: string }) {
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         <Link
           href="/upgrade"
+          data-track="go_pro_click"
+          data-track-prop-location="paywall"
           className="rounded-full bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700"
         >
           See Pro plans
@@ -35,6 +37,7 @@ export function ProGate({ next }: { next: string }) {
         Just purchased?{" "}
         <Link
           href={`/api/auth/whop?next=${encodeURIComponent(next)}`}
+          data-track="pro_claim_click"
           className="text-emerald-700 hover:underline dark:text-emerald-400"
         >
           Refresh my access

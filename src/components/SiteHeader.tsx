@@ -8,17 +8,21 @@ function GuestLinks() {
     <>
       <Link
         href="/learn"
+        data-track="start_free_click"
+        data-track-prop-location="header"
         className="font-semibold text-emerald-700 hover:underline dark:text-emerald-400"
       >
         Start for free
       </Link>
       <Link
         href="/upgrade"
+        data-track="go_pro_click"
+        data-track-prop-location="header"
         className="rounded-full bg-emerald-600 px-3 py-1 font-semibold text-white hover:bg-emerald-700"
       >
         Go Pro
       </Link>
-      <Link href="/login" className="hover:underline">
+      <Link href="/login" data-track="signin_click" className="hover:underline">
         Sign in
       </Link>
     </>
@@ -37,6 +41,8 @@ async function HeaderAuth() {
       ) : (
         <Link
           href="/upgrade"
+          data-track="go_pro_click"
+          data-track-prop-location="header_signed_in"
           className="rounded-full bg-emerald-600 px-3 py-1 font-semibold text-white hover:bg-emerald-700"
         >
           Go Pro

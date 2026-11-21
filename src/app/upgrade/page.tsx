@@ -57,6 +57,8 @@ async function PlansOrStatus() {
         {WHOP_MONTHLY_URL ? (
           <a
             href={WHOP_MONTHLY_URL}
+            data-track="checkout_start"
+            data-track-prop-plan="monthly"
             className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
           >
             Subscribe monthly
@@ -86,6 +88,8 @@ async function PlansOrStatus() {
         {WHOP_LIFETIME_URL ? (
           <a
             href={WHOP_LIFETIME_URL}
+            data-track="checkout_start"
+            data-track-prop-plan="lifetime"
             className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 text-center text-sm font-semibold text-white hover:bg-emerald-700"
           >
             Get lifetime access

@@ -122,6 +122,8 @@ export default function Home() {
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
             href="/learn"
+            data-track="start_free_click"
+            data-track-prop-location="hero"
             className="w-full rounded-2xl bg-emerald-600 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-emerald-600/25 transition hover:-translate-y-0.5 hover:bg-emerald-700 sm:w-auto"
           >
             Start practicing — it&apos;s free

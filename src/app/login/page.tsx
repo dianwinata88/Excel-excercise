@@ -135,6 +135,7 @@ async function SessionCard({
               />
               <button
                 type="submit"
+                data-track="signup_submit"
                 className="mt-1 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
               >
                 Create account
@@ -151,6 +152,7 @@ async function SessionCard({
               <Field label="Password" name="password" type="password" placeholder="Your password" />
               <button
                 type="submit"
+                data-track="login_submit"
                 className="mt-1 inline-flex min-h-11 items-center justify-center rounded-full bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
               >
                 Sign in

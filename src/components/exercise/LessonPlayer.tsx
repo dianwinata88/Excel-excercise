@@ -1,5 +1,6 @@
 "use client";
 
+import { track } from "@vercel/analytics";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Exercise } from "../../../content/schema";
@@ -51,6 +52,11 @@ export function LessonPlayer({ exercises, nextLesson }: Props) {
     if (finished) doneHeadingRef.current?.focus();
     else if (solved[index]) nextRef.current?.focus();
   }, [finished, solved, index]);
+
+  useEffect(() => {
+    if (finished) track("lesson_complete", { xp: String(xpEarned) });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished]);
 
   function advance() {
     if (index + 1 >= total) setFinished(true);
@@ -186,6 +192,7 @@ export function LessonPlayer({ exercises, nextLesson }: Props) {
           standalone={false}
           onResult={(correct) => {
             if (correct) {
+              track("exercise_solved", { xp: String(current.xp) });
               setSolved((s) => {
                 const next = [...s];
                 next[index] = true;
