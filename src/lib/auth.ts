@@ -1,0 +1,263 @@
+import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { cookies } from "next/headers";
+
+export const SESSION_COOKIE = "ep_session";
+const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+
+export type Session = {
+  sub: string; // Whop user id (user_xxx)
+  name: string;
+  email: string | null;
+  pro: boolean;
+  /** mint time (ms); sessions older than AppUser.sessionsRevokedAt are dead */
+  iat: number;
+};
+
+function secret(): string | undefined {
+  return process.env.SESSION_SECRET;
+}
+
+export function signSession(session: Session): string {
+  const key = secret();
+  if (!key) throw new Error("SESSION_SECRET is not configured");
+  const payload = Buffer.from(
+    JSON.stringify({
+      ...session,
+      iat: session.iat || Date.now(),
+      exp: Date.now() + MAX_AGE_MS,
+    }),
+  ).toString("base64url");
+  const sig = createHmac("sha256", key).update(payload).digest("base64url");
+  return `${payload}.${sig}`;
+}
+
+export function verifySession(value: string): Session | null {
+  const key = secret();
+  if (!key) return null;
+  const [payload, sig] = value.split(".");
+  if (!payload || !sig) return null;
+  const expected = createHmac("sha256", key).update(payload).digest("base64url");
+  if (
+    sig.length !== expected.length ||
+    !timingSafeEqual(Buffer.from(sig), Buffer.from(expected))
+  ) {
+    return null;
+  }
+  try {
+    const s = JSON.parse(Buffer.from(payload, "base64url").toString());
+    if (typeof s.exp !== "number" || s.exp < Date.now()) return null;
+    return {
+      sub: s.sub,
+      name: s.name ?? "",
+      email: s.email ?? null,
+      pro: !!s.pro,
+      iat: typeof s.iat === "number" ? s.iat : 0,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function getSession(): Promise<Session | null> {
+  const store = await cookies();
+  const value = store.get(SESSION_COOKIE)?.value;
+  return value ? verifySession(value) : null;
+}
+
+/**
+ * Public origin of the incoming request. Behind a reverse proxy
+ * `new URL(request.url).origin` is the internal host; use the
+ * forwarded headers so absolute redirects and OAuth redirect_uri
+ * match what the browser actually sees.
+ */
+function allowedForwardedHost(host: string): boolean {
+  try {
+    const site = process.env.NEXT_PUBLIC_SITE_URL;
+    if (site && new URL(site).host === host) return true;
+  } catch {
+    // fall through to the pattern checks below
+  }
+  return (
+    host === "localhost" ||
+    host.startsWith("localhost:") ||
+    host.startsWith("127.0.0.1") ||
+    host.endsWith(".preview.devinapps.com") ||
+    host.endsWith(".devinapps.com")
+  );
+}
+
+export const SESSION_COOKIE_OPTS = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: true,
+  maxAge: 30 * 24 * 60 * 60,
+  path: "/",
+};
+
+/** Sets the signed session cookie for an AppUser on a response. */
+export function applySession(
+  res: { cookies: { set: (name: string, value: string, opts: object) => void } },
+  user: { id: string; name: string; email: string | null; pro: boolean },
+): void {
+  res.cookies.set(
+    SESSION_COOKIE,
+    signSession({
+      sub: user.id,
+      name: user.name,
+      email: user.email,
+      pro: user.pro,
+      iat: Date.now(),
+    }),
+    SESSION_COOKIE_OPTS,
+  );
+}
+
+// In-memory failed-login limiter — fine for a single-node app server.
+const attempts = new Map<string, { count: number; resetAt: number }>();
+const LOGIN_MAX_ATTEMPTS = 8;
+const LOGIN_WINDOW_MS = 10 * 60 * 1000;
+const ATTEMPTS_MAX_KEYS = 5000;
+
+/** Drop expired then non-blocked entries — never evict an active lockout. */
+function boundAttempts(now: number) {
+  if (attempts.size <= ATTEMPTS_MAX_KEYS) return;
+  for (const [k, v] of attempts) {
+    if (v.resetAt <= now) attempts.delete(k);
+  }
+  for (const [k, v] of attempts) {
+    if (attempts.size <= ATTEMPTS_MAX_KEYS) break;
+    if (v.count < LOGIN_MAX_ATTEMPTS) attempts.delete(k);
+  }
+  // Past this point everything left is a live lockout: don't add new keys
+  // (untracked failures) rather than erase someone's cooldown.
+}
+
+/** true while `key` is under the failed-login cap; records a failure. */
+export function recordFailedLogin(key: string): boolean {
+  const now = Date.now();
+  boundAttempts(now);
+  if (attempts.size > ATTEMPTS_MAX_KEYS && !attempts.has(key)) return true;
+  const entry = attempts.get(key);
+  if (entry && entry.resetAt <= now) attempts.delete(key);
+  const cur = attempts.get(key) ?? { count: 0, resetAt: now + LOGIN_WINDOW_MS };
+  cur.count += 1;
+  if (cur.count >= LOGIN_MAX_ATTEMPTS) {
+    attempts.delete(key);
+    // Cool the account down with a fresh window that blocks further tries.
+    attempts.set(key, { count: LOGIN_MAX_ATTEMPTS, resetAt: now + LOGIN_WINDOW_MS });
+    return false;
+  }
+  attempts.set(key, cur);
+  return true;
+}
+
+export function loginAttemptsBlocked(key: string): boolean {
+  const entry = attempts.get(key);
+  if (!entry) return false;
+  if (entry.resetAt <= Date.now()) {
+    attempts.delete(key);
+    return false;
+  }
+  return entry.count >= LOGIN_MAX_ATTEMPTS;
+}
+
+/** Successful sign-in resets the counter. */
+export function clearLoginAttempts(key: string): void {
+  attempts.delete(key);
+}
+
+export function hashPassword(password: string): string {
+  const salt = randomBytes(16).toString("base64url");
+  const hash = scryptSync(password, salt, 64).toString("base64url");
+  return `scrypt:${salt}:${hash}`;
+}
+
+export function verifyPassword(password: string, stored: string | null): boolean {
+  if (!stored) return false;
+  const [scheme, salt, hash] = stored.split(":");
+  if (scheme !== "scrypt" || !salt || !hash) return false;
+  const candidate = scryptSync(password, salt, 64).toString("base64url");
+  return (
+    candidate.length === hash.length &&
+    timingSafeEqual(Buffer.from(candidate), Buffer.from(hash))
+  );
+}
+
+/** First host/proto the proxy reports, across common header spellings. */
+function forwardedHostProto(request: Request): {
+  host: string | null;
+  proto: string | null;
+} {
+  const h = request.headers;
+  // RFC 7239: Forwarded: for=...;host=example.com;proto=https
+  const fwd = h.get("forwarded");
+  let host: string | null = null;
+  let proto: string | null = null;
+  if (fwd) {
+    host = fwd.match(/host=([^;,]+)/i)?.[1]?.replace(/["[\]]/g, "").trim() ?? null;
+    proto = fwd.match(/proto=([^;,]+)/i)?.[1]?.replace(/"/g, "").trim() ?? null;
+  }
+  host =
+    host ??
+    h.get("x-forwarded-host")?.split(",")[0]?.trim() ??
+    h.get("x-original-host")?.split(",")[0]?.trim() ??
+    h.get("x-real-host")?.split(",")[0]?.trim() ??
+    null;
+  proto =
+    proto ??
+    h.get("x-forwarded-proto")?.split(",")[0]?.trim() ??
+    h.get("x-forwarded-scheme")?.split(",")[0]?.trim() ??
+    h.get("x-url-scheme")?.split(",")[0]?.trim() ??
+    null;
+  return { host, proto };
+}
+
+function isLocalHost(host: string): boolean {
+  return (
+    host === "localhost" ||
+    host.startsWith("localhost:") ||
+    host.startsWith("127.0.0.1")
+  );
+}
+
+export function requestOrigin(request: Request): string {
+  const url = new URL(request.url);
+  const { host, proto } = forwardedHostProto(request);
+  let site: URL | null = null;
+  try {
+    site = process.env.NEXT_PUBLIC_SITE_URL
+      ? new URL(process.env.NEXT_PUBLIC_SITE_URL)
+      : null;
+  } catch {
+    site = null;
+  }
+
+  if (host && allowedForwardedHost(host)) {
+    // With a canonical origin configured, a forwarded *local* host is the
+    // ingress's internal upstream (localhost:300x), not the browser-facing
+    // host — use the canonical origin. Without one, a forwarded localhost
+    // is the best guess of the browser-facing host (local reverse proxy).
+    if (site && isLocalHost(host)) return site.origin;
+    const scheme =
+      proto === "http" || proto === "https"
+        ? proto
+        : isLocalHost(host)
+          ? url.protocol.replace(":", "")
+          : "https";
+    return `${scheme}://${host}`;
+  }
+
+  // Any proxy marker (even a bare x-forwarded-proto) with a configured
+  // canonical origin resolves to it — never emit the internal upstream.
+  const proxied = Boolean(
+    proto ||
+      request.headers.get("forwarded") ||
+      request.headers.get("x-forwarded-for") ||
+      request.headers.get("x-real-ip") ||
+      request.headers.get("x-forwarded-host") ||
+      request.headers.get("x-original-host") ||
+      request.headers.get("x-real-host"),
+  );
+  if (site && proxied) return site.origin;
+  return url.origin;
+}

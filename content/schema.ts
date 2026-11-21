@@ -42,6 +42,13 @@ export const LessonSchema = z.object({
   description: z.string(),
   level: z.enum(["beginner", "intermediate", "advanced"]).default("beginner"),
   exercises: z.array(z.string()), // exercise ids, in order
+  overview: z.string().optional(),
+  objectives: z.array(z.string()).default([]),
+  steps: z.array(z.object({ heading: z.string(), body: z.string() })).default([]),
+  faqs: z.array(z.object({ question: z.string(), answer: z.string() })).default([]),
+  relatedFunctions: z.array(z.string()).default([]),
+  relatedTasks: z.array(z.string()).default([]),
+  relatedLessons: z.array(z.string()).default([]),
 });
 export type Lesson = z.infer<typeof LessonSchema>;
 
@@ -89,3 +96,46 @@ export const ShortcutDocSchema = z.object({
   relatedShortcuts: z.array(z.string()).default([]),
 });
 export type ShortcutDoc = z.infer<typeof ShortcutDocSchema>;
+
+export const ComparisonDocSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/), // e.g. "vlookup-vs-index-match"
+  leftName: z.string(), // "VLOOKUP"
+  rightName: z.string(), // "INDEX + MATCH"
+  title: z.string(), // "VLOOKUP vs INDEX MATCH: which lookup should you use?"
+  intro: z.string(), // unique paragraph for the page
+  verdict: z.string(), // short "use X when..." recommendation
+  // Side-by-side rows compared attribute by attribute.
+  rows: z.array(z.object({ aspect: z.string(), left: z.string(), right: z.string() })),
+  useLeftWhen: z.array(z.string()).default([]),
+  useRightWhen: z.array(z.string()).default([]),
+  relatedFunctions: z.array(z.string()).default([]),
+  relatedComparisons: z.array(z.string()).default([]),
+});
+export type ComparisonDoc = z.infer<typeof ComparisonDocSchema>;
+
+export const CertificationObjectiveSchema = z.object({
+  name: z.string(), // e.g. "Manage worksheets and workbooks"
+  weight: z.string().optional(), // e.g. "25-30% of the exam"
+  description: z.string(),
+  lessonSlugs: z.array(z.string()).default([]),
+  taskSlugs: z.array(z.string()).default([]),
+  functionSlugs: z.array(z.string()).default([]),
+});
+export type CertificationObjective = z.infer<typeof CertificationObjectiveSchema>;
+
+export const CertificationDocSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/), // e.g. "mo-210"
+  code: z.string(), // e.g. "MO-210" (display label)
+  name: z.string(), // e.g. "Microsoft Office Specialist: Excel Associate"
+  shortName: z.string(), // e.g. "Excel Associate"
+  title: z.string(), // SEO title
+  description: z.string(), // SEO description
+  intro: z.string(), // unique intro paragraph
+  provider: z.string(), // e.g. "Microsoft" or "Employer screening tests"
+  aliases: z.array(z.string()).default([]), // legacy exam codes / keyword variants
+  facts: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
+  objectives: z.array(CertificationObjectiveSchema).default([]),
+  faqs: z.array(z.object({ question: z.string(), answer: z.string() })).default([]),
+  related: z.array(z.string()).default([]), // other certification slugs
+});
+export type CertificationDoc = z.infer<typeof CertificationDocSchema>;

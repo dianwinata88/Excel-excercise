@@ -4,7 +4,49 @@
     "name": "Sum",
     "title": "SUM Lessons — Excel Practice",
     "description": "Practice adding numbers with SUM, ranges and quick totals.",
-    "lessons": ["sum-basics"]
+    "lessons": ["sum-basics", "sum-ranges", "sumproduct-basics", "percentage-calculations"]
+  },
+  {
+    "slug": "count",
+    "name": "Count",
+    "title": "COUNT Lessons — Excel Practice",
+    "description": "Count values in a sheet with COUNT and COUNTA.",
+    "lessons": ["count-basics"]
+  },
+  {
+    "slug": "logical",
+    "name": "Logic & IF",
+    "title": "IF & Logic Lessons — Excel Practice",
+    "description": "Build conditional formulas with IF and comparisons.",
+    "lessons": ["if-logic"]
+  },
+  {
+    "slug": "lookup",
+    "name": "Lookup",
+    "title": "Excel Lookup Lessons — VLOOKUP, XLOOKUP & Practice",
+    "description": "Practice finding values with VLOOKUP and XLOOKUP, including exact and default-result lookups.",
+    "lessons": ["vlookup-basics", "xlookup-basics"]
+  },
+  {
+    "slug": "text",
+    "name": "Text",
+    "title": "Excel Text Lessons — Clean, Uppercase & Join Text",
+    "description": "Practice cleaning text with TRIM, changing case with UPPER and joining values with formulas.",
+    "lessons": ["text-cleanup-basics", "text-functions-basics"]
+  },
+  {
+    "slug": "dates",
+    "name": "Dates",
+    "title": "Excel Date Lessons — DAYS, YEAR & Date Math",
+    "description": "Practice date math with DAYS and YEAR using Excel date serial values.",
+    "lessons": ["date-math-basics", "date-functions-basics"]
+  },
+  {
+    "slug": "conditional-aggregation",
+    "name": "Conditional Totals",
+    "title": "SUMIF & COUNTIF Lessons — Conditional Totals Practice",
+    "description": "Practice totals and counts that respond to criteria with SUMIF and COUNTIF.",
+    "lessons": ["sumif-countif-basics"]
   },
   {
     "slug": "shortcuts",
@@ -12,5 +54,12 @@
     "title": "Excel Shortcut Lessons — Practice on Your Keyboard",
     "description": "Build muscle memory for the most-used Excel shortcuts.",
     "lessons": ["shortcut-basics"]
+  },
+  {
+    "slug": "data",
+    "name": "Data",
+    "title": "Excel Data Lessons — Filter, Sort, Find & Named Ranges",
+    "description": "Practice filtering, sorting, finding and replacing text, and naming ranges.",
+    "lessons": ["filter-basics", "sorting-and-filtering", "find-and-substitute", "named-ranges-basics"]
   }
 ]

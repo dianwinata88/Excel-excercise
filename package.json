@@ -13,6 +13,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
+    "@vercel/analytics": "^2.0.1",
     "dotenv": "^18.0.10",
     "hyperformula": "^3.5.0",
     "next": "16.4.5",

@@ -1,0 +1,136 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import type { Exercise } from "../../../content/schema";
+import { gridBounds, toA1 } from "./engine";
+
+type Props = {
+  exercise: Exercise;
+  /** Currently selected cell ref (cell-select exercises + answer highlight). */
+  selected?: string | null;
+  onSelect?: (ref: string) => void;
+  /** Live value shown in answerCell after a correct formula, if computed. */
+  answerDisplay?: string;
+};
+
+function colLabel(col: number): string {
+  return toA1({ row: 0, col }).replace(/[0-9]/g, "");
+}
+
+/**
+ * Mini spreadsheet rendered from the exercise's sparse grid.
+ * Cells are clickable for cell-select exercises (to answer) and formula
+ * exercises (to insert the A1 reference into the formula bar).
+ */
+export function SpreadsheetGrid({ exercise, selected, onSelect, answerDisplay }: Props) {
+  const { rows, cols } = gridBounds(exercise.grid, exercise.answerCell);
+  const cells = new Map<string, string | number>();
+  for (const [ref, v] of Object.entries(exercise.grid)) cells.set(ref.toUpperCase(), v);
+  const answer = exercise.answerCell?.toUpperCase();
+  const interactive = exercise.type === "cell-select" || exercise.type === "formula";
+  const insertsRef = exercise.type === "formula";
+
+  // Show the right-edge fade only while the grid actually overflows.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showFade, setShowFade] = useState(false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const update = () =>
+      setShowFade(el.scrollWidth > el.clientWidth + 1 && el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
+  }, [exercise.id]);
+
+  return (
+    <div className="relative">
+      {showFade && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-white to-transparent dark:from-zinc-900"
+        />
+      )}
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto pb-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+        role="region"
+        aria-label="Spreadsheet grid — scroll horizontally if needed"
+        tabIndex={0}
+      >
+      <table
+        className="border-collapse text-sm"
+        aria-label="Exercise spreadsheet"
+      >
+        <thead>
+          <tr>
+            <th className="w-8 border border-zinc-300 bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800" />
+            {Array.from({ length: cols }, (_, c) => (
+              <th
+                key={c}
+                className="min-w-16 border border-zinc-300 bg-zinc-100 px-2 py-0.5 font-mono text-xs font-medium text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400"
+              >
+                {colLabel(c)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: rows }, (_, r) => (
+            <tr key={r}>
+              <th className="border border-zinc-300 bg-zinc-100 px-1 font-mono text-xs font-medium text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400">
+                {r + 1}
+              </th>
+              {Array.from({ length: cols }, (_, c) => {
+                const ref = toA1({ row: r, col: c });
+                const isAnswer = ref === answer;
+                const isSelected = ref === selected?.toUpperCase();
+                const raw = cells.get(ref);
+                const shown =
+                  isAnswer && answerDisplay !== undefined
+                    ? answerDisplay
+                    : raw === undefined
+                      ? ""
+                      : String(raw);
+                const rowH = interactive ? "h-11" : "h-8";
+                const base = `border border-zinc-300 px-2 text-left align-middle dark:border-zinc-700 ${rowH}`;
+                const state = isSelected
+                  ? "bg-emerald-100 ring-2 ring-inset ring-emerald-500 dark:bg-emerald-950"
+                  : isAnswer && exercise.type !== "cell-select"
+                    ? "bg-emerald-50 dark:bg-emerald-950/40"
+                    : "bg-white dark:bg-zinc-900";
+                const cell = (
+                  <span className="block truncate font-mono">{shown}</span>
+                );
+                return interactive ? (
+                  <td key={ref} className={`${base} ${state} p-0`}>
+                    <button
+                      type="button"
+                      onClick={() => onSelect?.(ref)}
+                      // Keep focus in the formula bar so the caret position survives the click.
+                      onMouseDown={insertsRef ? (e) => e.preventDefault() : undefined}
+                      aria-label={insertsRef ? `Insert cell ${ref} into formula` : `Cell ${ref}`}
+                      className={`h-11 w-full min-w-16 px-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-500 ${insertsRef ? "cursor-cell" : ""}`}
+                    >
+                      {cell}
+                    </button>
+                  </td>
+                ) : (
+                  <td key={ref} className={`${base} ${state}`}>
+                    {cell}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      </div>
+    </div>
+  );
+}
