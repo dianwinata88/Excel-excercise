@@ -17,7 +17,9 @@ const WHOP_PRODUCT_ID = process.env.WHOP_PRODUCT_ID ?? "";
 const API_KEY = process.env.WHOP_API_KEY ?? "";
 const CLIENT_SECRET = process.env.WHOP_CLIENT_SECRET ?? "";
 
-const PRO_STATUSES = new Set(["active", "trialing", "past_due"]);
+// "completed" = fulfilled non-renewing term (e.g. a lifetime purchase),
+// still entitled to access.
+const PRO_STATUSES = new Set(["active", "trialing", "past_due", "completed"]);
 
 function b64url(buf: Buffer): string {
   return buf.toString("base64url");
@@ -81,6 +83,7 @@ export async function getUserInfo(accessToken: string): Promise<{
   name?: string;
   preferred_username?: string;
   email?: string;
+  email_verified?: boolean;
 }> {
   const res = await fetch(`${WHOP_OAUTH_BASE}/userinfo`, {
     headers: { Authorization: `Bearer ${accessToken}` },
@@ -100,13 +103,15 @@ export async function hasProMembershipByEmail(email: string): Promise<{
   membershipId: string | null;
   error: boolean;
 }> {
-  if (!API_KEY) return { pro: false, membershipId: null, error: false };
+  // No product configured → cannot scope the check → fail closed.
+  if (!API_KEY || !WHOP_PRODUCT_ID)
+    return { pro: false, membershipId: null, error: false };
   const params = new URLSearchParams({
     query: email,
     membership_status: "active",
     first: "20",
+    product_ids: WHOP_PRODUCT_ID,
   });
-  if (WHOP_PRODUCT_ID) params.set("product_ids", WHOP_PRODUCT_ID);
   let res: Response;
   try {
     res = await fetch(`${WHOP_API_BASE}/members?${params}`, {
@@ -138,7 +143,9 @@ export async function hasProMembership(whopUserId: string): Promise<{
   /** true when Whop could not be checked — callers must not downgrade stored pro. */
   error: boolean;
 }> {
-  if (!API_KEY) return { pro: false, membershipId: null, error: false };
+  // No product configured → any membership would match → fail closed.
+  if (!API_KEY || !WHOP_PRODUCT_ID)
+    return { pro: false, membershipId: null, error: false };
   let res: Response;
   try {
     res = await fetch(
@@ -159,9 +166,7 @@ export async function hasProMembership(whopUserId: string): Promise<{
   // Only memberships on the Pro product count — an account can sell other
   // products that must not unlock this site.
   const active = (json.data ?? []).find(
-    (m) =>
-      PRO_STATUSES.has(m.status) &&
-      (!WHOP_PRODUCT_ID || m.product_id === WHOP_PRODUCT_ID),
+    (m) => PRO_STATUSES.has(m.status) && m.product_id === WHOP_PRODUCT_ID,
   );
   return { pro: !!active, membershipId: active?.id ?? null, error: false };
 }
@@ -189,7 +194,7 @@ export async function listProMemberships(whopUserId: string): Promise<{
   memberships: WhopMembership[];
   error: boolean;
 }> {
-  if (!API_KEY) return { memberships: [], error: false };
+  if (!API_KEY || !WHOP_PRODUCT_ID) return { memberships: [], error: false };
   let res: Response;
   try {
     res = await fetch(
@@ -208,9 +213,7 @@ export async function listProMemberships(whopUserId: string): Promise<{
   } | null;
   if (!json) return { memberships: [], error: true };
   const active = (json.data ?? []).filter(
-    (m) =>
-      PRO_STATUSES.has(m.status) &&
-      (!WHOP_PRODUCT_ID || m.product_id === WHOP_PRODUCT_ID),
+    (m) => PRO_STATUSES.has(m.status) && m.product_id === WHOP_PRODUCT_ID,
   );
   return { memberships: active, error: false };
 }

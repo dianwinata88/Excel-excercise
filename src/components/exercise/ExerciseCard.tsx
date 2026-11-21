@@ -240,6 +240,7 @@ export function ExerciseCard({ exercise, onResult, standalone = true }: Props) {
           aria-label="Shortcut capture area — press the key combination"
           onKeyDown={(e) => {
             if (done) return;
+            if (e.key === "Tab") return; // never trap focus
             const combo = eventToCombo(e);
             if (!combo) return;
             e.preventDefault();

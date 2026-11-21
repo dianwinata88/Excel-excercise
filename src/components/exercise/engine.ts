@@ -72,7 +72,9 @@ function valuesEqual(actual: unknown, expected: string | number | boolean): bool
   }
   if (typeof expected === "boolean") return actual === expected;
   if (typeof expected === "string") {
-    return String(actual).trim().toLowerCase() === expected.trim().toLowerCase();
+    // Text exercises (UPPER/LOWER/TRIM...) grade the exact output: wrong
+    // capitalization or stray whitespace is a wrong answer.
+    return String(actual) === expected;
   }
   return actual === expected;
 }

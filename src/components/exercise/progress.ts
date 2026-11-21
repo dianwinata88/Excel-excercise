@@ -48,8 +48,10 @@ function save(p: Progress) {
   }
 }
 
-function notify() {
-  cache = null;
+function notify(p: Progress) {
+  // Keep the fresh progress in memory even when the storage write failed —
+  // clearing the cache would re-read the stale row and drop the XP.
+  cache = p;
   for (const l of listeners) l();
 }
 
@@ -81,7 +83,7 @@ export function awardXp(exerciseId: string, xp: number): { progress: Progress; g
     p.lastPlayedDay = today;
   }
   save(p);
-  notify();
+  notify(p);
   return { progress: p, granted: already ? 0 : xp };
 }
 

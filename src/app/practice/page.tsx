@@ -48,7 +48,27 @@ async function Board({ exercises }: { exercises: Exercise[] }) {
   const session = await getSession();
   const pro = session ? await getEffectivePro(session) : false;
   const lockedIds = pro ? undefined : getProExerciseIds();
-  return <PracticeBoard exercises={exercises} lockedIds={lockedIds} />;
+  // Locked exercises render as a "Unlock with Pro" card — everything except
+  // identity fields is stripped server-side so grids, expected answers and
+  // MCQ solutions never reach a nonmember's browser.
+  const visible = lockedIds
+    ? exercises.map((e) =>
+        lockedIds.has(e.id)
+          ? {
+              ...e,
+              grid: {},
+              answerCell: undefined,
+              expectValue: undefined,
+              acceptFns: [],
+              keys: undefined,
+              options: undefined,
+              correctOption: undefined,
+              hints: [],
+            }
+          : e,
+      )
+    : exercises;
+  return <PracticeBoard exercises={visible} lockedIds={lockedIds} />;
 }
 
 export default function PracticePage() {

@@ -11,9 +11,7 @@ import { track } from "@vercel/analytics";
  */
 export function AnalyticsTracker() {
   useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      const el = (e.target as Element | null)?.closest?.("[data-track]");
-      if (!el) return;
+    const fire = (el: Element) => {
       const name = el.getAttribute("data-track");
       if (!name) return;
       const props: Record<string, string> = {};
@@ -25,11 +23,27 @@ export function AnalyticsTracker() {
       try {
         track(name, props);
       } catch {
-        // Analytics blocked/failed — never break a click.
+        // Analytics blocked/failed — never break the interaction.
       }
     };
+    const onClick = (e: MouseEvent) => {
+      const el = (e.target as Element | null)?.closest?.("[data-track]");
+      if (!el) return;
+      // Submit buttons are tracked on the form's submit event instead —
+      // a click fires before browser validation, inflating the funnel.
+      if (el instanceof HTMLButtonElement && el.type === "submit") return;
+      fire(el);
+    };
+    const onSubmit = (e: SubmitEvent) => {
+      const submitter = e.submitter;
+      if (submitter?.hasAttribute("data-track")) fire(submitter);
+    };
     document.addEventListener("click", onClick, true);
-    return () => document.removeEventListener("click", onClick, true);
+    document.addEventListener("submit", onSubmit, true);
+    return () => {
+      document.removeEventListener("click", onClick, true);
+      document.removeEventListener("submit", onSubmit, true);
+    };
   }, []);
   return null;
 }

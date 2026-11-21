@@ -71,6 +71,11 @@ export async function GET(request: Request) {
     // password is cleared — whoever pre-registered the email can neither
     // stay signed in nor log back in.
     const newlyLinked = existing !== null && existing.whopUserId !== user.sub;
+    // Whop explicitly reports this email unverified — it must not take over
+    // a password account registered to the same address.
+    if (newlyLinked && user.email_verified === false) {
+      return fail("Verify your email on Whop, then try again");
+    }
     const appUser = existing
       ? await prisma.appUser.update({
           where: { id: existing.id },
